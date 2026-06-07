@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vovu — Plans that find you.</title>
+  <meta name="description" content="Post what you want to do. Someone on campus who wants the same thing applies — anonymously. You both say yes. Names revealed.">
+  <style>
+    :root {
+      --butter: #FFEFB3;
+      --forest: #013E37;
+      --cream:  #FFFDF5;
+      --mist:   #E8F4F2;
+      --sage:   #6B8B87;
+      --white:  #FFFFFF;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Inter', sans-serif;
+      background: var(--butter);
+      color: var(--forest);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    img { display: block; max-width: 100%; }
+
+    /* ─── LAYOUT ─── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ─── NAVBAR ─── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      background: var(--butter);
+      z-index: 100;
+      transition: border-bottom 0.2s;
+    }
+    #navbar.scrolled {
+      border-bottom: 1px solid rgba(1,62,55,0.15);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo span {
+      font-family: Georgia, serif;
+      font-weight: bold;
+      font-size: 20px;
+      color: var(--forest);
+    }
+    .nav-cta {
+      background: var(--forest);
+      color: var(--butter);
+      border: none;
+      border-radius: 10px;
+      height: 44px;
+      padding: 0 20px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--forest);
+      border-radius: 2px;
+    }
+    .mobile-menu {
+      display: none;
+      background: var(--butter);
+      padding: 16px 24px 24px;
+      border-bottom: 1px solid rgba(1,62,55,0.15);
+    }
+    .mobile-menu.open { display: block; }
+    .mobile-menu a {
+      display: block;
+      padding: 12px 0;
+      color: var(--forest);
+      text-decoration: none;
+      font-size: 16px;
+      border-bottom: 1px solid rgba(1,62,55,0.08);
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .nav-cta { display: none; }
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      background: var(--butter);
+      padding: 80px 0 100px;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      background: var(--mist);
+      color: var(--forest);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-family: system-ui, sans-serif;
+      margin-bottom: 24px;
+    }
+    .hero-headline {
+      font-family: Georgia, serif;
+      font-size: 64px;
+      font-weight: bold;
+      color: var(--forest);
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .hero-sub {
+      font-size: 18px;
+      color: var(--sage);
+      line-height: 1.6;
+      margin-bottom: 32px;
+      max-width: 460px;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .btn-primary {
+      background: var(--forest);
+      color: var(--butter);
+      border: none;
+      border-radius: 10px;
+      height: 52px;
+      padding: 0 28px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--forest);
+      border: 1.5px solid var(--forest);
+      border-radius: 10px;
+      height: 52px;
+      padding: 0 28px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .hero-trust {
+      font-size: 13px;
+      color: var(--sage);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-bg-logo {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      object-fit: contain;
+      opacity: 0.07;
+      z-index: 0;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .hero-main-img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-height: 560px;
+      object-fit: contain;
+    }
+
+    @media (max-width: 768px) {
+      #hero { padding: 48px 0 64px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+      .hero-headline { font-size: 40px; }
+      .hero-sub { font-size: 16px; }
+      .hero-visual { order: -1; }
+      .hero-bg-logo { width: 160px; height: 160px; }
+    }
+
+    /* ─── PROBLEM ─── */
+    #problem {
+      background: var(--butter);
+      padding: 100px 0;
+    }
+    .section-headline {
+      font-family: Georgia, serif;
+      font-size: 42px;
+      font-weight: bold;
+      color: var(--forest);
+      text-align: center;
+      margin-bottom: 56px;
+      line-height: 1.15;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .problem-card {
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(1,62,55,0.08);
+    }
+    .problem-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px 12px 0 0;
+      display: block;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .card-title {
+      font-family: Georgia, serif;
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--forest);
+      margin-bottom: 8px;
+    }
+    .card-text {
+      font-size: 15px;
+      color: var(--sage);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      #problem { padding: 64px 0; }
+      .section-headline { font-size: 32px; margin-bottom: 36px; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── HOW IT WORKS ─── */
+    #how-it-works {
+      background: var(--cream);
+      padding: 100px 0;
+    }
+    .section-subhead {
+      font-size: 18px;
+      color: var(--sage);
+      text-align: center;
+      margin-top: -40px;
+      margin-bottom: 56px;
+    }
+    .steps-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+    }
+    .step {
+      flex: 1;
+      padding: 0 32px;
+      text-align: left;
+    }
+    .step-number {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--sage);
+      margin-bottom: 8px;
+    }
+    .step-title {
+      font-family: Georgia, serif;
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--forest);
+      margin-bottom: 12px;
+    }
+    .step-body {
+      font-size: 15px;
+      color: var(--sage);
+      line-height: 1.6;
+    }
+    .phone-frame {
+      border: 3px solid var(--forest);
+      border-radius: 24px;
+      background: var(--butter);
+      max-width: 200px;
+      margin: 24px auto 0;
+      overflow: hidden;
+      padding: 8px;
+    }
+    .phone-frame img {
+      width: 100%;
+      border-radius: 20px;
+      display: block;
+    }
+    .step-divider {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 60px;
+      min-width: 40px;
+    }
+    .step-divider-line {
+      width: 1px;
+      height: 120px;
+      background: rgba(1,62,55,0.2);
+    }
+    .step-divider-emoji {
+      font-size: 20px;
+      margin: 8px 0;
+      writing-mode: horizontal-tb;
+    }
+
+    @media (max-width: 768px) {
+      #how-it-works { padding: 64px 0; }
+      .section-subhead { margin-top: -20px; }
+      .steps-row { flex-direction: column; gap: 0; }
+      .step { padding: 0; margin-bottom: 40px; }
+      .step-divider {
+        flex-direction: row;
+        padding-top: 0;
+        margin-bottom: 40px;
+        min-width: unset;
+      }
+      .step-divider-line { width: 80px; height: 1px; }
+    }
+
+    /* ─── REVEAL ─── */
+    #reveal {
+      background: var(--forest);
+      color: var(--butter);
+      padding: 100px 0;
+    }
+    .reveal-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .reveal-left img {
+      max-width: 480px;
+      width: 100%;
+      object-fit: contain;
+    }
+    .reveal-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--sage);
+      margin-bottom: 16px;
+    }
+    .reveal-headline {
+      font-family: Georgia, serif;
+      font-size: 52px;
+      font-weight: bold;
+      color: var(--butter);
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .reveal-body {
+      font-size: 16px;
+      color: var(--sage);
+      line-height: 1.6;
+      margin-bottom: 32px;
+      max-width: 420px;
+    }
+    .match-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px;
+      width: 300px;
+      max-width: 100%;
+    }
+    .match-card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--sage);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .match-avatars {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Georgia, serif;
+      font-size: 18px;
+      font-weight: bold;
+      flex-direction: column;
+    }
+    .avatar-you {
+      background: var(--butter);
+      border: 2px solid var(--forest);
+      color: var(--forest);
+    }
+    .avatar-them {
+      background: var(--forest);
+      border: 2px solid var(--butter);
+    }
+    .avatar-heart { font-size: 22px; }
+    .avatar-name {
+      font-family: Georgia, serif;
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--forest);
+      text-align: center;
+    }
+    #reveal-name {
+      filter: blur(8px);
+      opacity: 0;
+      transition: filter 0.7s ease, opacity 0.7s ease;
+    }
+    #reveal-name.revealed {
+      filter: blur(0);
+      opacity: 1;
+    }
+    .match-divider {
+      border: none;
+      border-top: 1px solid #E5E5E5;
+      margin: 16px 0;
+    }
+    .match-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .match-detail-row {
+      font-size: 13px;
+      color: var(--forest);
+      font-family: system-ui, sans-serif;
+    }
+    .match-footer {
+      font-size: 11px;
+      color: var(--sage);
+      text-align: center;
+      margin-top: 16px;
+    }
+    .reveal-match-img {
+      max-width: 300px;
+      margin-top: 32px;
+      border-radius: 16px;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      #reveal { padding: 64px 0; }
+      .reveal-inner { grid-template-columns: 1fr; gap: 40px; }
+      .reveal-headline { font-size: 36px; }
+      .match-card { width: 100%; }
+    }
+
+    /* ─── SAFETY ─── */
+    #safety {
+      background: var(--butter);
+      padding: 80px 0;
+    }
+    .safety-subhead {
+      font-size: 18px;
+      color: var(--sage);
+      text-align: center;
+      margin-top: -40px;
+      margin-bottom: 48px;
+    }
+    .safety-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .safety-card {
+      border-radius: 16px;
+      padding: 32px;
+    }
+    .safety-card-white { background: var(--white); }
+    .safety-card-mist  { background: var(--mist); }
+    .safety-card-header {
+      font-family: Georgia, serif;
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--forest);
+      margin-bottom: 16px;
+    }
+    .safety-row {
+      border-left: 3px solid var(--forest);
+      padding-left: 12px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: var(--sage);
+      line-height: 1.5;
+    }
+    .safety-card-mist .safety-row { color: var(--forest); }
+    .safety-check { font-weight: bold; color: var(--forest); }
+    .safety-cross { font-weight: bold; }
+
+    @media (max-width: 768px) {
+      #safety { padding: 56px 0; }
+      .safety-subhead { margin-top: -20px; }
+      .safety-grid { grid-template-columns: 1fr; gap: 20px; }
+    }
+
+    /* ─── STATS ─── */
+    #stats {
+      background: var(--forest);
+      padding: 80px 0;
+    }
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      text-align: center;
+      max-width: 200px;
+    }
+    .stat-number {
+      font-family: Georgia, serif;
+      font-size: 72px;
+      font-weight: bold;
+      color: var(--butter);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: var(--sage);
+      max-width: 160px;
+      margin: 8px auto 0;
+    }
+
+    @media (max-width: 768px) {
+      #stats { padding: 56px 0; }
+      .stats-row { gap: 40px; }
+      .stat-number { font-size: 48px; }
+    }
+    @media (max-width: 480px) {
+      .stats-row { gap: 32px; }
+    }
+
+    /* ─── WAITLIST ─── */
+    #waitlist {
+      background: var(--forest);
+      padding: 100px 0;
+      border-top: 1px solid rgba(255,239,179,0.1);
+    }
+    .waitlist-headline {
+      font-family: Georgia, serif;
+      font-size: 48px;
+      font-weight: bold;
+      color: var(--butter);
+      text-align: center;
+      margin-bottom: 16px;
+      line-height: 1.15;
+    }
+    .waitlist-sub {
+      font-size: 18px;
+      color: var(--sage);
+      text-align: center;
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+    #waitlist-form {
+      display: flex;
+      gap: 12px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    #waitlist-email {
+      flex: 1;
+      height: 52px;
+      background: white;
+      border: 1.5px solid var(--forest);
+      border-radius: 10px;
+      padding: 0 16px;
+      font-size: 16px;
+      color: var(--forest);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #waitlist-email::placeholder { color: var(--sage); }
+    #waitlist-email:focus { border-color: var(--butter); }
+    #waitlist-email.shake {
+      animation: shake 0.4s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-6px); }
+      40%      { transform: translateX(6px); }
+      60%      { transform: translateX(-4px); }
+      80%      { transform: translateX(4px); }
+    }
+    .waitlist-btn {
+      height: 52px;
+      background: var(--butter);
+      color: var(--forest);
+      border: none;
+      border-radius: 10px;
+      padding: 0 24px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #waitlist-error {
+      font-size: 13px;
+      color: #FF6B6B;
+      margin-top: 8px;
+      text-align: center;
+      display: none;
+    }
+    #waitlist-success {
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: var(--butter);
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto;
+      display: none;
+    }
+    .waitlist-fine {
+      font-size: 12px;
+      color: var(--sage);
+      text-align: center;
+      margin-top: 16px;
+    }
+    #waitlist-form-wrap { max-width: 480px; margin: 0 auto; }
+
+    @media (max-width: 768px) {
+      #waitlist { padding: 64px 0; }
+      .waitlist-headline { font-size: 32px; }
+      .waitlist-sub { font-size: 16px; }
+      #waitlist-form { flex-direction: column; }
+      #waitlist-email { width: 100%; }
+      .waitlist-btn { width: 100%; }
+    }
+
+    /* ─── FOOTER ─── */
+    #footer {
+      background: var(--butter);
+      padding: 48px 0 32px;
+    }
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(1,62,55,0.12);
+      padding-top: 24px;
+      margin-top: 0;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .footer-brand span {
+      font-family: Georgia, serif;
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--forest);
+    }
+    .footer-tagline {
+      font-family: Georgia, serif;
+      font-style: italic;
+      font-size: 15px;
+      color: var(--sage);
+    }
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .footer-url {
+      font-size: 14px;
+      color: var(--forest);
+      text-decoration: none;
+    }
+    .footer-icons {
+      display: flex;
+      gap: 12px;
+    }
+    .footer-icons a {
+      color: var(--sage);
+      font-size: 18px;
+      text-decoration: none;
+    }
+    .footer-copy {
+      font-size: 12px;
+      color: var(--sage);
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .footer-top {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAVBAR ─── -->
+  <nav id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <img src="VOVU%20LOGO%20OFICIAL.png" height="40" width="40" alt="Vovu logo" loading="eager" onerror="this.style.display='none'">
+        <span>Vovu</span>
+      </a>
+      <button class="hamburger" id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <a href="#waitlist" class="nav-cta">Get early access</a>
+    </div>
+    <div class="mobile-menu" id="mobile-menu" role="menu">
+      <a href="#how-it-works" role="menuitem">How it works</a>
+      <a href="#safety" role="menuitem">Safety</a>
+      <a href="#waitlist" role="menuitem">Get early access</a>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section id="hero" aria-label="Hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <div class="hero-chip">🔒 .edu verified · Kenyon College</div>
+          <h1 class="hero-headline">Plans that find you.</h1>
+          <p class="hero-sub">Post what you want to do. Someone on campus who wants the same thing applies — anonymously. You both say yes. Names revealed.</p>
+          <div class="hero-buttons">
+            <a href="#waitlist" class="btn-primary">Get early access →</a>
+            <a href="#how-it-works" class="btn-outline">See how it works ↓</a>
+          </div>
+          <p class="hero-trust">🛡 Only verified .edu students. Last names never shared.</p>
+        </div>
+        <div class="hero-visual">
+          <img class="hero-bg-logo" src="VOVU%20LOGO%20OFICIAL.png" width="280" height="280" alt="" aria-hidden="true" loading="eager" onerror="this.style.display='none'">
+          <img class="hero-main-img" src="VOVU%204K.png" width="600" height="560" alt="Vovu app preview" loading="eager" onerror="this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── THE PROBLEM ─── -->
+  <section id="problem" aria-label="The problem">
+    <div class="container">
+      <h2 class="section-headline">You know the feeling.</h2>
+      <div class="cards-grid">
+
+        <article class="problem-card">
+          <img src="VOVU%204K%20TIRED%20OF%20EATING%20ALONE.png" width="400" height="200" alt="Eating alone" loading="lazy" onerror="this.style.display='none'">
+          <div class="card-body">
+            <h3 class="card-title">Eating alone again</h3>
+            <p class="card-text">The dining hall is full. Your phone is the only company.</p>
+          </div>
+        </article>
+
+        <article class="problem-card">
+          <img src="VOVU%204K%20QUOTE.png" width="400" height="200" alt="Plans that never happen" loading="lazy" onerror="this.style.display='none'">
+          <div class="card-body">
+            <h3 class="card-title">Plans that never happen</h3>
+            <p class="card-text">The group chat goes quiet. Everyone's busy. Nobody actually asks.</p>
+          </div>
+        </article>
+
+        <article class="problem-card">
+          <img src="VOVU%204K%20POST%20WHAT%20YOU%20WANT%20TO%20DO.png" width="400" height="200" alt="Too awkward to ask" loading="lazy" onerror="this.style.display='none'">
+          <div class="card-body">
+            <h3 class="card-title">Too awkward to ask</h3>
+            <p class="card-text">You want to hang out with that person from class. But what if they say no?</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── HOW IT WORKS ─── -->
+  <section id="how-it-works" aria-label="How it works">
+    <div class="container">
+      <h2 class="section-headline">No rejection. Ever.</h2>
+      <p class="section-subhead">Three steps. Zero awkwardness.</p>
+
+      <div class="steps-row">
+        <div class="step">
+          <p class="step-number">01</p>
+          <h3 class="step-title">Post a plan</h3>
+          <p class="step-body">Say what you want to do and when. Dining hall at 7pm. Gym at 4pm. Coffee between classes. Your exact location stays private until there's a match.</p>
+          <div class="phone-frame">
+            <img src="VOVU%204K%20POST%20WHAT%20YOU%20WANT%20TO%20DO.png" width="200" height="320" alt="Post a plan" loading="lazy" onerror="this.style.display='none'" style="width:100%;border-radius:20px">
+          </div>
+        </div>
+
+        <div class="step-divider" aria-hidden="true">
+          <div class="step-divider-line"></div>
+          <span class="step-divider-emoji">🥨</span>
+          <div class="step-divider-line"></div>
+        </div>
+
+        <div class="step">
+          <p class="step-number">02</p>
+          <h3 class="step-title">Apply anonymously</h3>
+          <p class="step-body">Someone sees your plan and applies. You see their vibe — activity tags and two bars. No name. No photo. Zero risk of rejection.</p>
+          <div class="phone-frame">
+            <img src="VOVU%204K%20QUOTE.png" width="200" height="320" alt="Apply anonymously" loading="lazy" onerror="this.style.display='none'" style="width:100%;border-radius:20px">
+          </div>
+        </div>
+
+        <div class="step-divider" aria-hidden="true">
+          <div class="step-divider-line"></div>
+          <span class="step-divider-emoji">🥨</span>
+          <div class="step-divider-line"></div>
+        </div>
+
+        <div class="step">
+          <p class="step-number">03</p>
+          <h3 class="step-title">Mutual yes → reveal</h3>
+          <p class="step-body">You both say yes. Only then: first name, campus email, exact location, exact time. Last name never shared by Vovu. Ever.</p>
+          <div class="phone-frame">
+            <img src="VOVU%204K%20BOTH%20SAY%20YES.png" width="200" height="320" alt="Mutual yes reveal" loading="lazy" onerror="this.style.display='none'" style="width:100%;border-radius:20px">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── THE REVEAL MOMENT ─── -->
+  <section id="reveal" aria-label="The reveal moment">
+    <div class="container">
+      <div class="reveal-inner">
+        <div class="reveal-left">
+          <img src="VOVU%204K%20BOTH%20SAY%20YES.png" width="480" height="480" alt="Both say yes" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="reveal-right">
+          <p class="reveal-label">The moment</p>
+          <h2 class="reveal-headline">It's a match.</h2>
+          <p class="reveal-body">The only moment of animation in the entire app. A name appearing from blur to focus. Because something real just happened.</p>
+
+          <div class="match-card">
+            <p class="match-card-label">It's a match</p>
+            <div class="match-avatars">
+              <div class="avatar avatar-you">Y</div>
+              <span class="avatar-heart">💚</span>
+              <div class="avatar avatar-them"></div>
+            </div>
+            <div style="text-align:center;margin-bottom:16px;">
+              <span id="reveal-name" class="avatar-name">Alex</span>
+            </div>
+            <hr class="match-divider">
+            <div class="match-details">
+              <p class="match-detail-row">📍 Wiggin Street Coffee, back corner table</p>
+              <p class="match-detail-row">🕐 3:15pm today</p>
+              <p class="match-detail-row">✉ alex@kenyon.edu</p>
+            </div>
+            <p class="match-footer">Last name never shared by Vovu.</p>
+          </div>
+
+          <img class="reveal-match-img" src="VOVU%204K%20MATCH.png" width="300" height="300" alt="Match visual" loading="lazy" onerror="this.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SAFETY ─── -->
+  <section id="safety" aria-label="Safety">
+    <div class="container">
+      <h2 class="section-headline">Built safe from the start.</h2>
+      <p class="safety-subhead">A bad actor reading the feed gains nothing actionable.</p>
+
+      <div class="safety-grid">
+        <div class="safety-card safety-card-white">
+          <h3 class="safety-card-header">What the feed shows</h3>
+          <div class="safety-row">Activity type (e.g. "Dinner")</div>
+          <div class="safety-row">General zone (e.g. "North campus area")</div>
+          <div class="safety-row">Time window ±30 min (e.g. "7–8pm")</div>
+          <div class="safety-row">Number of applicants</div>
+          <div class="safety-row">Optional short note</div>
+        </div>
+        <div class="safety-card safety-card-mist">
+          <h3 class="safety-card-header">Only after mutual YES</h3>
+          <div class="safety-row"><span class="safety-check">✓</span> Exact location</div>
+          <div class="safety-row"><span class="safety-check">✓</span> Exact time</div>
+          <div class="safety-row"><span class="safety-check">✓</span> First name only</div>
+          <div class="safety-row"><span class="safety-check">✓</span> Campus email</div>
+          <div class="safety-row"><span class="safety-cross">✗</span> Last name — never. Not even after the match.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STATS ─── -->
+  <section id="stats" aria-label="Statistics">
+    <div class="container">
+      <div class="stats-row">
+        <div class="stat-item">
+          <p class="stat-number">65%</p>
+          <p class="stat-label">of college students report feeling lonely (TimelyCare, 2024)</p>
+        </div>
+        <div class="stat-item">
+          <p class="stat-number">40%</p>
+          <p class="stat-label">drop in dining hall time since 2019 (Degree Analytics)</p>
+        </div>
+        <div class="stat-item">
+          <p class="stat-number">0</p>
+          <p class="stat-label">rejections. Ever.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WAITLIST ─── -->
+  <section id="waitlist" aria-label="Join waitlist">
+    <div class="container">
+      <h2 class="waitlist-headline">Vovu is coming to your campus.</h2>
+      <p class="waitlist-sub">Starting at Kenyon College. Expanding to Oberlin, Denison, UPenn, and beyond.</p>
+
+      <div id="waitlist-form-wrap">
+        <form id="waitlist-form" novalidate>
+          <input
+            type="email"
+            id="waitlist-email"
+            placeholder="you@kenyon.edu"
+            autocomplete="email"
+            aria-label="Your .edu email address"
+          >
+          <button type="submit" class="waitlist-btn">Join waitlist →</button>
+        </form>
+        <p id="waitlist-error" role="alert"></p>
+        <div id="waitlist-success"></div>
+        <p class="waitlist-fine">.edu email required · No spam · Campus-only access</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer id="footer" aria-label="Footer">
+    <div class="container">
+      <div class="footer-top">
+        <a href="#" class="footer-brand">
+          <img src="VOVU%20LOGO%20OFICIAL.png" height="28" width="28" alt="Vovu logo" loading="lazy" onerror="this.style.display='none'">
+          <span>Vovu</span>
+        </a>
+        <p class="footer-tagline">Plans that find you.</p>
+        <div class="footer-right">
+          <a href="#" class="footer-url">vovu.co</a>
+          <div class="footer-icons" aria-label="Social links">
+            <a href="#" aria-label="Instagram">◻</a>
+            <a href="#" aria-label="Twitter / X">◻</a>
+            <a href="#" aria-label="TikTok">◻</a>
+          </div>
+        </div>
+      </div>
+      <p class="footer-copy">© 2026 Vovu · Anonymous until mutual yes.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ─── NAVBAR SCROLL ───
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // ─── HAMBURGER ───
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const mobileMenu   = document.getElementById('mobile-menu');
+    hamburgerBtn.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('open');
+      hamburgerBtn.setAttribute('aria-expanded', open);
+    });
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        hamburgerBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // ─── REVEAL ANIMATION ───
+    const revealName = document.getElementById('reveal-name');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          revealName.classList.add('revealed');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    revealObserver.observe(document.getElementById('reveal'));
+
+    // ─── WAITLIST FORM ───
+    const form         = document.getElementById('waitlist-form');
+    const emailInput   = document.getElementById('waitlist-email');
+    const errorMsg     = document.getElementById('waitlist-error');
+    const successMsg   = document.getElementById('waitlist-success');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+
+      // Validation
+      if (!email.includes('@') || !email.endsWith('.edu')) {
+        errorMsg.textContent = 'Use your .edu email — no outsiders.';
+        errorMsg.style.display = 'block';
+        emailInput.classList.remove('shake');
+        void emailInput.offsetWidth; // reflow to restart animation
+        emailInput.classList.add('shake');
+        emailInput.addEventListener('animationend', () => {
+          emailInput.classList.remove('shake');
+        }, { once: true });
+        return;
+      }
+
+      // Clear error
+      errorMsg.style.display = 'none';
+
+      // Save to localStorage
+      const existing = JSON.parse(localStorage.getItem('vovu_waitlist') || '[]');
+      existing.push({
+        email,
+        timestamp: Date.now(),
+        campus: email.split('@')[1]
+      });
+      localStorage.setItem('vovu_waitlist', JSON.stringify(existing));
+
+      // Show success
+      form.style.display = 'none';
+      successMsg.textContent = "You're on the list. We'll reach out when Vovu comes to your campus. 🥨";
+      successMsg.style.display = 'block';
+    });
+  </script>
+</body>
+</html>

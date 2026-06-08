@@ -11,74 +11,107 @@ interface Props {
 }
 
 export default function PlanCard({ plan, onApply, applied }: Props) {
-  const meta   = ACTIVITY_META[plan.activity]
-  const count  = plan.applicant_count ?? 0
+  const meta  = ACTIVITY_META[plan.activity]
+  const count = plan.applicant_count ?? 0
   const expiry = timeUntilExpiry(plan.expires_at)
   const isFull = count >= plan.spots
 
   return (
     <div
-      style={s.card}
-      onMouseEnter={e => {
-        (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--border-hover)'
+      style={{
+        background: 'var(--white)',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--border)',
+        padding: 16,
+        transition: 'border-color 200ms ease, transform 150ms ease',
+        cursor: 'pointer',
       }}
-      onMouseLeave={e => {
-        (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--border)'
-      }}
-      onMouseDown={e => {
-        (e.currentTarget as HTMLDivElement).style.transform = 'scale(0.99)'
-      }}
-      onMouseUp={e => {
-        (e.currentTarget as HTMLDivElement).style.transform = 'scale(1)'
-      }}
+      onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--border-hover)')}
+      onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}
     >
       {/* Top row */}
-      <div style={s.topRow}>
-        <div style={s.iconCircle}>
-          {meta?.icon ?? '📅'}
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-            <span style={s.actLabel}>{meta?.label ?? plan.activity}</span>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flex: 1, minWidth: 0 }}>
+          <div style={{
+            width: 42, height: 42,
+            borderRadius: '50%',
+            background: 'var(--mist)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 20,
+            flexShrink: 0,
+          }}>
+            {meta?.icon ?? '📅'}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <span style={{
-              ...s.spotsBadge,
-              background: isFull ? '#F5F5F5' : '#E6F4EF',
-              color: isFull ? 'var(--sage)' : '#1A7F5A',
+              fontFamily: 'Georgia, serif',
+              fontSize: 15,
+              fontWeight: 'bold',
+              color: 'var(--forest)',
+              display: 'block',
             }}>
-              {isFull ? 'Full' : `${plan.spots} spot${plan.spots !== 1 ? 's' : ''}`}
+              {meta?.label ?? plan.activity}
             </span>
-          </div>
-          <div style={s.metaRow}>
-            <span>🕐 {plan.time_window}</span>
-            <span style={{ color: 'var(--mist)' }}>·</span>
-            <span>📍 {plan.zone}</span>
+            <div style={{ fontSize: 12, color: 'var(--sage)', marginTop: 3 }}>
+              🕐 {plan.time_window} &nbsp;·&nbsp; 📍 {plan.zone}
+            </div>
           </div>
         </div>
+
+        {/* Spots badge */}
+        <span style={{
+          fontSize: 11,
+          fontWeight: 600,
+          background: isFull ? '#F5F5F5' : '#E6F4EF',
+          color: isFull ? 'var(--sage)' : '#1A7F5A',
+          padding: '4px 10px',
+          borderRadius: 'var(--radius-full)',
+          flexShrink: 0,
+          whiteSpace: 'nowrap',
+        }}>
+          {isFull ? 'Full' : `${plan.spots} spot${plan.spots !== 1 ? 's' : ''}`}
+        </span>
       </div>
 
       {/* Note */}
       {plan.note && (
-        <p style={s.note}>"{plan.note}"</p>
+        <p style={{
+          fontSize: 13,
+          color: 'var(--sage)',
+          fontStyle: 'italic',
+          marginTop: 10,
+          paddingLeft: 10,
+          borderLeft: '2px solid var(--mist)',
+          lineHeight: 1.5,
+          overflow: 'hidden',
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+        }}>
+          "{plan.note}"
+        </p>
       )}
 
       {/* Footer */}
-      <div style={s.footer}>
-        <div style={s.dotsRow}>
-          {Array.from({ length: plan.spots }).map((_, i) => (
-            <div key={i} style={{
-              width: 28, height: 28,
-              borderRadius: '50%',
-              background: i < count ? 'var(--mist)' : '#F5F5F5',
-              border: `1.5px solid ${i < count ? 'var(--forest)' : '#E0E0E0'}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 11,
-              color: i < count ? 'var(--forest)' : 'transparent',
-              fontWeight: 500,
-            }}>
-              {i < count ? '?' : ''}
-            </div>
-          ))}
-          <span style={{ fontSize: 12, color: 'var(--sage)', marginLeft: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 5 }}>
+            {Array.from({ length: plan.spots }).map((_, i) => (
+              <div key={i} style={{
+                width: 28, height: 28,
+                borderRadius: '50%',
+                background: i < count ? 'var(--mist)' : '#F5F5F5',
+                border: `1.5px solid ${i < count ? 'var(--forest)' : '#E0E0E0'}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 11,
+                fontWeight: 500,
+                color: i < count ? 'var(--forest)' : 'transparent',
+              }}>
+                {i < count ? '?' : ''}
+              </div>
+            ))}
+          </div>
+          <span style={{ fontSize: 12, color: 'var(--sage)', marginLeft: 3 }}>
             {count} applied
           </span>
         </div>
@@ -94,7 +127,7 @@ export default function PlanCard({ plan, onApply, applied }: Props) {
           }}
           style={{
             height: 32,
-            padding: '0 20px',
+            padding: '0 16px',
             borderRadius: applied ? 'var(--radius-full)' : 'var(--radius-md)',
             border: 'none',
             fontSize: 13,
@@ -119,75 +152,4 @@ export default function PlanCard({ plan, onApply, applied }: Props) {
       )}
     </div>
   )
-}
-
-const s: Record<string, React.CSSProperties> = {
-  card: {
-    background: 'var(--white)',
-    borderRadius: 'var(--radius-lg)',
-    border: '1px solid var(--border)',
-    padding: 16,
-    cursor: 'pointer',
-    transition: 'border-color 200ms ease, transform 150ms ease',
-  },
-  topRow: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: 12,
-    marginBottom: 0,
-  },
-  iconCircle: {
-    width: 42, height: 42,
-    borderRadius: '50%',
-    background: 'var(--mist)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontSize: 20,
-    flexShrink: 0,
-  },
-  actLabel: {
-    fontFamily: 'Georgia, serif',
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: 'var(--forest)',
-  },
-  spotsBadge: {
-    fontSize: 11,
-    fontWeight: 600,
-    padding: '4px 10px',
-    borderRadius: 'var(--radius-full)',
-    flexShrink: 0,
-    whiteSpace: 'nowrap' as const,
-  },
-  metaRow: {
-    display: 'flex',
-    gap: 6,
-    alignItems: 'center',
-    fontSize: 12,
-    color: 'var(--sage)',
-    marginTop: 3,
-  },
-  note: {
-    fontSize: 13,
-    color: 'var(--sage)',
-    fontStyle: 'italic',
-    marginTop: 10,
-    lineHeight: 1.5,
-    overflow: 'hidden',
-    display: '-webkit-box',
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: 'vertical' as const,
-    paddingLeft: 10,
-    borderLeft: '2px solid var(--mist)',
-  },
-  footer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 12,
-  },
-  dotsRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 5,
-  },
 }

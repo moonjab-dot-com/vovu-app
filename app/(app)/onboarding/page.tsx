@@ -10,8 +10,8 @@ const TOTAL = 8
 const STEP_ILLUSTRATIONS: Partial<Record<number, { src: string; size: number }>> = {
   1: { src: '/Welcome--Streamline-Dhaka.png',           size: 120 },
   4: { src: '/Post-It-To-Do-Notes--Streamline-Dhaka.png', size: 120 },
-  7: { src: '/I-Have-A-Question--Streamline-Dhaka.png', size: 120 },
-  8: { src: '/Leadership--Streamline-Dhaka.png',        size: 140 },
+  7: { src: '/I-Have-A-Question--Streamline-Dhaka.png',  size: 120 },
+  8: { src: '/Leadership--Streamline-Dhaka.png',         size: 140 },
 }
 
 export default function OnboardingPage() {
@@ -102,19 +102,16 @@ export default function OnboardingPage() {
 
       {/* Step content */}
       <div style={s.content}>
-        {/* Illustration — only on specific steps */}
         {illus && (
-          <div style={{ textAlign: 'center', marginBottom: 24 }}>
-            <img
-              src={illus.src}
-              alt=""
-              width={illus.size}
-              height={illus.size}
-              style={{ objectFit: 'contain' }}
-              loading="lazy"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-            />
-          </div>
+          <img
+            src={illus.src}
+            alt=""
+            width={illus.size}
+            height={illus.size}
+            loading="lazy"
+            style={{ objectFit: 'contain', display: 'block', margin: `0 auto ${24}px` }}
+            onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
+          />
         )}
 
         {step === 1 && (
@@ -177,7 +174,6 @@ export default function OnboardingPage() {
         {step === 4 && (
           <div style={s.stepWrap}>
             <h2 style={s.q}>What do you actually like doing?</h2>
-            {/* Important callout */}
             <div style={s.callout}>
               🔒 These filter your feed forever. Skip party? You'll never see a party plan.
             </div>
@@ -194,7 +190,7 @@ export default function OnboardingPage() {
                       <div style={s.checkmark}>✓</div>
                     )}
                     <span style={{ fontSize: 22 }}>{a.icon}</span>
-                    <span style={{ fontSize: 12, marginTop: 4, textAlign: 'center', lineHeight: 1.3 }}>{a.label}</span>
+                    <span style={{ fontSize: 12, marginTop: 4, fontWeight: 500 }}>{a.label}</span>
                   </button>
                 )
               })}
@@ -202,7 +198,7 @@ export default function OnboardingPage() {
             <p style={{
               ...s.counter,
               color: activities.length >= 1 ? 'var(--forest)' : 'var(--sage)',
-              fontWeight: activities.length >= 1 ? 500 : 400,
+              fontWeight: activities.length >= 1 ? 700 : 400,
             }}>
               {activities.length} selected
             </p>
@@ -261,14 +257,13 @@ export default function OnboardingPage() {
                 {[1,2,3,4,5].map(i => (
                   <div
                     key={i}
-                    onClick={() => setFollowThrough(i)}
                     style={{
                       width: 28, height: 28, borderRadius: '50%',
-                      background: i <= followThrough ? 'var(--forest)' : 'var(--mist)',
-                      border: '1.5px solid var(--forest)',
+                      background: i <= followThrough ? 'var(--forest)' : 'rgba(1,62,55,0.12)',
                       cursor: 'pointer',
                       transition: 'background 200ms',
                     }}
+                    onClick={() => setFollowThrough(i)}
                   />
                 ))}
               </div>
@@ -283,14 +278,13 @@ export default function OnboardingPage() {
                 {[1,2,3,4,5].map(i => (
                   <div
                     key={i}
-                    onClick={() => setOpenness(i)}
                     style={{
                       width: 28, height: 28, borderRadius: '50%',
-                      background: i <= openness ? 'var(--forest)' : 'var(--mist)',
-                      border: '1.5px solid var(--forest)',
+                      background: i <= openness ? 'var(--forest)' : 'rgba(1,62,55,0.12)',
                       cursor: 'pointer',
                       transition: 'background 200ms',
                     }}
+                    onClick={() => setOpenness(i)}
                   />
                 ))}
               </div>
@@ -321,16 +315,13 @@ export default function OnboardingPage() {
         )}
       </div>
 
-      {/* Bottom nav */}
+      {/* Bottom nav bar */}
       <div style={s.bottomBar}>
         <button
           onClick={back}
-          disabled={step === 1}
           style={{
             ...s.backBtn,
-            opacity: step === 1 ? 0 : 1,
-            pointerEvents: step === 1 ? 'none' : 'auto',
-            flex: 1,
+            visibility: step > 1 ? 'visible' : 'hidden',
           }}
         >
           ← Back
@@ -339,12 +330,7 @@ export default function OnboardingPage() {
           <button
             onClick={next}
             disabled={!canContinue}
-            style={{
-              ...s.nextBtn,
-              opacity: canContinue ? 1 : 0.35,
-              cursor: canContinue ? 'pointer' : 'not-allowed',
-              flex: 2,
-            }}
+            style={{ ...s.nextBtn, opacity: canContinue ? 1 : 0.35 }}
           >
             Continue →
           </button>
@@ -352,12 +338,7 @@ export default function OnboardingPage() {
           <button
             onClick={handleFinish}
             disabled={!canContinue || saving}
-            style={{
-              ...s.nextBtn,
-              opacity: canContinue && !saving ? 1 : 0.35,
-              cursor: canContinue && !saving ? 'pointer' : 'not-allowed',
-              flex: 2,
-            }}
+            style={{ ...s.nextBtn, opacity: canContinue && !saving ? 1 : 0.35 }}
           >
             {saving ? 'Saving…' : 'Enter Vovu →'}
           </button>
@@ -379,6 +360,7 @@ const s: Record<string, React.CSSProperties> = {
     height: 3,
     background: 'rgba(1,62,55,0.10)',
     width: '100%',
+    flexShrink: 0,
   },
   progressFill: {
     height: '100%',
@@ -390,6 +372,7 @@ const s: Record<string, React.CSSProperties> = {
     color: 'var(--sage)',
     textAlign: 'right',
     padding: '16px 24px 0',
+    flexShrink: 0,
   },
   content: {
     flex: 1,
@@ -464,7 +447,7 @@ const s: Record<string, React.CSSProperties> = {
   actBtn: {
     height: 72,
     background: 'var(--white)',
-    border: '1.5px solid var(--forest)',
+    border: '1.5px solid var(--border)',
     borderRadius: 'var(--radius-md)',
     display: 'flex',
     flexDirection: 'column',
@@ -479,6 +462,7 @@ const s: Record<string, React.CSSProperties> = {
   },
   actBtnSelected: {
     background: 'var(--forest)',
+    borderColor: 'var(--forest)',
     color: 'var(--butter)',
   },
   checkmark: {
@@ -491,21 +475,22 @@ const s: Record<string, React.CSSProperties> = {
     background: 'var(--butter)',
     color: 'var(--forest)',
     fontSize: 10,
+    fontWeight: 700,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontWeight: 700,
   },
   counter: {
     fontSize: 13,
     textAlign: 'center',
-    transition: 'color 200ms',
+    marginTop: 4,
   },
   sliderLabel: {
     fontSize: 14,
     fontWeight: 500,
     color: 'var(--forest)',
     marginBottom: 12,
+    lineHeight: 1.4,
   },
   dotRow: {
     display: 'flex',
@@ -534,6 +519,7 @@ const s: Record<string, React.CSSProperties> = {
     gap: 12,
   },
   backBtn: {
+    flex: 1,
     height: 52,
     background: 'var(--white)',
     border: '1.5px solid var(--forest)',
@@ -545,6 +531,7 @@ const s: Record<string, React.CSSProperties> = {
     transition: 'opacity 200ms',
   },
   nextBtn: {
+    flex: 2,
     height: 52,
     background: 'var(--forest)',
     color: 'var(--butter)',
@@ -552,6 +539,7 @@ const s: Record<string, React.CSSProperties> = {
     borderRadius: 'var(--radius-md)',
     fontSize: 15,
     fontWeight: 500,
+    cursor: 'pointer',
     transition: 'opacity 200ms',
   },
 }

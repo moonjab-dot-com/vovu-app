@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vovu — It's a match</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body style="background:var(--forest);">
+<div class="match-screen">
+
+  <!-- Illustration above card -->
+  <img src="./public/Business-Dealsuccess--Streamline-Dhaka.png"
+       width="200" height="200"
+       class="fade-in"
+       style="object-fit:contain;"
+       onerror="this.style.display='none'">
+
+  <!-- Label -->
+  <p class="match-label fade-in-delay-1">IT'S A MATCH</p>
+
+  <!-- Reveal card -->
+  <div class="reveal-card fade-in-delay-2">
+
+    <div class="reveal-avatars">
+      <div class="avatar-col">
+        <div class="avatar avatar-you" style="width:64px;height:64px;font-size:22px;">Y</div>
+        <span class="avatar-label">You</span>
+      </div>
+      <span style="font-size:28px; align-self:center;">💚</span>
+      <div class="avatar-col">
+        <div class="avatar avatar-them" style="width:64px;height:64px;font-size:22px;" id="match-avatar">?</div>
+        <span id="match-name">Alex</span>
+      </div>
+    </div>
+
+    <div class="reveal-card-divider"></div>
+
+    <div class="reveal-card-details">
+      <p>📍 Wiggin Street Coffee, back corner table</p>
+      <p>🕐 3:15pm today</p>
+      <p>✉️ alex@kenyon.edu</p>
+    </div>
+
+    <p class="reveal-card-footer">Last name never shared by Vovu.</p>
+  </div>
+
+  <!-- CTA -->
+  <a href="./feed.html" class="btn btn-butter fade-in-delay-3" style="margin-top:32px;">
+    Back to feed →
+  </a>
+
+</div>
+
+<script src="./js/main.js"></script>
+<script src="./js/nav.js"></script>
+</body>
+</html>

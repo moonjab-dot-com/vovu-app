@@ -4,7 +4,7 @@
     {
       "name": "vovu-static",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "-s", ".", "-p", "3000", "--no-clipboard"],
+      "runtimeArgs": ["serve", ".", "-p", "3000", "--no-clipboard"],
       "port": 3000
     }
   ]

@@ -1,58 +1,53 @@
-// nav.js — page-level setup, scroll animations, match reveal
+// nav.js — page-level setup: scroll animations, match reveal, stats count-up
 
 document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('page-loaded');
 
-  // Scroll-triggered animations
+  // Scroll-triggered .will-animate elements
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('animated');
-      }
+      if (entry.isIntersecting) entry.target.classList.add('animated');
     });
   }, { threshold: 0.15 });
+  document.querySelectorAll('.will-animate').forEach(el => observer.observe(el));
 
-  document.querySelectorAll('.will-animate').forEach(el => {
-    observer.observe(el);
-  });
-
-  // Match page reveal
-  const matchName = document.getElementById('match-name');
+  // Match page — blur reveal
+  const matchName   = document.getElementById('match-name');
+  const matchAvatar = document.getElementById('match-avatar');
   if (matchName) {
     setTimeout(() => {
-      matchName.style.opacity = '1';
       matchName.classList.add('reveal-name');
-      const questionMark = document.querySelector('.avatar-them');
-      if (questionMark) questionMark.textContent = 'A';
+      if (matchAvatar) {
+        matchAvatar.style.transition = 'opacity 400ms ease';
+        matchAvatar.style.opacity = '0';
+        setTimeout(() => { matchAvatar.textContent = 'A'; matchAvatar.style.opacity = '1'; }, 400);
+      }
     }, 600);
   }
 
-  // Landing page demo card reveal
+  // Landing page demo card reveal (blur when scrolled into view)
   const demoName = document.getElementById('demo-name');
   if (demoName) {
-    const revealObserver = new IntersectionObserver((entries) => {
+    const demoObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          setTimeout(() => {
-            demoName.classList.add('reveal-name');
-            demoName.style.opacity = '1';
-          }, 400);
-          revealObserver.unobserve(entry.target);
+          setTimeout(() => demoName.classList.add('reveal-name'), 400);
+          demoObserver.unobserve(entry.target);
         }
       });
     }, { threshold: 0.5 });
-    revealObserver.observe(demoName);
+    demoObserver.observe(demoName);
   }
 
-  // Navbar scroll border
+  // Navbar scroll border (landing)
   const navbar = document.querySelector('.navbar');
   if (navbar) {
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 60);
-    });
+    }, { passive: true });
   }
 
-  // Rotating hero text
+  // Rotating hero text (landing)
   const words = [
     'Going to the gym.',
     'Getting dinner.',
@@ -69,29 +64,28 @@ document.addEventListener('DOMContentLoaded', () => {
         i = (i + 1) % words.length;
         rotating.textContent = words[i];
         rotating.style.opacity = '1';
-      }, 200);
+      }, 300);
     }, 2500);
   }
 
-  // Stats count-up
+  // Stats count-up (landing)
   const statsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const el = entry.target;
-        const target = parseInt(el.dataset.target);
-        const suffix = el.dataset.suffix || '';
-        if (isNaN(target)) return;
-        let start = null;
-        const duration = 1200;
-        const step = timestamp => {
-          if (!start) start = timestamp;
-          const progress = Math.min((timestamp - start) / duration, 1);
-          el.textContent = Math.floor(progress * target) + suffix;
-          if (progress < 1) requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
-        statsObserver.unobserve(el);
-      }
+      if (!entry.isIntersecting) return;
+      const el     = entry.target;
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      if (isNaN(target)) return;
+      let start    = null;
+      const dur    = 1200;
+      const step   = ts => {
+        if (!start) start = ts;
+        const p = Math.min((ts - start) / dur, 1);
+        el.textContent = Math.floor(p * target) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+      statsObserver.unobserve(el);
     });
   }, { threshold: 0.5 });
   document.querySelectorAll('.count-up').forEach(el => statsObserver.observe(el));

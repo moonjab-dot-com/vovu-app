@@ -3,218 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vovu — Set up your profile</title>
+  <title>Vovu — Your vibe profile</title>
   <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-<div class="onboarding-screen">
 
-  <!-- Progress Bar -->
-  <div class="progress-bar">
-    <div class="progress-fill" id="progress" style="width:12.5%"></div>
-  </div>
-
-  <!-- Step Counter -->
-  <div class="step-counter"><span id="step-num">1</span> of 8</div>
-
-  <!-- Steps -->
-  <div class="steps-wrapper" id="steps-wrapper">
-
-    <!-- STEP 1: First name -->
-    <div class="step-content active" id="step-1">
-      <img src="./public/Welcome--Streamline-Dhaka.png"
-           width="120" height="120"
-           class="step-illustration"
-           loading="lazy"
-           onerror="this.style.display='none'">
-      <p class="step-question">What's your first name?</p>
-      <p class="step-sub">Only revealed after mutual yes.</p>
-      <input type="text" id="first-name"
-             class="input"
-             placeholder="Your first name"
-             autofocus
-             oninput="answers.firstName = this.value">
-    </div>
-
-    <!-- STEP 2: Group size -->
-    <div class="step-content" id="step-2">
-      <p class="step-question">Your social energy</p>
-      <p class="step-sub">What size group feels natural to you?</p>
-      <div class="options-group">
-        <button class="option-btn" onclick="selectOption(this, 'groupSize', '1on1')">1-on-1 only</button>
-        <button class="option-btn" onclick="selectOption(this, 'groupSize', 'small')">Small group (2–3)</button>
-        <button class="option-btn" onclick="selectOption(this, 'groupSize', 'either')">Either works</button>
-        <button class="option-btn" onclick="selectOption(this, 'groupSize', 'big')">Big groups</button>
-      </div>
-    </div>
-
-    <!-- STEP 3: Place vibe -->
-    <div class="step-content" id="step-3">
-      <p class="step-question">Your kind of place</p>
-      <p class="step-sub">Where do you feel most comfortable?</p>
-      <div class="options-group">
-        <button class="option-btn" onclick="selectOption(this, 'placeVibe', 'quiet')">Quiet and calm</button>
-        <button class="option-btn" onclick="selectOption(this, 'placeVibe', 'lowkey')">Low-key</button>
-        <button class="option-btn" onclick="selectOption(this, 'placeVibe', 'anywhere')">Anywhere</button>
-        <button class="option-btn" onclick="selectOption(this, 'placeVibe', 'loud')">Loud and energetic</button>
-      </div>
-    </div>
-
-    <!-- STEP 4: Activities (most important) -->
-    <div class="step-content" id="step-4">
-      <img src="./public/Post-It-To-Do-Notes--Streamline-Dhaka.png"
-           width="120" height="120"
-           class="step-illustration"
-           loading="lazy"
-           onerror="this.style.display='none'">
-      <p class="step-question">What do you want to do?</p>
-
-      <div class="activity-callout">
-        🔒 These filter your feed forever. Skip parties? You'll never see a party plan.
-      </div>
-
-      <div class="activity-grid">
-        <button class="activity-btn" onclick="toggleActivity(this, 'cafe')">
-          <span class="activity-check">✓</span>
-          <span class="act-icon">☕</span>
-          <span class="act-label">Café</span>
-        </button>
-        <button class="activity-btn" onclick="toggleActivity(this, 'dining')">
-          <span class="activity-check">✓</span>
-          <span class="act-icon">🍽</span>
-          <span class="act-label">Dining hall</span>
-        </button>
-        <button class="activity-btn" onclick="toggleActivity(this, 'gym')">
-          <span class="activity-check">✓</span>
-          <span class="act-icon">🏋</span>
-          <span class="act-label">Gym</span>
-        </button>
-        <button class="activity-btn" onclick="toggleActivity(this, 'study')">
-          <span class="activity-check">✓</span>
-          <span class="act-icon">📚</span>
-          <span class="act-label">Study</span>
-        </button>
-        <button class="activity-btn" onclick="toggleActivity(this, 'walk')">
-          <span class="activity-check">✓</span>
-          <span class="act-icon">🚶</span>
-          <span class="act-label">Walk</span>
-        </button>
-        <button class="activity-btn" onclick="toggleActivity(this, 'movie')">
-          <span class="activity-check">✓</span>
-          <span class="act-icon">🎬</span>
-          <span class="act-label">Movie</span>
-        </button>
-        <button class="activity-btn" onclick="toggleActivity(this, 'sports')">
-          <span class="activity-check">✓</span>
-          <span class="act-icon">🏃</span>
-          <span class="act-label">Sports</span>
-        </button>
-        <button class="activity-btn" onclick="toggleActivity(this, 'offcampus')">
-          <span class="activity-check">✓</span>
-          <span class="act-icon">🗺</span>
-          <span class="act-label">Off-campus</span>
-        </button>
-      </div>
-      <p class="activity-counter" id="activity-counter">0 selected</p>
-    </div>
-
-    <!-- STEP 5: Timing -->
-    <div class="step-content" id="step-5">
-      <p class="step-question">When are you usually free?</p>
-      <p class="step-sub">Select all that apply.</p>
-      <div class="time-grid">
-        <button class="time-btn" onclick="toggleTime(this, 'morning')">Morning</button>
-        <button class="time-btn" onclick="toggleTime(this, 'between')">Between classes</button>
-        <button class="time-btn" onclick="toggleTime(this, 'afternoons')">Afternoons</button>
-        <button class="time-btn" onclick="toggleTime(this, 'evenings')">Evenings</button>
-        <button class="time-btn" onclick="toggleTime(this, 'latenight')">Late night</button>
-        <button class="time-btn" onclick="toggleTime(this, 'weekends')">Weekends</button>
-      </div>
-    </div>
-
-    <!-- STEP 6: Plan style -->
-    <div class="step-content" id="step-6">
-      <p class="step-question">How do you make plans?</p>
-      <p class="step-sub">No right answer — just honest.</p>
-      <div class="options-group">
-        <button class="option-btn" onclick="selectOption(this, 'planStyle', 'lastminute')">Last minute</button>
-        <button class="option-btn" onclick="selectOption(this, 'planStyle', 'daybefore')">Day before</button>
-        <button class="option-btn" onclick="selectOption(this, 'planStyle', 'planahead')">Plan ahead</button>
-      </div>
-    </div>
-
-    <!-- STEP 7: Sliders -->
-    <div class="step-content" id="step-7">
-      <img src="./public/I-Have-A-Question--Streamline-Dhaka.png"
-           width="120" height="120"
-           class="step-illustration"
-           loading="lazy"
-           onerror="this.style.display='none'">
-      <p class="step-question">Two honest questions.</p>
-      <p class="step-sub">Shown as bars, not numbers.</p>
-
-      <div class="slider-group">
-        <p class="slider-question">How often do you follow through?</p>
-        <input type="range" min="1" max="5" value="3" id="slider-followthrough"
-               oninput="updateSlider(this, 'dots-followthrough', 'followThrough')">
-        <div class="slider-label-row">
-          <span>I bail a lot</span>
-          <span>Always show up</span>
-        </div>
-        <div class="slider-dots" id="dots-followthrough">
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot filled"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-        </div>
-      </div>
-
-      <div class="slider-group">
-        <p class="slider-question">Open to meeting someone new?</p>
-        <input type="range" min="1" max="5" value="3" id="slider-openness"
-               oninput="updateSlider(this, 'dots-openness', 'openness')">
-        <div class="slider-label-row">
-          <span>A bit nervous</span>
-          <span>Love it</span>
-        </div>
-        <div class="slider-dots" id="dots-openness">
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot filled"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- STEP 8: Duration -->
-    <div class="step-content" id="step-8">
-      <img src="./public/Leadership--Streamline-Dhaka.png"
-           width="140" height="140"
-           class="step-illustration"
-           loading="lazy"
-           onerror="this.style.display='none'">
-      <p class="step-question">How long do you usually hang out?</p>
-      <p class="step-sub">Sets expectations before you meet.</p>
-      <div class="options-group">
-        <button class="option-btn" onclick="selectOption(this, 'duration', 'quick')">Quick (30 min)</button>
-        <button class="option-btn" onclick="selectOption(this, 'duration', 'medium')">Medium (1–2 hours)</button>
-        <button class="option-btn" onclick="selectOption(this, 'duration', 'linger')">Long — I linger</button>
-      </div>
-    </div>
-
-  </div><!-- /steps-wrapper -->
-
-  <!-- Fixed bottom nav -->
-  <nav class="onboarding-nav">
-    <button class="btn btn-ghost" id="back-btn" onclick="prevStep()" style="flex:1; visibility:hidden;">← Back</button>
-    <button class="btn btn-primary" id="next-btn" onclick="nextStep()" style="flex:2;">Continue →</button>
-  </nav>
-
+<!-- PROGRESS -->
+<div class="ob-progress-track">
+  <div class="progress-fill" id="ob-progress" style="width:4.5%"></div>
 </div>
 
-<script src="./js/main.js"></script>
-<script src="./js/nav.js"></script>
+<!-- STEP COUNTER -->
+<div class="ob-step-counter">
+  <span id="ob-step-label">1 of 22</span>
+</div>
+
+<!-- STEP WRAPPER -->
+<div class="ob-wrapper" id="ob-wrapper">
+  <!-- JS renders each step here -->
+</div>
+
+<!-- FIXED BOTTOM NAV -->
+<div class="ob-bottom-nav">
+  <button class="btn-ghost" id="ob-back" onclick="obBack()" style="visibility:hidden;">
+    <i data-lucide="arrow-left"></i> Back
+  </button>
+  <button class="btn-primary" id="ob-next" onclick="obNext()" disabled>
+    Continue <i data-lucide="arrow-right"></i>
+  </button>
+</div>
+
+<script src="./js/matching.js"></script>
+<script src="./js/onboarding.js"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>

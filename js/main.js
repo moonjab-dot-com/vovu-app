@@ -1,86 +1,226 @@
-// main.js — all page interactions
+// main.js — Vovu interactions
 
-// =============================================
-// WAITLIST (index.html)
-// =============================================
+document.addEventListener('DOMContentLoaded', () => {
 
-function handleWaitlist(e) {
-  if (e) e.preventDefault();
-  const emailInput = document.getElementById('waitlist-email');
-  const errorEl   = document.getElementById('waitlist-error');
-  const form      = document.getElementById('waitlist-form');
-  const success   = document.getElementById('success-state');
-  if (!emailInput) return;
+  // ── Lucide icons ─────────────────────────────
+  if (typeof lucide !== 'undefined') lucide.createIcons();
 
-  const email = emailInput.value.trim();
-  if (!email.includes('@') || !email.toLowerCase().endsWith('.edu')) {
-    emailInput.classList.remove('shake');
-    void emailInput.offsetWidth;
-    emailInput.classList.add('shake');
-    if (errorEl) { errorEl.textContent = 'Please use your .edu email address.'; errorEl.classList.remove('hidden'); }
-    return;
+  // ── Navbar scroll border ─────────────────────
+  const navbar = document.querySelector('.navbar');
+  if (navbar) {
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
   }
 
-  if (errorEl) errorEl.classList.add('hidden');
-  const list = JSON.parse(localStorage.getItem('vovu_waitlist') || '[]');
-  list.push({ email, campus: email.split('@')[1], ts: Date.now() });
-  localStorage.setItem('vovu_waitlist', JSON.stringify(list));
-  if (form)    form.classList.add('hidden');
-  if (success) success.classList.remove('hidden');
-}
+  // ── Scroll animations (.will-animate) ────────
+  const scrollObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        entry.target.classList.add('animated'); // backwards compat
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.will-animate').forEach(el => scrollObs.observe(el));
 
-// =============================================
-// LOGIN (login.html)
-// =============================================
+  // ── Card entrance animations ──────────────────
+  const cardObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.card-enter').forEach(el => cardObs.observe(el));
 
-const campusMap = {
-  'kenyon.edu': 'Kenyon College',
-  'oberlin.edu': 'Oberlin College',
-  'mit.edu': 'MIT',
-  'harvard.edu': 'Harvard University',
-  'stanford.edu': 'Stanford University',
-  'yale.edu': 'Yale University',
-  'columbia.edu': 'Columbia University',
-  'princeton.edu': 'Princeton University',
-  'brown.edu': 'Brown University',
-  'dartmouth.edu': 'Dartmouth College',
-  'cornell.edu': 'Cornell University',
-  'upenn.edu': 'University of Pennsylvania',
-  'usc.edu': 'USC',
-  'ucla.edu': 'UCLA',
-  'umich.edu': 'University of Michigan',
-  'nyu.edu': 'NYU',
-  'bu.edu': 'Boston University',
-  'northeastern.edu': 'Northeastern University',
-  'tufts.edu': 'Tufts University',
-  'williams.edu': 'Williams College',
-  'amherst.edu': 'Amherst College',
-  'swarthmore.edu': 'Swarthmore College',
-  'brynmawr.edu': 'Bryn Mawr College',
-  'haverford.edu': 'Haverford College',
-  'reed.edu': 'Reed College',
-  'carleton.edu': 'Carleton College',
-  'middlebury.edu': 'Middlebury College',
-};
+  // ── Vibe bar animation on scroll ─────────────
+  const barObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.bar-fill, .vibe-bar-fill').forEach(bar => {
+          setTimeout(() => bar.classList.add('loaded'), 100);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.applicant-card, .card-preview, .profile-card-preview').forEach(el => {
+    barObs.observe(el);
+  });
 
-function onEmailInput() {
-  const input   = document.getElementById('email-input');
-  const confirm = document.getElementById('campus-confirm');
-  const nameEl  = document.getElementById('campus-name-text');
-  if (!input || !confirm) return;
-  const email = input.value.trim().toLowerCase();
-  if (email.includes('@') && email.endsWith('.edu')) {
-    const domain = email.split('@')[1];
-    if (nameEl) nameEl.textContent = (campusMap[domain] || domain) + ' detected';
-    confirm.classList.remove('hidden');
-  } else {
-    confirm.classList.add('hidden');
+  // ── Typewriter rotating word ──────────────────
+  const rotatingEl = document.getElementById('rotating-word');
+  if (rotatingEl) {
+    const words = [
+      'Going to the gym.',
+      'Getting dinner.',
+      'Grabbing coffee.',
+      'Studying together.',
+      'Walking at midnight.',
+      'Doing absolutely nothing.',
+    ];
+    let wordIndex = 0;
+
+    function typeChar(word, charIndex) {
+      if (charIndex <= word.length) {
+        rotatingEl.textContent = word.slice(0, charIndex);
+        setTimeout(() => typeChar(word, charIndex + 1), 55);
+      } else {
+        setTimeout(() => deleteChar(word, word.length), 1800);
+      }
+    }
+
+    function deleteChar(word, deleteIndex) {
+      if (deleteIndex >= 0) {
+        rotatingEl.textContent = word.slice(0, deleteIndex);
+        setTimeout(() => deleteChar(word, deleteIndex - 1), 30);
+      } else {
+        wordIndex = (wordIndex + 1) % words.length;
+        setTimeout(() => typeChar(words[wordIndex], 0), 300);
+      }
+    }
+
+    setTimeout(() => typeChar(words[0], 0), 800);
   }
-}
 
+  // ── Stats count-up ────────────────────────────
+  const statsObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const target = parseFloat(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      if (isNaN(target)) return;
+      let startTime = null;
+      const duration = 1400;
+
+      function countUp(ts) {
+        if (!startTime) startTime = ts;
+        const progress = Math.min((ts - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * target) + suffix;
+        if (progress < 1) requestAnimationFrame(countUp);
+      }
+
+      requestAnimationFrame(countUp);
+      statsObs.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.count-up').forEach(el => statsObs.observe(el));
+
+  // ── Match name reveal ─────────────────────────
+  const matchName = document.getElementById('match-name');
+  const matchAvatar = document.getElementById('match-avatar');
+  if (matchName) {
+    setTimeout(() => {
+      if (matchAvatar) {
+        matchAvatar.style.transition = 'opacity 400ms ease';
+        matchAvatar.style.opacity = '0';
+        setTimeout(() => {
+          matchAvatar.textContent = 'A';
+          matchAvatar.style.opacity = '1';
+        }, 400);
+      }
+      matchName.classList.add('reveal-name');
+    }, 600);
+  }
+
+  // ── Demo card reveal (landing) ────────────────
+  const demoName = document.getElementById('demo-name');
+  if (demoName) {
+    const demoObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setTimeout(() => demoName.classList.add('reveal-name'), 400);
+          demoObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    demoObs.observe(demoName);
+  }
+
+  // ── Waitlist form ─────────────────────────────
+  const waitlistForm = document.getElementById('waitlist-form');
+  if (waitlistForm) {
+    waitlistForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const emailInput = document.getElementById('waitlist-email');
+      const errorEl = document.getElementById('waitlist-error');
+      if (!emailInput) return;
+
+      const email = emailInput.value.trim();
+      if (!email.includes('@') || !email.toLowerCase().endsWith('.edu')) {
+        emailInput.classList.remove('shake');
+        void emailInput.offsetWidth;
+        emailInput.classList.add('shake');
+        if (errorEl) {
+          errorEl.textContent = 'Use your .edu email — no outsiders.';
+          errorEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      if (errorEl) errorEl.classList.add('hidden');
+      const list = JSON.parse(localStorage.getItem('vovu_waitlist') || '[]');
+      list.push({ email, campus: email.split('@')[1], ts: Date.now() });
+      localStorage.setItem('vovu_waitlist', JSON.stringify(list));
+
+      const formWrap = document.getElementById('waitlist-form-wrap') || waitlistForm.parentElement;
+      const successEl = document.getElementById('success-state') || document.getElementById('waitlist-success');
+      if (formWrap && formWrap.id !== 'waitlist-form') formWrap.classList.add('hidden');
+      else waitlistForm.classList.add('hidden');
+      if (successEl) successEl.classList.remove('hidden');
+    });
+  }
+
+  // ── Login page ────────────────────────────────
+  const emailInput = document.getElementById('email-input');
+  if (emailInput) {
+    const campusMap = {
+      'kenyon.edu': 'Kenyon College', 'oberlin.edu': 'Oberlin College',
+      'mit.edu': 'MIT', 'harvard.edu': 'Harvard University',
+      'stanford.edu': 'Stanford University', 'yale.edu': 'Yale University',
+      'columbia.edu': 'Columbia University', 'princeton.edu': 'Princeton University',
+      'brown.edu': 'Brown University', 'dartmouth.edu': 'Dartmouth College',
+      'cornell.edu': 'Cornell University', 'upenn.edu': 'University of Pennsylvania',
+      'usc.edu': 'USC', 'ucla.edu': 'UCLA', 'nyu.edu': 'NYU',
+      'umich.edu': 'University of Michigan', 'bu.edu': 'Boston University',
+      'tufts.edu': 'Tufts University', 'swarthmore.edu': 'Swarthmore College',
+      'amherst.edu': 'Amherst College', 'williams.edu': 'Williams College',
+      'reed.edu': 'Reed College', 'carleton.edu': 'Carleton College',
+      'middlebury.edu': 'Middlebury College', 'grinnell.edu': 'Grinnell College',
+    };
+
+    emailInput.addEventListener('input', () => {
+      const val = emailInput.value.trim().toLowerCase();
+      const confirmEl = document.getElementById('campus-confirm');
+      const nameEl = document.getElementById('campus-name-text');
+      const sendBtn = document.getElementById('send-btn');
+
+      if (val.includes('@') && val.endsWith('.edu')) {
+        const domain = val.split('@')[1];
+        if (nameEl) nameEl.textContent = (campusMap[domain] || domain) + ' detected';
+        if (confirmEl) confirmEl.classList.remove('hidden');
+        if (sendBtn) sendBtn.removeAttribute('disabled');
+      } else {
+        if (confirmEl) confirmEl.classList.add('hidden');
+        if (sendBtn) sendBtn.setAttribute('disabled', '');
+      }
+    });
+  }
+
+  // ── Post form: time select ────────────────────
+  const timeSelect = document.getElementById('time-select');
+  if (timeSelect) timeSelect.addEventListener('change', checkPostReady);
+
+  // ── Note textarea counter ─────────────────────
+  const noteTextarea = document.getElementById('plan-note');
+  if (noteTextarea) noteTextarea.addEventListener('input', updateNoteCounter);
+
+});
+
+// ── Login handler ───────────────────────────────
 function handleLogin() {
-  const input     = document.getElementById('email-input');
-  const errorEl   = document.getElementById('email-error');
+  const input = document.getElementById('email-input');
+  const errorEl = document.getElementById('email-error');
   const loginForm = document.getElementById('login-form');
   const sentState = document.getElementById('sent-state');
   const sentEmail = document.getElementById('sent-email');
@@ -91,113 +231,51 @@ function handleLogin() {
     input.classList.remove('shake');
     void input.offsetWidth;
     input.classList.add('shake');
-    if (errorEl) { errorEl.textContent = 'Please use your .edu email.'; errorEl.classList.remove('hidden'); }
+    if (errorEl) {
+      errorEl.textContent = 'Please use your .edu email.';
+      errorEl.classList.remove('hidden');
+    }
     return;
   }
 
-  localStorage.setItem('vovu_email',  email);
+  localStorage.setItem('vovu_email', email);
   localStorage.setItem('vovu_campus', email.split('@')[1]);
-  if (sentEmail)  sentEmail.textContent = email;
-  if (loginForm)  loginForm.classList.add('hidden');
-  if (sentState)  sentState.classList.remove('hidden');
+  if (sentEmail) sentEmail.textContent = email;
+  if (loginForm) loginForm.classList.add('hidden');
+  if (sentState) sentState.classList.remove('hidden');
 }
 
-// =============================================
-// ONBOARDING (onboarding.html)
-// =============================================
-
-let currentStep = 1;
-const totalSteps = 8;
-const answers = {};
-
-function showStep(n) {
-  document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
-  const step = document.getElementById('step-' + n);
-  if (step) step.classList.add('active');
-
-  const progress = document.getElementById('progress');
-  if (progress) progress.style.width = (n / totalSteps * 100) + '%';
-
-  const stepNum = document.getElementById('step-num');
-  if (stepNum) stepNum.textContent = n;
-
-  const backBtn = document.getElementById('back-btn');
-  if (backBtn) backBtn.style.visibility = n === 1 ? 'hidden' : 'visible';
-
-  const nextBtn = document.getElementById('next-btn');
-  if (nextBtn) nextBtn.textContent = n === totalSteps ? 'Enter Vovu →' : 'Continue →';
-}
-
-function nextStep() {
-  if (currentStep === totalSteps) {
-    const profile = JSON.parse(localStorage.getItem('vovu_profile') || '{}');
-    Object.assign(profile, answers);
-    localStorage.setItem('vovu_profile', JSON.stringify(profile));
-    window.location.href = './feed.html';
-    return;
+// ── Toast ───────────────────────────────────────
+window.showToast = function(message, type) {
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.className = 'toast';
+    document.body.appendChild(toast);
   }
-  currentStep = Math.min(currentStep + 1, totalSteps);
-  showStep(currentStep);
-}
+  toast.textContent = message;
+  toast.className = 'toast visible';
+  toast.style.background = type === 'error' ? '#dc2626' : 'var(--forest)';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.className = 'toast hiding';
+    setTimeout(() => { toast.className = 'toast'; }, 300);
+  }, 3000);
+};
 
-function prevStep() {
-  currentStep = Math.max(currentStep - 1, 1);
-  showStep(currentStep);
-}
-
-function selectOption(btn, key, value) {
-  const group = btn.closest('.options-group');
-  if (group) group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  answers[key] = value;
-}
-
-function toggleActivity(btn, activity) {
-  btn.classList.toggle('selected');
-  if (!answers.activities) answers.activities = [];
-  const idx = answers.activities.indexOf(activity);
-  if (idx === -1) answers.activities.push(activity);
-  else answers.activities.splice(idx, 1);
-  const counter = document.getElementById('activity-counter');
-  if (counter) {
-    const n = answers.activities.length;
-    counter.textContent = n + ' selected';
-    counter.className = 'activity-counter' + (n > 0 ? ' has-selection' : '');
-  }
-}
-
-function toggleTime(btn, time) {
-  btn.classList.toggle('selected');
-  if (!answers.times) answers.times = [];
-  const idx = answers.times.indexOf(time);
-  if (idx === -1) answers.times.push(time);
-  else answers.times.splice(idx, 1);
-}
-
-function updateSlider(input, dotContainerId, key) {
-  answers[key] = parseInt(input.value);
-  const container = document.getElementById(dotContainerId);
-  if (!container) return;
-  const dots = container.querySelectorAll('.dot');
-  dots.forEach((dot, i) => dot.classList.toggle('filled', i < parseInt(input.value)));
-}
-
-// =============================================
-// FEED (feed.html)
-// =============================================
-
+// ── Feed: apply to plan ─────────────────────────
 function markApplied(e, btn) {
   e.stopPropagation();
-  btn.textContent = '✓ Applied';
+  btn.innerHTML = '<i data-lucide="check"></i> Applied';
   btn.classList.add('applied');
   btn.disabled = true;
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+  if (window.showToast) showToast('Applied anonymously');
 }
 
-// =============================================
-// POST (post.html)
-// =============================================
-
-let postData = { activity: null, zone: null };
+// ── Post form ───────────────────────────────────
+let postData = { activity: null, zone: null, spots: 1 };
 
 function selectActivity(btn, activity) {
   document.querySelectorAll('.post-activity-btn').forEach(b => b.classList.remove('selected'));
@@ -209,9 +287,9 @@ function selectActivity(btn, activity) {
 function selectZone(chip) {
   document.querySelectorAll('.suggestion-chip').forEach(c => c.classList.remove('selected'));
   chip.classList.add('selected');
-  postData.zone = chip.textContent;
-  const customInput = document.getElementById('zone-custom');
-  if (customInput) customInput.value = '';
+  postData.zone = chip.textContent.trim();
+  const custom = document.getElementById('zone-custom');
+  if (custom) custom.value = '';
   checkPostReady();
 }
 
@@ -224,50 +302,28 @@ function selectSpot(btn, n) {
 function checkPostReady() {
   const submitBtn = document.getElementById('submit-plan-btn');
   if (!submitBtn) return;
-  const timeEl  = document.getElementById('time-select');
+  const timeEl = document.getElementById('time-select');
   const timeVal = timeEl ? timeEl.value : '';
   submitBtn.disabled = !(postData.activity && postData.zone && timeVal);
 }
 
 function submitPlan() {
-  const form    = document.getElementById('post-form');
+  const form = document.getElementById('post-form');
   const success = document.getElementById('post-success');
-  const bar     = document.getElementById('submit-bar');
-  if (form)    form.classList.add('hidden');
-  if (bar)     bar.classList.add('hidden');
+  const bar = document.getElementById('submit-bar');
+  const bottomNav = document.querySelector('.bottom-nav');
+  if (form) form.classList.add('hidden');
+  if (bar) bar.classList.add('hidden');
+  if (bottomNav) bottomNav.classList.add('hidden');
   if (success) success.classList.remove('hidden');
 }
 
 function updateNoteCounter() {
-  const textarea = document.getElementById('plan-note');
-  const counter  = document.getElementById('note-counter');
-  if (!textarea || !counter) return;
-  if (textarea.value.length > 120) textarea.value = textarea.value.slice(0, 120);
-  const n = textarea.value.length;
+  const ta = document.getElementById('plan-note');
+  const counter = document.getElementById('note-counter');
+  if (!ta || !counter) return;
+  if (ta.value.length > 120) ta.value = ta.value.slice(0, 120);
+  const n = ta.value.length;
   counter.textContent = n + '/120';
   counter.className = 'char-counter' + (n >= 100 ? ' danger' : n >= 80 ? ' warn' : '');
 }
-
-// =============================================
-// INIT
-// =============================================
-document.addEventListener('DOMContentLoaded', () => {
-  // Onboarding
-  if (document.getElementById('steps-wrapper')) showStep(1);
-
-  // Waitlist form
-  const waitlistForm = document.getElementById('waitlist-form');
-  if (waitlistForm) waitlistForm.addEventListener('submit', handleWaitlist);
-
-  // Login email input
-  const emailInput = document.getElementById('email-input');
-  if (emailInput) emailInput.addEventListener('input', onEmailInput);
-
-  // Post time select
-  const timeSelect = document.getElementById('time-select');
-  if (timeSelect) timeSelect.addEventListener('change', checkPostReady);
-
-  // Note textarea counter
-  const noteTextarea = document.getElementById('plan-note');
-  if (noteTextarea) noteTextarea.addEventListener('input', updateNoteCounter);
-});

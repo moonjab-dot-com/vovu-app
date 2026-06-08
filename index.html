@@ -5,14 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vovu — Plans that find you.</title>
   <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
 <!-- NAVBAR -->
 <nav class="navbar">
   <a href="./index.html" class="nav-logo">
-    <img src="./public/VOVU LOGO OFICIAL.png"
+    <img src="./VOVU LOGO OFICIAL.png"
          alt="Vovu" width="36" height="36"
+         style="object-fit:contain"
          onerror="this.style.display='none'">
     <span>Vovu</span>
   </a>
@@ -21,25 +23,36 @@
 
 <!-- SECTION 1: HERO -->
 <section class="hero">
-  <div class="hero-text fade-in">
-    <span class="chip">🔒 .edu verified only</span>
+  <div class="hero-text fade-up">
+    <span class="chip">
+      <i data-lucide="shield-check"></i>
+      .edu verified only
+    </span>
     <h1>Plans that find you.</h1>
     <p class="hero-sub">Post what you want to do. Someone on campus applies — anonymously. You both say yes.</p>
     <p class="rotating-line"><span id="rotating-word">Going to the gym.</span></p>
     <div class="hero-btns">
-      <a href="./login.html" class="btn-primary">I want in →</a>
-      <a href="#how-it-works" class="btn-ghost">See how it works ↓</a>
+      <a href="./login.html" class="btn-primary">
+        I want in
+        <i data-lucide="arrow-right"></i>
+      </a>
+      <a href="#how-it-works" class="btn-ghost">See how it works</a>
     </div>
-    <p class="trust-line">🛡 .edu only · last names never shared</p>
+    <p class="trust-line">
+      <i data-lucide="shield-check"></i>
+      .edu only · last names never shared
+    </p>
   </div>
-  <div class="hero-visual fade-in-delay-1">
-    <img src="./public/VOVU LOGO OFICIAL.png"
+  <div class="hero-visual fade-up-d2">
+    <img src="./VOVU LOGO OFICIAL.png"
          alt="" width="260" height="260"
          class="hero-logo-bg"
+         loading="eager"
          onerror="this.style.display='none'">
-    <img src="./public/VOVU 4K.png"
+    <img src="./public/VOVU%204K.png"
          alt="Vovu illustration"
          width="520" height="520"
+         loading="eager"
          style="max-height:560px; width:100%; object-fit:contain;"
          onerror="this.style.display='none'">
   </div>
@@ -47,7 +60,7 @@
 
 <!-- SECTION 2: THE PROBLEM -->
 <section class="section-problem" id="the-problem">
-  <h2>You know the feeling.</h2>
+  <h2 class="will-animate">You know the feeling.</h2>
 
   <div class="confession-lines">
     <p class="confession will-animate">"I ate alone in the dining hall for the third time this week."</p>
@@ -58,30 +71,33 @@
   <p class="confession-response">Sound familiar? We built something for that.</p>
 
   <div class="problem-cards">
-    <div class="problem-card">
-      <img src="./public/VOVU 4K TIRED OF EATING ALONE.png"
+    <div class="problem-card will-animate">
+      <img src="./public/VOVU%204K%20TIRED%20OF%20EATING%20ALONE.png"
            alt="Eating alone"
            class="problem-card-img"
+           loading="lazy"
            onerror="this.style.display='none'">
       <div class="problem-card-content">
         <h3>Eating alone again</h3>
         <p>The dining hall is full of people. None of them are waiting for you. Yet.</p>
       </div>
     </div>
-    <div class="problem-card">
-      <img src="./public/VOVU 4K QUOTE.png"
+    <div class="problem-card will-animate" style="transition-delay:80ms">
+      <img src="./public/VOVU%204K%20QUOTE.png"
            alt="Plans that never happen"
            class="problem-card-img"
+           loading="lazy"
            onerror="this.style.display='none'">
       <div class="problem-card-content">
         <h3>Plans that never happen</h3>
         <p>The group chat goes quiet. Everyone's busy. The plan dies in the thread.</p>
       </div>
     </div>
-    <div class="problem-card">
-      <img src="./public/VOVU 4K POST WHAT YOU WANT TO DO.png"
+    <div class="problem-card will-animate" style="transition-delay:160ms">
+      <img src="./public/VOVU%204K%20POST%20WHAT%20YOU%20WANT%20TO%20DO.png"
            alt="Too awkward to ask"
            class="problem-card-img"
+           loading="lazy"
            onerror="this.style.display='none'">
       <div class="problem-card-content">
         <h3>Too awkward to ask</h3>
@@ -93,11 +109,11 @@
 
 <!-- SECTION 3: HOW IT WORKS -->
 <section class="section-how" id="how-it-works">
-  <span class="section-label">HOW IT WORKS</span>
-  <h2>No rejection. Ever.</h2>
+  <span class="section-label" style="text-align:center;display:block;margin-bottom:12px;">HOW IT WORKS</span>
+  <h2 class="will-animate" style="text-align:center">No rejection. Ever.</h2>
 
   <div class="steps-row">
-    <div class="step">
+    <div class="step will-animate">
       <div class="step-number">1</div>
       <h3>Post a plan</h3>
       <p>What do you want to do, and when? Your exact location stays hidden until there's a match.</p>
@@ -105,11 +121,11 @@
 
     <div class="steps-connector">
       <div class="step-dot-line">
-        <span class="step-emoji">🥨</span>
+        <span class="step-pretzel">🥨</span>
       </div>
     </div>
 
-    <div class="step">
+    <div class="step will-animate" style="transition-delay:80ms">
       <div class="step-number">2</div>
       <h3>Apply anonymously</h3>
       <p>Someone sees your plan and applies. You see their vibe — tags and bars. No name. No photo.</p>
@@ -117,11 +133,11 @@
 
     <div class="steps-connector">
       <div class="step-dot-line">
-        <span class="step-emoji">🥨</span>
+        <span class="step-pretzel">🥨</span>
       </div>
     </div>
 
-    <div class="step">
+    <div class="step will-animate" style="transition-delay:160ms">
       <div class="step-number">3</div>
       <h3>Names revealed</h3>
       <p>You both say yes. First name, campus email, exact spot. Last name never shared. Ever.</p>
@@ -132,14 +148,21 @@
 <!-- SECTION 4: THE REVEAL -->
 <section class="section-reveal">
   <div class="reveal-inner">
-    <div class="reveal-left">
-      <img src="./public/VOVU 4K BOTH SAY YES.png"
+    <div class="reveal-left will-animate">
+      <img src="./public/VOVU%204K%20BOTH%20SAY%20YES.png"
            alt="Both say yes"
            width="480" height="480"
+           loading="lazy"
            style="max-width:480px; width:100%; object-fit:contain;"
            onerror="this.style.display='none'">
+      <img src="./public/VOVU%204K%20MATCH.png"
+           alt="Vovu match"
+           width="480" height="240"
+           loading="lazy"
+           style="max-width:480px; width:100%; object-fit:contain; margin-top:16px;"
+           onerror="this.style.display='none'">
     </div>
-    <div class="reveal-right">
+    <div class="reveal-right will-animate" style="transition-delay:80ms">
       <span class="reveal-label">THE MOMENT</span>
       <h2>It's a match.</h2>
       <p>The only animation in the entire app. A name appearing from blur to focus. Because something real just happened.</p>
@@ -149,12 +172,14 @@
 
         <div class="avatars-row">
           <div class="avatar-col">
-            <div class="avatar avatar-you">Y</div>
+            <div class="avatar avatar-you" style="width:56px;height:56px;font-size:20px;">Y</div>
             <span class="avatar-label">You</span>
           </div>
-          <span style="font-size:24px; padding-bottom:8px;">💚</span>
+          <div style="align-self:center;color:var(--success);">
+            <i data-lucide="heart-handshake" style="width:28px;height:28px;"></i>
+          </div>
           <div class="avatar-col">
-            <div class="avatar avatar-them">?</div>
+            <div class="avatar avatar-them" style="width:56px;height:56px;font-size:20px;">?</div>
             <span id="demo-name">Alex</span>
           </div>
         </div>
@@ -162,9 +187,18 @@
         <div class="reveal-divider"></div>
 
         <div class="reveal-details">
-          <p>📍 Wiggin Street Coffee, back corner</p>
-          <p>🕐 3:15pm today</p>
-          <p>✉️ alex@university.edu</p>
+          <p>
+            <i data-lucide="map-pin"></i>
+            Wiggin Street Coffee, back corner
+          </p>
+          <p>
+            <i data-lucide="clock"></i>
+            3:15pm today
+          </p>
+          <p>
+            <i data-lucide="mail"></i>
+            alex@university.edu
+          </p>
         </div>
 
         <p class="reveal-footer-note">Last name never shared by Vovu.</p>
@@ -194,23 +228,27 @@
 <!-- SECTION 6: WAITLIST -->
 <section class="section-waitlist">
   <div class="waitlist-inner">
-    <h2>Your campus is next.</h2>
-    <p>Starting campus by campus. .edu verified. Word of mouth only.</p>
+    <h2 class="will-animate">Your campus is next.</h2>
+    <p class="will-animate">Starting campus by campus. .edu verified. Word of mouth only.</p>
 
-    <form id="waitlist-form">
+    <form id="waitlist-form" class="will-animate" style="transition-delay:80ms">
       <input type="email" id="waitlist-email"
              placeholder="you@university.edu"
              autocomplete="email">
-      <button type="submit" class="waitlist-submit">I want in →</button>
+      <button type="submit" class="waitlist-submit">
+        I want in
+        <i data-lucide="arrow-right"></i>
+      </button>
     </form>
     <p id="waitlist-error" class="hidden" style="text-align:center;color:#ffcdd2;font-size:13px;margin-top:8px;"></p>
 
-    <div id="success-state" class="hidden">
+    <div id="success-state" class="hidden" style="text-align:center;">
       <img src="./public/Success--Streamline-Dhaka.png"
            width="120" height="120"
+           loading="lazy"
            style="margin:0 auto 16px; object-fit:contain;"
            onerror="this.style.display='none'">
-      <p>🥨 You're on the list.</p>
+      <p>You're on the list.</p>
       <p>We'll reach out when Vovu comes to your campus.</p>
     </div>
 
@@ -222,18 +260,19 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-logo">
-      <img src="./public/VOVU LOGO OFICIAL.png"
+      <img src="./VOVU LOGO OFICIAL.png"
            alt="Vovu" width="28" height="28"
+           style="object-fit:contain"
            onerror="this.style.display='none'">
       <span>Vovu</span>
     </div>
     <span class="footer-tagline">Plans that find you.</span>
-    <a href="./index.html" class="footer-link">vovu.co</a>
+    <a href="./index.html" class="footer-link" style="font-size:14px;color:var(--sage);">vovu.co</a>
   </div>
   <p class="footer-copy">© 2026 Vovu · Anonymous until mutual yes.</p>
 </footer>
 
 <script src="./js/main.js"></script>
-<script src="./js/nav.js"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>

@@ -5,44 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vovu — Café plan</title>
   <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 <div class="plan-screen">
 
-  <!-- Header -->
   <header class="page-header">
-    <button class="back-btn" onclick="history.back()">←</button>
+    <button class="back-btn" onclick="history.back()">
+      <i data-lucide="arrow-left"></i>
+    </button>
     <h1>Café</h1>
     <div class="header-spacer"></div>
   </header>
 
-  <!-- Plan summary card -->
   <div class="plan-summary-card card">
     <div class="plan-summary-top">
-      <div class="activity-icon-circle">☕</div>
+      <div class="activity-icon-circle">
+        <i data-lucide="coffee"></i>
+      </div>
       <div>
         <div class="plan-detail-title">Café</div>
-        <div class="plan-detail-meta">🕐 3–4pm &nbsp;·&nbsp; 📍 Near village coffee shop</div>
+        <div class="plan-detail-meta">
+          <i data-lucide="clock" style="width:13px;height:13px;"></i>
+          3–4pm
+          &nbsp;·&nbsp;
+          <i data-lucide="map-pin" style="width:13px;height:13px;"></i>
+          Near village coffee shop
+        </div>
       </div>
     </div>
     <div class="plan-detail-note">"just want someone to sit and talk with"</div>
 
-    <!-- Creator private details -->
     <div class="private-reveal-box">
-      <div class="private-reveal-header">🔒 Your private details</div>
+      <div class="private-reveal-header">
+        <i data-lucide="lock" style="width:12px;height:12px;"></i>
+        Your private details
+      </div>
       <div class="private-reveal-detail">
-        📍 Wiggin Street Coffee, back corner table<br>
-        🕐 3:15pm
+        <div class="detail-row">
+          <i data-lucide="map-pin" style="width:13px;height:13px;"></i>
+          Wiggin Street Coffee, back corner table
+        </div>
+        <div class="detail-row">
+          <i data-lucide="clock" style="width:13px;height:13px;"></i>
+          3:15pm
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Applicants -->
   <div class="applicants-section">
     <span class="applicants-label">Anonymous applicants · 2 applied</span>
 
     <!-- Applicant 1 -->
-    <div class="applicant-card">
+    <div class="applicant-card card-enter">
       <div class="applicant-header">
         <div class="avatar avatar-anon" style="width:40px;height:40px;font-size:16px;">J</div>
         <div>
@@ -67,12 +83,13 @@
       </div>
 
       <button class="yes-btn" onclick="window.location.href='./match.html'">
-        Yes, go with this person →
+        <i data-lucide="heart-handshake"></i>
+        Yes, go with this person
       </button>
     </div>
 
     <!-- Applicant 2 -->
-    <div class="applicant-card">
+    <div class="applicant-card card-enter">
       <div class="applicant-header">
         <div class="avatar avatar-anon" style="width:40px;height:40px;font-size:16px;">M</div>
         <div>
@@ -96,46 +113,48 @@
       </div>
 
       <button class="yes-btn" onclick="window.location.href='./match.html'">
-        Yes, go with this person →
+        <i data-lucide="heart-handshake"></i>
+        Yes, go with this person
       </button>
     </div>
 
-    <!-- Empty state (hidden in demo) -->
+    <!-- Empty state -->
     <div class="applicant-empty hidden" id="empty-applicants">
       <img src="./public/Empty-Inbox--Streamline-Dhaka.png"
            width="160" height="160"
-           style="object-fit:contain;"
            loading="lazy"
+           style="object-fit:contain;"
            onerror="this.style.display='none'">
       <p style="font-family:Georgia,serif;font-size:16px;text-align:center;">No one has applied yet.</p>
       <p style="font-size:13px;color:var(--sage);text-align:center;">Be patient 🥨</p>
     </div>
 
-    <!-- Waiting state (hidden in demo) -->
+    <!-- Waiting state -->
     <div class="applicant-waiting hidden" id="waiting-state">
       <img src="./public/Patience--Streamline-Dhaka.png"
            width="160" height="160"
-           style="object-fit:contain;"
            loading="lazy"
+           style="object-fit:contain;"
            onerror="this.style.display='none'">
       <p style="font-family:Georgia,serif;font-size:16px;text-align:center;">Confirming your match…</p>
       <div class="spinner"></div>
     </div>
 
-  </div><!-- /applicants-section -->
+  </div>
 
-  <!-- Bottom nav -->
   <nav class="bottom-nav">
     <a href="./feed.html" class="nav-tab active">
-      <span class="nav-icon">🏠</span>
+      <i data-lucide="layout-list"></i>
       <span>Feed</span>
     </a>
     <a href="./post.html" class="nav-tab nav-post">
-      <div class="post-circle">+</div>
+      <div class="post-circle">
+        <i data-lucide="plus" style="color:var(--butter);"></i>
+      </div>
       <span style="margin-top:2px;">Post</span>
     </a>
     <a href="./profile.html" class="nav-tab">
-      <span class="nav-icon">👤</span>
+      <i data-lucide="user"></i>
       <span>Profile</span>
     </a>
   </nav>
@@ -143,6 +162,6 @@
 </div>
 
 <script src="./js/main.js"></script>
-<script src="./js/nav.js"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>

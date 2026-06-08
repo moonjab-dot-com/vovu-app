@@ -5,22 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vovu — Profile</title>
   <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 <div class="profile-screen">
 
-  <!-- Header -->
   <div class="profile-header">
     <h1>Profile</h1>
   </div>
 
   <!-- Identity card -->
-  <div class="identity-card card fade-in">
+  <div class="identity-card card fade-up">
     <div class="identity-card-inner">
       <div class="identity-left">
         <div class="avatar avatar-anon avatar-large">A</div>
         <div class="campus-chip">
-          <span style="color:var(--green-text);">✓</span>
+          <i data-lucide="shield-check" style="width:12px;height:12px;color:var(--success);"></i>
           kenyon.edu
         </div>
       </div>
@@ -38,20 +38,20 @@
   </div>
 
   <!-- How others see you -->
-  <div class="profile-section card fade-in-delay-1" style="margin:12px 16px 0;">
+  <div class="profile-section card fade-up-d1" style="margin:12px 16px 0;">
     <div class="profile-section-header">
       <span class="section-label">How others see you</span>
     </div>
     <p style="font-size:12px;color:var(--sage);margin-bottom:16px;">This is your anonymous card when you apply to a plan.</p>
 
-    <div class="profile-card-preview">
+    <div class="profile-card-preview applicant-card" style="margin-bottom:0;">
       <div class="app-header-row">
         <div class="avatar avatar-anon" style="width:40px;height:40px;font-size:16px;">A</div>
         <div class="app-header-info">
           <p>A· — Anonymous applicant</p>
           <span>Name revealed after mutual yes</span>
         </div>
-        <span class="badge-you" style="background:var(--mist);color:var(--forest);border-radius:var(--radius-full);font-size:11px;padding:3px 10px;font-weight:500;">You</span>
+        <span class="badge-you">You</span>
       </div>
 
       <div class="tags-row" style="margin-bottom:14px;">
@@ -72,46 +72,56 @@
   </div>
 
   <!-- Your vibe -->
-  <div class="profile-section card fade-in-delay-2" style="margin:12px 16px 0;">
+  <div class="profile-section card fade-up-d2" style="margin:12px 16px 0;">
     <div class="profile-section-header">
       <span class="section-label">Your vibe</span>
       <a href="./onboarding.html" class="edit-link">Edit</a>
     </div>
     <div class="tags-row" style="margin-top:14px;">
-      <span class="tag tag-active">☕ Café</span>
-      <span class="tag tag-active">🍽 Dining</span>
-      <span class="tag tag-active">📚 Study</span>
-      <span class="tag tag-active">🚶 Walk</span>
-      <span class="tag" style="text-decoration:line-through;color:var(--sage);">🎉 Party</span>
+      <span class="tag tag-active">Café</span>
+      <span class="tag tag-active">Dining</span>
+      <span class="tag tag-active">Study</span>
+      <span class="tag tag-active">Walk</span>
+      <span class="tag" style="text-decoration:line-through;color:var(--sage);">Party</span>
     </div>
   </div>
 
   <!-- Privacy -->
-  <div class="privacy-box fade-in-delay-2">
-    <p>🔒 Your privacy at Vovu</p>
+  <div class="privacy-box fade-up-d2">
+    <p>
+      <i data-lucide="lock" style="width:14px;height:14px;"></i>
+      Your privacy at Vovu
+    </p>
     <p>Last name: never shared</p>
     <p>Exact plans: only after mutual yes</p>
     <p>Campus email: only to your match</p>
   </div>
 
   <!-- Actions -->
-  <div class="profile-actions fade-in-delay-3">
-    <a href="./onboarding.html" class="btn btn-outline" style="height:52px;display:flex;align-items:center;justify-content:center;">Update my profile →</a>
-    <button class="btn btn-danger" style="height:52px;" onclick="window.location.href='./login.html'">Sign out</button>
+  <div class="profile-actions fade-up-d3">
+    <a href="./onboarding.html" class="btn-outline">
+      <i data-lucide="sliders-horizontal"></i>
+      Update my profile
+    </a>
+    <button class="btn-danger" style="height:52px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-md);font-size:14px;font-weight:500;cursor:pointer;"
+            onclick="window.location.href='./login.html'">
+      Sign out
+    </button>
   </div>
 
-  <!-- Bottom nav -->
   <nav class="bottom-nav">
     <a href="./feed.html" class="nav-tab">
-      <span class="nav-icon">🏠</span>
+      <i data-lucide="layout-list"></i>
       <span>Feed</span>
     </a>
     <a href="./post.html" class="nav-tab nav-post">
-      <div class="post-circle">+</div>
+      <div class="post-circle">
+        <i data-lucide="plus" style="color:var(--butter);"></i>
+      </div>
       <span style="margin-top:2px;">Post</span>
     </a>
     <a href="./profile.html" class="nav-tab active">
-      <span class="nav-icon">👤</span>
+      <i data-lucide="user"></i>
       <span>Profile</span>
     </a>
   </nav>
@@ -119,6 +129,6 @@
 </div>
 
 <script src="./js/main.js"></script>
-<script src="./js/nav.js"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>

@@ -5,43 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vovu — Feed</title>
   <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 <div class="feed-screen">
 
-  <!-- Header -->
   <header class="feed-header">
     <div class="feed-header-row">
       <div>
         <div class="feed-title">Vovu</div>
         <div class="campus-chip" style="margin-top:4px;">
-          <span style="color:var(--green-text);font-size:10px;">✓</span>
+          <i data-lucide="shield-check" style="width:12px;height:12px;color:var(--success);"></i>
           kenyon.edu
         </div>
       </div>
-      <div class="plan-count">
+      <div class="plan-count" style="text-align:right;">
         <span class="plan-count-num">4</span>
         <span class="plan-count-label">plans for you</span>
       </div>
     </div>
   </header>
 
-  <!-- Section label -->
   <div class="feed-section-label">
     <span class="section-label">Filtered to your vibe</span>
   </div>
 
-  <!-- Plan Cards -->
   <div class="feed-cards">
 
     <!-- Card 1: Café -->
     <div class="plan-card card-enter" onclick="window.location.href='./plan.html'">
       <div class="plan-card-top">
         <div class="plan-card-left">
-          <div class="activity-icon-circle">☕</div>
+          <div class="activity-icon-circle">
+            <i data-lucide="coffee"></i>
+          </div>
           <div class="plan-info">
             <div class="plan-title">Café</div>
-            <div class="plan-meta">🕐 3–4pm &nbsp;·&nbsp; 📍 Near village coffee shop</div>
+            <div class="plan-meta">
+              <i data-lucide="clock" style="width:12px;height:12px;"></i>
+              3–4pm
+              &nbsp;·&nbsp;
+              <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
+              Near village coffee shop
+            </div>
           </div>
         </div>
         <span class="badge-green">1 spot</span>
@@ -61,10 +67,18 @@
     <div class="plan-card card-enter" onclick="window.location.href='./plan.html'">
       <div class="plan-card-top">
         <div class="plan-card-left">
-          <div class="activity-icon-circle">🍽</div>
+          <div class="activity-icon-circle">
+            <i data-lucide="utensils"></i>
+          </div>
           <div class="plan-info">
             <div class="plan-title">Dinner</div>
-            <div class="plan-meta">🕐 7–8pm &nbsp;·&nbsp; 📍 North campus dining</div>
+            <div class="plan-meta">
+              <i data-lucide="clock" style="width:12px;height:12px;"></i>
+              7–8pm
+              &nbsp;·&nbsp;
+              <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
+              North campus dining
+            </div>
           </div>
         </div>
         <span class="badge-green">1 spot</span>
@@ -85,10 +99,18 @@
     <div class="plan-card card-enter" onclick="window.location.href='./plan.html'">
       <div class="plan-card-top">
         <div class="plan-card-left">
-          <div class="activity-icon-circle">🏋</div>
+          <div class="activity-icon-circle">
+            <i data-lucide="dumbbell"></i>
+          </div>
           <div class="plan-info">
             <div class="plan-title">Gym</div>
-            <div class="plan-meta">🕐 4:30–5:30pm &nbsp;·&nbsp; 📍 Campus rec center</div>
+            <div class="plan-meta">
+              <i data-lucide="clock" style="width:12px;height:12px;"></i>
+              4:30–5:30pm
+              &nbsp;·&nbsp;
+              <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
+              Campus rec center
+            </div>
           </div>
         </div>
         <span class="badge-green">1 spot</span>
@@ -106,10 +128,18 @@
     <div class="plan-card card-enter" onclick="window.location.href='./plan.html'">
       <div class="plan-card-top">
         <div class="plan-card-left">
-          <div class="activity-icon-circle">📚</div>
+          <div class="activity-icon-circle">
+            <i data-lucide="book-open"></i>
+          </div>
           <div class="plan-info">
             <div class="plan-title">Study</div>
-            <div class="plan-meta">🕐 8–9pm &nbsp;·&nbsp; 📍 Main library</div>
+            <div class="plan-meta">
+              <i data-lucide="clock" style="width:12px;height:12px;"></i>
+              8–9pm
+              &nbsp;·&nbsp;
+              <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
+              Main library
+            </div>
           </div>
         </div>
         <span class="badge-green">1 spot</span>
@@ -126,43 +156,45 @@
       </div>
     </div>
 
-  </div><!-- /feed-cards -->
+  </div>
 
-  <!-- Empty state (hidden in demo) -->
+  <!-- Empty state -->
   <div class="feed-empty hidden" id="empty-state">
     <img src="./public/Searching--Streamline-Dhaka.png"
          width="200" height="200"
-         style="object-fit:contain;"
          loading="lazy"
+         style="object-fit:contain;"
          onerror="this.style.display='none'">
     <h3>No plans match your vibe yet.</h3>
     <p>Be the first to post one.</p>
-    <a href="./post.html" class="btn btn-primary" style="width:160px; margin-top:8px;">Post a plan →</a>
+    <a href="./post.html" class="btn-primary" style="width:160px; margin-top:8px;">Post a plan</a>
   </div>
 
-  <!-- Error state (hidden in demo) -->
+  <!-- Error state -->
   <div class="feed-empty hidden" id="error-state">
     <img src="./public/Something-Went-Wrong--Streamline-Dhaka.png"
          width="180" height="180"
-         style="object-fit:contain;"
          loading="lazy"
+         style="object-fit:contain;"
          onerror="this.style.display='none'">
     <h3>Couldn't load plans.</h3>
-    <button class="btn btn-ghost" style="width:160px;">Try again</button>
+    <button class="btn-ghost" style="width:160px;">Try again</button>
   </div>
 
   <!-- Bottom Nav -->
   <nav class="bottom-nav">
     <a href="./feed.html" class="nav-tab active">
-      <span class="nav-icon">🏠</span>
+      <i data-lucide="layout-list"></i>
       <span>Feed</span>
     </a>
     <a href="./post.html" class="nav-tab nav-post">
-      <div class="post-circle">+</div>
+      <div class="post-circle">
+        <i data-lucide="plus" style="color:var(--butter);"></i>
+      </div>
       <span style="margin-top:2px;">Post</span>
     </a>
     <a href="./profile.html" class="nav-tab">
-      <span class="nav-icon">👤</span>
+      <i data-lucide="user"></i>
       <span>Profile</span>
     </a>
   </nav>
@@ -170,6 +202,6 @@
 </div>
 
 <script src="./js/main.js"></script>
-<script src="./js/nav.js"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>

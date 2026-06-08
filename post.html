@@ -5,19 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vovu — Drop a plan</title>
   <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 <div class="post-screen">
 
-  <!-- Header -->
   <header class="page-header">
-    <button class="back-btn" onclick="history.back()">←</button>
+    <button class="back-btn" onclick="history.back()">
+      <i data-lucide="arrow-left"></i>
+    </button>
     <h1>Drop a plan</h1>
     <div class="header-spacer"></div>
   </header>
   <p class="page-sub">Only people whose vibe matches yours will see it.</p>
 
-  <!-- Form -->
   <div id="post-form">
 
     <!-- Activity -->
@@ -25,39 +26,39 @@
       <div class="form-section-label">What do you want to do?</div>
       <div class="post-activity-grid">
         <button class="post-activity-btn" onclick="selectActivity(this, 'cafe')">
-          <span class="pa-icon">☕</span>
+          <i data-lucide="coffee"></i>
           <span class="pa-label">Café</span>
         </button>
-        <button class="post-activity-btn" onclick="selectActivity(this, 'dining')">
-          <span class="pa-icon">🍽</span>
+        <button class="post-activity-btn" onclick="selectActivity(this, 'food')">
+          <i data-lucide="utensils"></i>
           <span class="pa-label">Dining hall</span>
         </button>
         <button class="post-activity-btn" onclick="selectActivity(this, 'gym')">
-          <span class="pa-icon">🏋</span>
+          <i data-lucide="dumbbell"></i>
           <span class="pa-label">Gym</span>
         </button>
         <button class="post-activity-btn" onclick="selectActivity(this, 'study')">
-          <span class="pa-icon">📚</span>
+          <i data-lucide="book-open"></i>
           <span class="pa-label">Study</span>
         </button>
         <button class="post-activity-btn" onclick="selectActivity(this, 'walk')">
-          <span class="pa-icon">🚶</span>
+          <i data-lucide="footprints"></i>
           <span class="pa-label">Walk</span>
         </button>
         <button class="post-activity-btn" onclick="selectActivity(this, 'movie')">
-          <span class="pa-icon">🎬</span>
+          <i data-lucide="film"></i>
           <span class="pa-label">Movie</span>
         </button>
         <button class="post-activity-btn" onclick="selectActivity(this, 'sports')">
-          <span class="pa-icon">🏃</span>
+          <i data-lucide="trophy"></i>
           <span class="pa-label">Sports</span>
         </button>
         <button class="post-activity-btn" onclick="selectActivity(this, 'offcampus')">
-          <span class="pa-icon">🗺</span>
+          <i data-lucide="map-pin"></i>
           <span class="pa-label">Off-campus</span>
         </button>
         <button class="post-activity-btn" onclick="selectActivity(this, 'other')">
-          <span class="pa-icon">✨</span>
+          <i data-lucide="plus"></i>
           <span class="pa-label">Other</span>
         </button>
       </div>
@@ -81,7 +82,7 @@
       <input type="text" class="input input-sm"
              id="zone-custom"
              placeholder="Or type your own area…"
-             oninput="if(this.value) postData.zone = this.value; checkPostReady();">
+             oninput="if(this.value){postData.zone=this.value;document.querySelectorAll('.suggestion-chip').forEach(c=>c.classList.remove('selected'));}checkPostReady();">
     </div>
 
     <!-- Time window -->
@@ -104,7 +105,10 @@
 
     <!-- Private details -->
     <div class="private-section">
-      <div class="private-header">🔒 Private — revealed only after match</div>
+      <div class="private-header">
+        <i data-lucide="lock"></i>
+        Private — revealed only after match
+      </div>
       <input type="text" class="private-input" placeholder="Exact location (e.g. Wiggin St Coffee, back corner)">
       <input type="text" class="private-input" placeholder="Exact time (e.g. 3:15pm)">
     </div>
@@ -125,48 +129,50 @@
     <div class="form-section">
       <div class="form-section-label">How many people?</div>
       <div class="spots-row">
-        <button class="spot-btn" onclick="selectSpot(this, 1)">1</button>
+        <button class="spot-btn selected" onclick="selectSpot(this, 1)">1</button>
         <button class="spot-btn" onclick="selectSpot(this, 2)">2</button>
         <button class="spot-btn" onclick="selectSpot(this, 3)">3</button>
       </div>
     </div>
 
-  </div><!-- /post-form -->
+  </div>
 
-  <!-- Success state (hidden) -->
+  <!-- Success state -->
   <div id="post-success" class="post-success hidden">
     <img src="./public/Sharing-1--Streamline-Dhaka.png"
          width="200" height="200"
-         style="object-fit:contain; margin:0 auto;"
          loading="lazy"
+         style="object-fit:contain; margin:0 auto;"
          onerror="this.style.display='none'">
-    <h2>Plan posted 🥨</h2>
+    <h2>Plan posted.</h2>
     <p>It's live for your campus vibe.</p>
-    <a href="./feed.html" class="btn btn-primary" style="width:200px; margin:0 auto;">Back to feed →</a>
+    <a href="./feed.html" class="btn-primary" style="width:200px; margin:0 auto; display:flex;">Back to feed</a>
   </div>
 
   <!-- Submit bar -->
   <div class="submit-bar" id="submit-bar">
     <button id="submit-plan-btn"
-            class="btn btn-primary btn-full"
+            class="btn-primary btn-full"
             disabled
             onclick="submitPlan()">
-      Drop this plan →
+      Drop this plan
+      <i data-lucide="arrow-right"></i>
     </button>
   </div>
 
-  <!-- Bottom nav -->
   <nav class="bottom-nav">
     <a href="./feed.html" class="nav-tab">
-      <span class="nav-icon">🏠</span>
+      <i data-lucide="layout-list"></i>
       <span>Feed</span>
     </a>
     <a href="./post.html" class="nav-tab nav-post active">
-      <div class="post-circle">+</div>
+      <div class="post-circle">
+        <i data-lucide="plus" style="color:var(--butter);"></i>
+      </div>
       <span style="margin-top:2px;">Post</span>
     </a>
     <a href="./profile.html" class="nav-tab">
-      <span class="nav-icon">👤</span>
+      <i data-lucide="user"></i>
       <span>Profile</span>
     </a>
   </nav>
@@ -174,6 +180,6 @@
 </div>
 
 <script src="./js/main.js"></script>
-<script src="./js/nav.js"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>

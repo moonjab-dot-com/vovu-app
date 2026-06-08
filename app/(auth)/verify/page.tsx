@@ -32,22 +32,34 @@ function VerifyInner() {
 
   if (status === 'error') {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, flexDirection: 'column', gap: 16 }}>
-        <span style={{ fontSize: 40 }}>🔗</span>
-        <p style={{ fontFamily: 'Georgia, serif', fontSize: 20, color: 'var(--forest)' }}>
-          {error}
-        </p>
-        <a href="/login" style={{ fontSize: 14, color: 'var(--sage)' }}>← Back to login</a>
+      <div style={s.page}>
+        <img
+          src="/Something-Went-Wrong--Streamline-Dhaka.png"
+          alt=""
+          width={160}
+          height={160}
+          style={{ objectFit: 'contain' }}
+          loading="lazy"
+          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+        />
+        <p style={s.errorTitle}>{error}</p>
+        <a href="/login" style={s.backLink}>← Back to login</a>
       </div>
     )
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12 }}>
-      <div style={{ fontSize: 32 }}>🥨</div>
-      <p style={{ fontFamily: 'Georgia, serif', fontSize: 18, color: 'var(--forest)' }}>
-        Verifying…
-      </p>
+    <div style={s.page}>
+      <img
+        src="/Patience--Streamline-Dhaka.png"
+        alt=""
+        width={160}
+        height={160}
+        style={{ objectFit: 'contain' }}
+        loading="lazy"
+        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+      />
+      <p style={s.loadingTitle}>Verifying…</p>
     </div>
   )
 }
@@ -58,4 +70,34 @@ export default function VerifyPage() {
       <VerifyInner />
     </Suspense>
   )
+}
+
+const s: Record<string, React.CSSProperties> = {
+  page: {
+    minHeight: '100vh',
+    background: 'var(--butter)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    gap: 16,
+    padding: 24,
+    textAlign: 'center',
+  },
+  loadingTitle: {
+    fontFamily: 'Georgia, serif',
+    fontSize: 18,
+    color: 'var(--forest)',
+  },
+  errorTitle: {
+    fontFamily: 'Georgia, serif',
+    fontSize: 20,
+    color: 'var(--forest)',
+  },
+  backLink: {
+    fontSize: 14,
+    color: 'var(--sage)',
+    textDecoration: 'none',
+    marginTop: 4,
+  },
 }

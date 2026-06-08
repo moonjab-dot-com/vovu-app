@@ -74,13 +74,23 @@ export default function FeedPage() {
         <div>
           <h1 style={s.title}>Vovu</h1>
           {campus && (
-            <span style={s.campusChip}>✓ {campusName}</span>
+            <div style={{ marginTop: 4 }}>
+              <span style={s.campusChip}>✓ {campusName}</span>
+            </div>
           )}
         </div>
-        <span style={s.countLabel}>
-          {loading ? '' : `${plans.length} plan${plans.length !== 1 ? 's' : ''} for you`}
-        </span>
+        {!loading && (
+          <div style={{ textAlign: 'right' }}>
+            <div style={s.countNumber}>{plans.length}</div>
+            <div style={s.countLabel}>plans for you</div>
+          </div>
+        )}
       </div>
+
+      {/* Section label */}
+      {!loading && !error && plans.length > 0 && (
+        <div style={s.sectionLabel}>Filtered to your vibe</div>
+      )}
 
       {/* Loading skeletons */}
       {loading && (
@@ -88,13 +98,33 @@ export default function FeedPage() {
           {[0,1,2].map(i => (
             <div key={i} className="skeleton" style={{ height: 120, animationDelay: `${i * 150}ms` }} />
           ))}
+          <div style={{ textAlign: 'center', marginTop: 8, opacity: 0.6 }}>
+            <img
+              src="/Patience--Streamline-Dhaka.png"
+              alt=""
+              width={140}
+              height={140}
+              style={{ objectFit: 'contain' }}
+              loading="lazy"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+            />
+          </div>
         </div>
       )}
 
       {/* Error */}
       {!loading && error && (
         <div style={s.center}>
-          <p style={s.errText}>{error}</p>
+          <img
+            src="/Something-Went-Wrong--Streamline-Dhaka.png"
+            alt=""
+            width={180}
+            height={180}
+            style={{ objectFit: 'contain' }}
+            loading="lazy"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+          />
+          <p style={s.emptyTitle}>Couldn't load plans.</p>
           <button onClick={() => email && loadPlans(email)} style={s.retryBtn}>
             Try again
           </button>
@@ -104,7 +134,15 @@ export default function FeedPage() {
       {/* Empty state */}
       {!loading && !error && plans.length === 0 && (
         <div style={s.center}>
-          <span style={{ fontSize: 40 }}>🌱</span>
+          <img
+            src="/Searching--Streamline-Dhaka.png"
+            alt=""
+            width={200}
+            height={200}
+            style={{ objectFit: 'contain' }}
+            loading="lazy"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+          />
           <p style={s.emptyTitle}>No plans match your vibe yet.</p>
           <p style={s.emptySubtitle}>Be the first to post one.</p>
           <button onClick={() => router.push('/post')} style={s.emptyBtn}>
@@ -147,32 +185,46 @@ const s: Record<string, React.CSSProperties> = {
   page: {
     minHeight: '100vh',
     background: 'var(--butter)',
-    paddingTop: 0,
   },
   header: {
-    padding: '20px 16px 12px',
+    padding: '20px 20px 0',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
   },
   title: {
     fontFamily: 'Georgia, serif',
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
     color: 'var(--forest)',
-    display: 'inline',
-    marginRight: 10,
   },
   campusChip: {
     fontSize: 12,
+    fontWeight: 500,
     background: 'var(--mist)',
     color: 'var(--forest)',
-    padding: '3px 10px',
-    borderRadius: 9999,
-    fontWeight: 500,
+    padding: '6px 12px',
+    borderRadius: 'var(--radius-full)',
+    display: 'inline-block',
+  },
+  countNumber: {
+    fontFamily: 'Georgia, serif',
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: 'var(--forest)',
+    textAlign: 'right',
   },
   countLabel: {
-    fontSize: 12,
+    fontSize: 11,
+    color: 'var(--sage)',
+    textAlign: 'right',
+  },
+  sectionLabel: {
+    padding: '16px 20px 8px',
+    fontSize: 11,
+    fontWeight: 500,
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.08em',
     color: 'var(--sage)',
   },
   feed: {
@@ -186,8 +238,8 @@ const s: Record<string, React.CSSProperties> = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '80px 24px',
-    gap: 12,
+    padding: '60px 24px',
+    gap: 16,
     textAlign: 'center',
   },
   emptyTitle: {
@@ -202,24 +254,20 @@ const s: Record<string, React.CSSProperties> = {
   emptyBtn: {
     marginTop: 8,
     height: 48,
+    width: 160,
     background: 'var(--forest)',
     color: 'var(--butter)',
     border: 'none',
-    borderRadius: 12,
+    borderRadius: 'var(--radius-md)',
     fontSize: 15,
     fontWeight: 500,
     cursor: 'pointer',
-    padding: '0 24px',
-  },
-  errText: {
-    fontSize: 15,
-    color: 'var(--forest)',
   },
   retryBtn: {
     height: 40,
     background: 'transparent',
     border: '1.5px solid var(--forest)',
-    borderRadius: 10,
+    borderRadius: 'var(--radius-md)',
     fontSize: 14,
     color: 'var(--forest)',
     cursor: 'pointer',

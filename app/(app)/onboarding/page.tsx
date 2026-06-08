@@ -7,12 +7,18 @@ import { ActivityType } from '@/lib/types'
 
 const TOTAL = 8
 
+const STEP_ILLUSTRATIONS: Partial<Record<number, { src: string; size: number }>> = {
+  1: { src: '/Welcome--Streamline-Dhaka.png',           size: 120 },
+  4: { src: '/Post-It-To-Do-Notes--Streamline-Dhaka.png', size: 120 },
+  7: { src: '/I-Have-A-Question--Streamline-Dhaka.png', size: 120 },
+  8: { src: '/Leadership--Streamline-Dhaka.png',        size: 140 },
+}
+
 export default function OnboardingPage() {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [saving, setSaving] = useState(false)
 
-  // Step answers
   const [firstName,     setFirstName]     = useState('')
   const [groupSize,     setGroupSize]     = useState('')
   const [placeVibe,     setPlaceVibe]     = useState('')
@@ -40,13 +46,11 @@ export default function OnboardingPage() {
     if (!email) { router.replace('/login'); return }
     setSaving(true)
     try {
-      // Save first name
       await fetch('/api/auth/update-name', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, first_name: firstName }),
       })
-      // Save profile
       await fetch('/api/profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -84,6 +88,8 @@ export default function OnboardingPage() {
     return false
   })()
 
+  const illus = STEP_ILLUSTRATIONS[step]
+
   return (
     <div style={s.page}>
       {/* Progress bar */}
@@ -96,6 +102,21 @@ export default function OnboardingPage() {
 
       {/* Step content */}
       <div style={s.content}>
+        {/* Illustration — only on specific steps */}
+        {illus && (
+          <div style={{ textAlign: 'center', marginBottom: 24 }}>
+            <img
+              src={illus.src}
+              alt=""
+              width={illus.size}
+              height={illus.size}
+              style={{ objectFit: 'contain' }}
+              loading="lazy"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+            />
+          </div>
+        )}
+
         {step === 1 && (
           <div style={s.stepWrap}>
             <h2 style={s.q}>What's your first name?</h2>
@@ -156,9 +177,9 @@ export default function OnboardingPage() {
         {step === 4 && (
           <div style={s.stepWrap}>
             <h2 style={s.q}>What do you actually like doing?</h2>
+            {/* Important callout */}
             <div style={s.callout}>
-              <strong>Choose honestly.</strong> These filter your feed forever.
-              If you don't pick parties, you'll never see a party plan.
+              🔒 These filter your feed forever. Skip party? You'll never see a party plan.
             </div>
             <div style={s.activityGrid}>
               {ONBOARDING_ACTIVITIES.map(a => {
@@ -169,14 +190,22 @@ export default function OnboardingPage() {
                     onClick={() => toggleActivity(a.key as ActivityType)}
                     style={{ ...s.actBtn, ...(sel ? s.actBtnSelected : {}) }}
                   >
+                    {sel && (
+                      <div style={s.checkmark}>✓</div>
+                    )}
                     <span style={{ fontSize: 22 }}>{a.icon}</span>
-                    <span style={{ fontSize: 12, marginTop: 4 }}>{a.label}</span>
-                    {sel && <span style={{ position: 'absolute', top: 6, right: 8, fontSize: 12 }}>✓</span>}
+                    <span style={{ fontSize: 12, marginTop: 4, textAlign: 'center', lineHeight: 1.3 }}>{a.label}</span>
                   </button>
                 )
               })}
             </div>
-            <p style={s.counter}>{activities.length} selected</p>
+            <p style={{
+              ...s.counter,
+              color: activities.length >= 1 ? 'var(--forest)' : 'var(--sage)',
+              fontWeight: activities.length >= 1 ? 500 : 400,
+            }}>
+              {activities.length} selected
+            </p>
           </div>
         )}
 
@@ -230,13 +259,17 @@ export default function OnboardingPage() {
               <p style={s.sliderLabel}>How often do you follow through on plans?</p>
               <div style={s.dotRow}>
                 {[1,2,3,4,5].map(i => (
-                  <div key={i} style={{
-                    width: 28, height: 28, borderRadius: '50%',
-                    background: i <= followThrough ? 'var(--forest)' : 'var(--mist)',
-                    border: '1.5px solid var(--forest)',
-                    cursor: 'pointer',
-                    transition: 'background 200ms',
-                  }} onClick={() => setFollowThrough(i)} />
+                  <div
+                    key={i}
+                    onClick={() => setFollowThrough(i)}
+                    style={{
+                      width: 28, height: 28, borderRadius: '50%',
+                      background: i <= followThrough ? 'var(--forest)' : 'var(--mist)',
+                      border: '1.5px solid var(--forest)',
+                      cursor: 'pointer',
+                      transition: 'background 200ms',
+                    }}
+                  />
                 ))}
               </div>
               <div style={s.sliderLabels}>
@@ -248,13 +281,17 @@ export default function OnboardingPage() {
               <p style={s.sliderLabel}>How open are you to meeting someone new?</p>
               <div style={s.dotRow}>
                 {[1,2,3,4,5].map(i => (
-                  <div key={i} style={{
-                    width: 28, height: 28, borderRadius: '50%',
-                    background: i <= openness ? 'var(--forest)' : 'var(--mist)',
-                    border: '1.5px solid var(--forest)',
-                    cursor: 'pointer',
-                    transition: 'background 200ms',
-                  }} onClick={() => setOpenness(i)} />
+                  <div
+                    key={i}
+                    onClick={() => setOpenness(i)}
+                    style={{
+                      width: 28, height: 28, borderRadius: '50%',
+                      background: i <= openness ? 'var(--forest)' : 'var(--mist)',
+                      border: '1.5px solid var(--forest)',
+                      cursor: 'pointer',
+                      transition: 'background 200ms',
+                    }}
+                  />
                 ))}
               </div>
               <div style={s.sliderLabels}>
@@ -286,15 +323,28 @@ export default function OnboardingPage() {
 
       {/* Bottom nav */}
       <div style={s.bottomBar}>
-        {step > 1 && (
-          <button onClick={back} style={s.backBtn}>← Back</button>
-        )}
-        <div style={{ flex: 1 }} />
+        <button
+          onClick={back}
+          disabled={step === 1}
+          style={{
+            ...s.backBtn,
+            opacity: step === 1 ? 0 : 1,
+            pointerEvents: step === 1 ? 'none' : 'auto',
+            flex: 1,
+          }}
+        >
+          ← Back
+        </button>
         {step < TOTAL ? (
           <button
             onClick={next}
             disabled={!canContinue}
-            style={{ ...s.nextBtn, opacity: canContinue ? 1 : 0.35 }}
+            style={{
+              ...s.nextBtn,
+              opacity: canContinue ? 1 : 0.35,
+              cursor: canContinue ? 'pointer' : 'not-allowed',
+              flex: 2,
+            }}
           >
             Continue →
           </button>
@@ -302,7 +352,12 @@ export default function OnboardingPage() {
           <button
             onClick={handleFinish}
             disabled={!canContinue || saving}
-            style={{ ...s.nextBtn, opacity: canContinue && !saving ? 1 : 0.35 }}
+            style={{
+              ...s.nextBtn,
+              opacity: canContinue && !saving ? 1 : 0.35,
+              cursor: canContinue && !saving ? 'pointer' : 'not-allowed',
+              flex: 2,
+            }}
           >
             {saving ? 'Saving…' : 'Enter Vovu →'}
           </button>
@@ -322,23 +377,23 @@ const s: Record<string, React.CSSProperties> = {
   },
   progressTrack: {
     height: 3,
-    background: 'rgba(1,62,55,0.12)',
+    background: 'rgba(1,62,55,0.10)',
     width: '100%',
   },
   progressFill: {
     height: '100%',
     background: 'var(--forest)',
-    transition: 'width 300ms ease',
+    transition: 'width 400ms cubic-bezier(0.4, 0, 0.2, 1)',
   },
   stepCounter: {
-    fontSize: 13,
+    fontSize: 12,
     color: 'var(--sage)',
     textAlign: 'right',
-    padding: '12px 24px 0',
+    padding: '16px 24px 0',
   },
   content: {
     flex: 1,
-    padding: '24px 24px 0',
+    padding: '24px 24px 120px',
     overflowY: 'auto',
   },
   stepWrap: {
@@ -348,10 +403,10 @@ const s: Record<string, React.CSSProperties> = {
   },
   q: {
     fontFamily: 'Georgia, serif',
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     color: 'var(--forest)',
-    lineHeight: 1.25,
+    lineHeight: 1.3,
     marginBottom: 4,
   },
   sub: {
@@ -363,38 +418,42 @@ const s: Record<string, React.CSSProperties> = {
   input: {
     height: 52,
     background: 'var(--white)',
-    border: '1.5px solid var(--forest)',
-    borderRadius: 12,
+    border: '1.5px solid var(--border)',
+    borderRadius: 'var(--radius-md)',
     padding: '0 16px',
     fontSize: 16,
     color: 'var(--forest)',
     outline: 'none',
     width: '100%',
+    transition: 'border-color 200ms',
   },
   optBtn: {
     width: '100%',
-    height: 48,
+    minHeight: 52,
+    padding: '14px 18px',
     background: 'var(--white)',
-    border: '1.5px solid var(--forest)',
-    borderRadius: 12,
+    border: '1.5px solid var(--border)',
+    borderRadius: 'var(--radius-md)',
     fontSize: 14,
     fontWeight: 500,
     color: 'var(--forest)',
     cursor: 'pointer',
     textAlign: 'left',
-    padding: '0 16px',
+    transition: 'all 150ms ease',
   },
   optBtnSelected: {
     background: 'var(--forest)',
+    borderColor: 'var(--forest)',
     color: 'var(--butter)',
   },
   callout: {
     background: 'var(--forest)',
     color: 'var(--butter)',
-    borderRadius: 12,
-    padding: '12px 16px',
-    fontSize: 14,
-    lineHeight: 1.6,
+    borderRadius: 'var(--radius-md)',
+    padding: '14px 16px',
+    fontSize: 13,
+    fontWeight: 500,
+    lineHeight: 1.5,
     marginBottom: 8,
   },
   activityGrid: {
@@ -403,10 +462,10 @@ const s: Record<string, React.CSSProperties> = {
     gap: 10,
   },
   actBtn: {
-    height: 64,
+    height: 72,
     background: 'var(--white)',
     border: '1.5px solid var(--forest)',
-    borderRadius: 12,
+    borderRadius: 'var(--radius-md)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -416,15 +475,31 @@ const s: Record<string, React.CSSProperties> = {
     color: 'var(--forest)',
     position: 'relative',
     fontWeight: 500,
+    transition: 'all 150ms ease',
   },
   actBtnSelected: {
     background: 'var(--forest)',
     color: 'var(--butter)',
   },
+  checkmark: {
+    position: 'absolute',
+    top: 6,
+    right: 8,
+    width: 16,
+    height: 16,
+    borderRadius: '50%',
+    background: 'var(--butter)',
+    color: 'var(--forest)',
+    fontSize: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 700,
+  },
   counter: {
     fontSize: 13,
-    color: 'var(--sage)',
     textAlign: 'center',
+    transition: 'color 200ms',
   },
   sliderLabel: {
     fontSize: 14,
@@ -453,32 +528,30 @@ const s: Record<string, React.CSSProperties> = {
     background: 'var(--butter)',
     borderTop: '1px solid var(--border)',
     padding: '12px 24px',
+    paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
     display: 'flex',
     alignItems: 'center',
     gap: 12,
-    paddingBottom: 'calc(12px + env(safe-area-inset-bottom))',
   },
   backBtn: {
-    height: 48,
-    background: 'transparent',
+    height: 52,
+    background: 'var(--white)',
     border: '1.5px solid var(--forest)',
-    borderRadius: 12,
-    fontSize: 14,
+    borderRadius: 'var(--radius-md)',
+    fontSize: 15,
     color: 'var(--forest)',
     cursor: 'pointer',
-    padding: '0 20px',
     fontWeight: 500,
+    transition: 'opacity 200ms',
   },
   nextBtn: {
-    height: 48,
+    height: 52,
     background: 'var(--forest)',
     color: 'var(--butter)',
     border: 'none',
-    borderRadius: 12,
+    borderRadius: 'var(--radius-md)',
     fontSize: 15,
     fontWeight: 500,
-    cursor: 'pointer',
-    padding: '0 28px',
     transition: 'opacity 200ms',
   },
 }

@@ -11,8 +11,8 @@ export default function LoginPage() {
   const [error,   setError]   = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const domain    = getEmailDomain(email.toLowerCase())
-  const valid     = isEduEmail(email)
+  const domain     = getEmailDomain(email.toLowerCase())
+  const valid      = isEduEmail(email)
   const campusName = valid ? getCampusName(domain) : null
 
   async function handleSubmit(e: React.FormEvent) {
@@ -65,21 +65,25 @@ export default function LoginPage() {
 
   if (sent) {
     return (
-      <div style={styles.page}>
-        <div style={styles.inner}>
-          <div style={{ fontSize: 48, textAlign: 'center', marginBottom: 24 }}>📬</div>
-          <h1 style={styles.sentTitle}>Check your inbox</h1>
-          <p style={styles.sentBody}>
-            We sent a link to <strong>{email}</strong>.
-            Click it to enter Vovu.
+      <div style={s.page}>
+        <div style={s.inner}>
+          <img
+            src="/Enter-Your-Password--Streamline-Dhaka.png"
+            alt=""
+            width={200}
+            height={200}
+            style={{ objectFit: 'contain', display: 'block', margin: '0 auto' }}
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+          />
+          <h1 style={{ ...s.sentTitle, marginTop: 24 }}>Check your inbox</h1>
+          <p style={s.sentBody}>
+            We sent a link to{' '}
+            <strong style={{ color: 'var(--forest)' }}>{email}</strong>.
           </p>
-          <p style={{ fontSize: 13, color: 'var(--sage)', marginTop: 12, textAlign: 'center' }}>
-            Link expires in 15 minutes.
+          <p style={{ fontSize: 12, color: 'var(--sage)', marginTop: 16, textAlign: 'center' }}>
+            Expires in 15 minutes.
           </p>
-          <button
-            onClick={() => setSent(false)}
-            style={{ ...styles.ghost, marginTop: 32 }}
-          >
+          <button onClick={() => setSent(false)} style={s.demoLink}>
             ← Use a different email
           </button>
         </div>
@@ -88,59 +92,81 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={styles.page}>
-      <div style={styles.inner}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <Logo size="lg" />
-          <h1 style={styles.brand}>Vovu</h1>
-          <p style={styles.tagline}>Plans that find you.</p>
+    <div style={s.page}>
+      <div style={s.inner}>
+        {/* Illustration */}
+        <img
+          src="/Welcome--Streamline-Dhaka.png"
+          alt=""
+          width={200}
+          height={200}
+          style={{ objectFit: 'contain', display: 'block', margin: '0 auto 28px' }}
+          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+        />
+
+        {/* Wordmark row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center', marginBottom: 8 }}>
+          <Logo size="md" />
+          <span style={s.brand}>Vovu</span>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-          <label style={styles.label}>School email</label>
-          <input
-            ref={inputRef}
-            type="email"
-            value={email}
-            onChange={e => { setEmail(e.target.value); setError('') }}
-            onBlur={() => {
-              if (email && !valid) setError('Use your .edu email to continue.')
-            }}
-            placeholder="you@kenyon.edu"
-            style={{
-              ...styles.input,
-              borderColor: error ? '#dc2626' : valid ? '#1A7F5A' : 'var(--forest)',
-            }}
-            autoFocus
-            autoComplete="email"
-            inputMode="email"
-          />
+        {/* Tagline */}
+        <p style={s.tagline}>Plans that find you.</p>
 
-          {/* Campus confirmation */}
-          {valid && campusName && (
-            <div style={{ fontSize: 14, color: '#1A7F5A', marginTop: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
-              <span>✓</span> <span>{campusName}</span>
-            </div>
-          )}
+        {/* Spacer */}
+        <div style={{ height: 32 }} />
 
-          {error && (
-            <div style={{ fontSize: 13, color: '#dc2626', marginTop: 6 }}>{error}</div>
-          )}
+        {/* Form card */}
+        <div style={s.formCard}>
+          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+            <label style={s.label}>School email</label>
+            <input
+              ref={inputRef}
+              type="email"
+              value={email}
+              onChange={e => { setEmail(e.target.value); setError('') }}
+              onBlur={() => {
+                if (email && !valid) setError('Use your .edu email to continue.')
+              }}
+              placeholder="you@university.edu"
+              style={{
+                ...s.input,
+                borderColor: error ? '#dc2626' : valid ? '#1A7F5A' : 'var(--border)',
+              }}
+              autoFocus
+              autoComplete="email"
+              inputMode="email"
+            />
 
-          <button
-            type="submit"
-            disabled={!valid || loading}
-            style={{
-              ...styles.btn,
-              opacity: !valid || loading ? 0.4 : 1,
-              marginTop: 20,
-            }}
-          >
-            {loading ? 'Sending…' : 'Send me a link →'}
-          </button>
-        </form>
+            {/* Campus confirmation */}
+            {valid && campusName && (
+              <div className="fade-in-fast" style={{ fontSize: 13, color: '#1A7F5A', marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a', flexShrink: 0 }} />
+                <span>{campusName}</span>
+              </div>
+            )}
 
-        <button onClick={handleDemo} style={styles.demoLink}>
+            {error && (
+              <div className="fade-in-fast" style={{ fontSize: 13, color: '#dc2626', marginTop: 6 }}>{error}</div>
+            )}
+
+            <button
+              type="submit"
+              disabled={!valid || loading}
+              style={{
+                ...s.btn,
+                background: !valid || loading ? '#E5E5E5' : 'var(--forest)',
+                color: !valid || loading ? 'var(--sage)' : 'var(--butter)',
+                cursor: !valid || loading ? 'not-allowed' : 'pointer',
+                marginTop: 20,
+              }}
+            >
+              {loading ? 'Sending…' : 'Send me a link →'}
+            </button>
+          </form>
+        </div>
+
+        <button onClick={handleDemo} disabled={loading} style={s.demoLink}>
           Skip for demo →
         </button>
       </div>
@@ -148,7 +174,7 @@ export default function LoginPage() {
   )
 }
 
-const styles: Record<string, React.CSSProperties> = {
+const s: Record<string, React.CSSProperties> = {
   page: {
     minHeight: '100vh',
     display: 'flex',
@@ -166,15 +192,23 @@ const styles: Record<string, React.CSSProperties> = {
   },
   brand: {
     fontFamily: 'Georgia, serif',
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
     color: 'var(--forest)',
-    marginTop: 12,
-    marginBottom: 6,
   },
   tagline: {
+    fontFamily: 'Georgia, serif',
+    fontStyle: 'italic',
     fontSize: 16,
     color: 'var(--sage)',
+    textAlign: 'center',
+  },
+  formCard: {
+    width: '100%',
+    background: 'var(--white)',
+    borderRadius: 20,
+    padding: '28px 24px',
+    border: '1px solid var(--border)',
   },
   label: {
     fontSize: 13,
@@ -182,38 +216,27 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--sage)',
     display: 'block',
     marginBottom: 8,
-    alignSelf: 'flex-start',
-    width: '100%',
   },
   input: {
     width: '100%',
     height: 52,
-    background: 'var(--white)',
-    border: '1.5px solid var(--forest)',
-    borderRadius: 12,
+    background: 'var(--butter)',
+    border: '1.5px solid var(--border)',
+    borderRadius: 'var(--radius-md)',
     padding: '0 16px',
     fontSize: 16,
     color: 'var(--forest)',
     outline: 'none',
+    transition: 'border-color 200ms, background 200ms',
   },
   btn: {
     width: '100%',
     height: 52,
-    background: 'var(--forest)',
-    color: 'var(--butter)',
     border: 'none',
-    borderRadius: 12,
-    fontSize: 16,
+    borderRadius: 'var(--radius-md)',
+    fontSize: 15,
     fontWeight: 500,
-    cursor: 'pointer',
-  },
-  ghost: {
-    background: 'transparent',
-    border: 'none',
-    fontSize: 13,
-    color: 'var(--sage)',
-    cursor: 'pointer',
-    textDecoration: 'underline',
+    transition: 'background 150ms, transform 150ms',
   },
   demoLink: {
     background: 'transparent',

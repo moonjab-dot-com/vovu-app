@@ -17,11 +17,11 @@ export default function VibeBar({ label, value }: Props) {
   }, [value])
 
   return (
-    <div ref={ref} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+    <div ref={ref} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
       <span style={{
         fontSize: 12,
         color: 'var(--sage)',
-        width: 108,
+        width: 100,
         flexShrink: 0,
         lineHeight: 1.4,
         fontFamily: 'system-ui, sans-serif',
@@ -30,15 +30,15 @@ export default function VibeBar({ label, value }: Props) {
       </span>
       <div style={{
         flex: 1,
-        height: 4,
-        background: '#E5E5E5',
-        borderRadius: 2,
+        height: 6,
+        background: 'rgba(1,62,55,0.12)',
+        borderRadius: 3,
         overflow: 'hidden',
       }}>
         <div style={{
           height: '100%',
           background: 'var(--forest)',
-          borderRadius: 2,
+          borderRadius: 3,
           width: `${width}%`,
           transition: 'width 600ms ease',
         }} />

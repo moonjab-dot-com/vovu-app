@@ -47,21 +47,24 @@ export default function PostPage() {
         return
       }
       router.push('/feed')
-      // Toast shown on feed via URL param would be cleaner but this is fine
     } catch {
       setError('Network error. Try again.')
       setSubmitting(false)
     }
   }
 
+  const noteCountColor = note.length >= 100 ? '#dc2626' : note.length >= 80 ? '#f59e0b' : 'var(--sage)'
+
   return (
     <div style={s.page}>
       {/* Header */}
       <div style={s.header}>
-        <button onClick={() => router.back()} style={s.backBtn}>← Back</button>
+        <button onClick={() => router.back()} style={s.backBtn}>←</button>
         <h1 style={s.title}>Drop a plan</h1>
-        <div style={{ width: 48 }} />
+        <div style={{ width: 32 }} />
       </div>
+
+      <p style={s.subtext}>Only people whose vibe matches yours will see it.</p>
 
       <div style={s.form}>
         {/* Activity */}
@@ -77,8 +80,8 @@ export default function PostPage() {
                   ...(activity === key ? s.actBtnSel : {}),
                 }}
               >
-                <span style={{ fontSize: 22 }}>{meta.icon}</span>
-                <span style={{ fontSize: 11, marginTop: 4 }}>{meta.label}</span>
+                <span style={{ fontSize: 24 }}>{meta.icon}</span>
+                <span style={{ fontSize: 12, marginTop: 4 }}>{meta.label}</span>
               </button>
             ))}
           </div>
@@ -91,7 +94,7 @@ export default function PostPage() {
               General area
               <span style={s.labelNote}> (shown publicly)</span>
             </label>
-            <p style={s.helper}>Vague on purpose — exact spot only revealed after match.</p>
+            <p style={s.helper}>Vague on purpose. Exact spot only revealed after match.</p>
             <div style={s.chips}>
               {ACTIVITY_META[activity].zone_suggestions.map(z => (
                 <button
@@ -106,7 +109,7 @@ export default function PostPage() {
             <input
               value={customZone}
               onChange={e => { setCustomZone(e.target.value); setZone('') }}
-              placeholder="Or type your own…"
+              placeholder="Or type your own area…"
               style={{ ...s.input, marginTop: 8 }}
             />
           </div>
@@ -118,46 +121,44 @@ export default function PostPage() {
             Time window
             <span style={s.labelNote}> (shown publicly)</span>
           </label>
-          <select
-            value={timeWindow}
-            onChange={e => setTimeWindow(e.target.value)}
-            style={s.select}
-          >
-            <option value="">Select a time…</option>
-            {TIME_WINDOWS.map(t => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
+          <div style={{ position: 'relative' }}>
+            <select
+              value={timeWindow}
+              onChange={e => setTimeWindow(e.target.value)}
+              style={s.select}
+            >
+              <option value="">Select a time…</option>
+              {TIME_WINDOWS.map(t => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+            <span style={s.selectArrow}>▾</span>
+          </div>
         </div>
 
         {/* Private details */}
         <div style={s.privateSection}>
           <div style={s.privateHeader}>
-            <span style={{ fontSize: 16 }}>🔒</span>
-            <span style={s.privateLabel}>Only revealed after mutual yes</span>
+            <span style={{ fontSize: 15 }}>🔒</span>
+            <span style={s.privateLabel}>Private — revealed only after match</span>
           </div>
-
-          <div style={s.privateFields}>
-            <div>
-              <label style={s.label}>Exact location</label>
-              <p style={s.helper}>Only revealed after mutual yes.</p>
-              <input
-                value={exactLocation}
-                onChange={e => setExactLocation(e.target.value)}
-                placeholder="e.g. Back corner table, near the windows"
-                style={s.input}
-              />
-            </div>
-            <div style={{ marginTop: 16 }}>
-              <label style={s.label}>Exact time</label>
-              <p style={s.helper}>Only revealed after mutual yes.</p>
-              <input
-                value={exactTime}
-                onChange={e => setExactTime(e.target.value)}
-                placeholder="e.g. 7:15pm"
-                style={s.input}
-              />
-            </div>
+          <div>
+            <label style={{ ...s.label, color: 'var(--sage)' }}>Exact location</label>
+            <input
+              value={exactLocation}
+              onChange={e => setExactLocation(e.target.value)}
+              placeholder="e.g. Back corner table, near the windows"
+              style={s.privateInput}
+            />
+          </div>
+          <div style={{ marginTop: 16 }}>
+            <label style={{ ...s.label, color: 'var(--sage)' }}>Exact time</label>
+            <input
+              value={exactTime}
+              onChange={e => setExactTime(e.target.value)}
+              placeholder="e.g. 7:15pm"
+              style={s.privateInput}
+            />
           </div>
         </div>
 
@@ -165,7 +166,7 @@ export default function PostPage() {
         <div style={s.section}>
           <label style={s.label}>
             Add a note
-            <span style={s.labelNote}> (optional · max 120 characters)</span>
+            <span style={s.labelNote}> optional · 120 chars max</span>
           </label>
           <div style={{ position: 'relative' }}>
             <textarea
@@ -175,11 +176,7 @@ export default function PostPage() {
               placeholder="Anything to set the vibe…"
               style={s.textarea}
             />
-            <span style={{
-              position: 'absolute', bottom: 8, right: 10,
-              fontSize: 11,
-              color: note.length >= 100 ? 'var(--forest)' : 'var(--sage)',
-            }}>
+            <span style={{ position: 'absolute', bottom: 8, right: 10, fontSize: 11, color: noteCountColor }}>
               {note.length}/120
             </span>
           </div>
@@ -193,10 +190,7 @@ export default function PostPage() {
               <button
                 key={n}
                 onClick={() => setSpots(n)}
-                style={{
-                  ...s.spotBtn,
-                  ...(spots === n ? s.spotBtnSel : {}),
-                }}
+                style={{ ...s.spotBtn, ...(spots === n ? s.spotBtnSel : {}) }}
               >
                 {n}
               </button>
@@ -211,7 +205,12 @@ export default function PostPage() {
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          style={{ ...s.submitBtn, opacity: canSubmit ? 1 : 0.4 }}
+          style={{
+            ...s.submitBtn,
+            background: canSubmit ? 'var(--forest)' : '#E5E5E5',
+            color: canSubmit ? 'var(--butter)' : 'var(--sage)',
+            cursor: canSubmit ? 'pointer' : 'not-allowed',
+          }}
         >
           {submitting ? 'Posting…' : 'Drop this plan →'}
         </button>
@@ -231,51 +230,62 @@ const s: Record<string, React.CSSProperties> = {
   page: {
     minHeight: '100vh',
     background: 'var(--butter)',
-    paddingBottom: 100,
+    paddingBottom: 140,
   },
   header: {
-    padding: '16px',
+    padding: '20px 20px 0',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottom: '1px solid var(--border)',
   },
   backBtn: {
     background: 'transparent',
     border: 'none',
-    fontSize: 15,
+    fontSize: 20,
     color: 'var(--forest)',
     cursor: 'pointer',
-    padding: '4px 0',
-    fontWeight: 500,
+    padding: 0,
+    lineHeight: 1,
   },
   title: {
     fontFamily: 'Georgia, serif',
     fontSize: 20,
     fontWeight: 'bold',
     color: 'var(--forest)',
+    flex: 1,
+    textAlign: 'center',
+  },
+  subtext: {
+    fontSize: 13,
+    color: 'var(--sage)',
+    padding: '6px 20px 20px',
   },
   form: {
-    padding: '16px',
+    padding: '0 16px',
   },
   section: {
     marginBottom: 28,
   },
   label: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 500,
-    color: 'var(--forest)',
+    color: 'var(--sage)',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.07em',
     display: 'block',
-    marginBottom: 6,
+    marginBottom: 10,
   },
   labelNote: {
     fontWeight: 400,
     color: 'var(--sage)',
+    textTransform: 'none' as const,
+    letterSpacing: 0,
+    fontSize: 11,
   },
   helper: {
     fontSize: 12,
     color: 'var(--sage)',
-    marginBottom: 8,
+    marginBottom: 12,
     lineHeight: 1.4,
   },
   actGrid: {
@@ -286,8 +296,8 @@ const s: Record<string, React.CSSProperties> = {
   actBtn: {
     height: 80,
     background: 'var(--white)',
-    border: '1.5px solid var(--forest)',
-    borderRadius: 12,
+    border: '1.5px solid var(--border)',
+    borderRadius: 'var(--radius-md)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -295,9 +305,12 @@ const s: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     color: 'var(--forest)',
     fontWeight: 500,
+    transition: 'all 150ms ease',
+    gap: 4,
   },
   actBtnSel: {
     background: 'var(--forest)',
+    borderColor: 'var(--forest)',
     color: 'var(--butter)',
   },
   chips: {
@@ -306,14 +319,15 @@ const s: Record<string, React.CSSProperties> = {
     gap: 8,
   },
   chip: {
-    fontSize: 13,
+    fontSize: 12,
+    fontWeight: 500,
     background: 'var(--mist)',
     color: 'var(--forest)',
     border: 'none',
-    borderRadius: 9999,
-    padding: '6px 14px',
+    borderRadius: 'var(--radius-full)',
+    padding: '8px 16px',
     cursor: 'pointer',
-    fontWeight: 500,
+    transition: 'all 150ms ease',
   },
   chipSel: {
     background: 'var(--forest)',
@@ -321,32 +335,44 @@ const s: Record<string, React.CSSProperties> = {
   },
   input: {
     width: '100%',
-    height: 48,
+    height: 44,
     background: 'var(--white)',
     border: '1.5px solid var(--border)',
-    borderRadius: 10,
+    borderRadius: 'var(--radius-md)',
     padding: '0 14px',
     fontSize: 15,
     color: 'var(--forest)',
     outline: 'none',
+    transition: 'border-color 200ms',
   },
   select: {
     width: '100%',
-    height: 48,
+    height: 52,
     background: 'var(--white)',
-    border: '1.5px solid var(--border)',
-    borderRadius: 10,
-    padding: '0 14px',
+    border: '1.5px solid var(--forest)',
+    borderRadius: 'var(--radius-md)',
+    padding: '0 16px',
     fontSize: 15,
     color: 'var(--forest)',
     outline: 'none',
     appearance: 'none',
     cursor: 'pointer',
+    paddingRight: 36,
+  },
+  selectArrow: {
+    position: 'absolute',
+    right: 14,
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: 'var(--forest)',
+    pointerEvents: 'none',
+    fontSize: 14,
   },
   privateSection: {
     background: 'var(--mist)',
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 'var(--radius-lg)',
+    padding: 20,
+    border: '1.5px solid rgba(1,62,55,0.15)',
     marginBottom: 28,
   },
   privateHeader: {
@@ -356,37 +382,52 @@ const s: Record<string, React.CSSProperties> = {
     marginBottom: 16,
   },
   privateLabel: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: 500,
     color: 'var(--forest)',
+    textTransform: 'none' as const,
   },
-  privateFields: {},
+  privateInput: {
+    width: '100%',
+    height: 44,
+    background: 'var(--cream)',
+    border: '1.5px solid var(--border)',
+    borderRadius: 'var(--radius-md)',
+    padding: '0 14px',
+    fontSize: 15,
+    color: 'var(--forest)',
+    outline: 'none',
+  },
   textarea: {
     width: '100%',
     background: 'var(--white)',
     border: '1.5px solid var(--border)',
-    borderRadius: 10,
+    borderRadius: 'var(--radius-md)',
     padding: '12px 14px',
-    fontSize: 15,
+    fontSize: 14,
     color: 'var(--forest)',
     outline: 'none',
     resize: 'none',
     lineHeight: 1.5,
     paddingBottom: 28,
+    fontFamily: 'system-ui, sans-serif',
   },
   spotsRow: {
     display: 'flex',
     gap: 12,
   },
   spotBtn: {
-    width: 52, height: 52,
+    width: 56,
+    height: 56,
     borderRadius: '50%',
     background: 'var(--white)',
     border: '1.5px solid var(--forest)',
+    fontFamily: 'Georgia, serif',
     fontSize: 18,
     fontWeight: 'bold',
     color: 'var(--forest)',
     cursor: 'pointer',
+    transition: 'all 150ms ease',
   },
   spotBtnSel: {
     background: 'var(--forest)',
@@ -399,21 +440,19 @@ const s: Record<string, React.CSSProperties> = {
     transform: 'translateX(-50%)',
     width: '100%',
     maxWidth: 480,
-    padding: '12px 16px',
+    padding: '12px 20px',
+    paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
     background: 'var(--butter)',
     borderTop: '1px solid var(--border)',
   },
   submitBtn: {
     width: '100%',
     height: 52,
-    background: 'var(--forest)',
-    color: 'var(--butter)',
     border: 'none',
-    borderRadius: 12,
-    fontSize: 16,
+    borderRadius: 'var(--radius-md)',
+    fontSize: 15,
     fontWeight: 500,
-    cursor: 'pointer',
-    transition: 'opacity 200ms',
+    transition: 'background 150ms, transform 150ms',
   },
   errText: {
     fontSize: 13,

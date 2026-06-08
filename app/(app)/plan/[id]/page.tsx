@@ -65,15 +65,13 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
     if (!myApp) return
     setPressing(myApp.applicant_id)
     try {
-      // In this simplified flow, applicant YES is the same endpoint
-      // In production this would be a separate route
       showToast('You said yes! Waiting for confirmation…')
     } finally {
       setPressing(null)
     }
   }
 
-  const meta = plan ? ACTIVITY_META[plan.activity as ActivityType] : null
+  const meta  = plan ? ACTIVITY_META[plan.activity as ActivityType] : null
   const myApp = applicants.find(a => a.is_me)
 
   // ── REVEAL SCREEN ──
@@ -81,26 +79,38 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
     return (
       <div className="slide-up" style={s.revealPage}>
         <div style={s.revealInner}>
+          <img
+            src="/Business-Dealsuccess--Streamline-Dhaka.png"
+            alt=""
+            width={200}
+            height={200}
+            style={{ objectFit: 'contain', display: 'block', margin: '0 auto 32px' }}
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+          />
+
           <p style={s.revealLabel}>IT'S A MATCH</p>
 
-          <div style={s.avatarRow}>
-            <div style={s.avatarCol}>
-              <div style={{ ...s.avatar, background: 'var(--butter)', border: '2px solid var(--butter)', color: 'var(--forest)' }}>
-                {email.charAt(0).toUpperCase()}
-              </div>
-            </div>
-            <span style={{ fontSize: 28 }}>💚</span>
-            <div style={s.avatarCol}>
-              <div style={{ ...s.avatar, background: 'var(--forest)', border: '2px solid var(--butter)', color: 'var(--butter)' }}>
-                ?
-              </div>
-              <span className="reveal-name" style={s.revealName}>
-                {match.match_first_name}
-              </span>
-            </div>
-          </div>
-
           <div style={s.matchCard}>
+            <div style={s.avatarRow}>
+              <div style={s.avatarCol}>
+                <div style={{ ...s.avatar, background: 'var(--butter)', border: '2px solid var(--forest)', color: 'var(--forest)' }}>
+                  {email.charAt(0).toUpperCase()}
+                </div>
+                <span style={s.avatarLabel}>You</span>
+              </div>
+              <span style={{ fontSize: 28, alignSelf: 'center' }}>💚</span>
+              <div style={s.avatarCol}>
+                <div style={{ ...s.avatar, background: 'var(--forest)', border: '2px solid var(--butter)', color: 'var(--butter)' }}>
+                  ?
+                </div>
+                <span className="reveal-name" style={s.revealName}>
+                  {match.match_first_name}
+                </span>
+              </div>
+            </div>
+
+            <div style={s.divider} />
+
             <div style={s.matchDetails}>
               <p style={s.matchRow}>📍 {match.exact_location}</p>
               <p style={s.matchRow}>🕐 {match.exact_time}</p>
@@ -110,7 +120,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
           </div>
 
           <button onClick={() => router.push('/feed')} style={s.feedBtn}>
-            Back to feed
+            Back to feed →
           </button>
         </div>
       </div>
@@ -119,7 +129,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
 
   if (loading) {
     return (
-      <div style={{ padding: 24 }}>
+      <div style={{ padding: 24, background: 'var(--butter)', minHeight: '100vh' }}>
         <div className="skeleton" style={{ height: 120, marginBottom: 16 }} />
         <div className="skeleton" style={{ height: 100 }} />
       </div>
@@ -128,8 +138,17 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
 
   if (!plan) {
     return (
-      <div style={{ padding: 24, textAlign: 'center' }}>
-        <p style={{ color: 'var(--forest)', marginBottom: 12 }}>Plan not found.</p>
+      <div style={{ padding: 24, textAlign: 'center', background: 'var(--butter)', minHeight: '100vh' }}>
+        <img
+          src="/Something-Went-Wrong--Streamline-Dhaka.png"
+          alt=""
+          width={160}
+          height={160}
+          style={{ objectFit: 'contain', display: 'block', margin: '40px auto 16px' }}
+          loading="lazy"
+          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+        />
+        <p style={{ fontFamily: 'Georgia, serif', fontSize: 18, color: 'var(--forest)', marginBottom: 16 }}>Plan not found.</p>
         <button onClick={() => router.back()} style={s.backBtn}>← Go back</button>
       </div>
     )
@@ -137,11 +156,14 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div style={s.page}>
+      {/* Header */}
       <div style={s.header}>
-        <button onClick={() => router.back()} style={s.backBtn}>← Back</button>
+        <button onClick={() => router.back()} style={s.backBtn}>←</button>
+        <h1 style={s.headerTitle}>{meta?.label ?? plan.activity}</h1>
+        <div style={{ width: 32 }} />
       </div>
 
-      {/* Plan detail card */}
+      {/* Plan summary card */}
       <div style={s.planCard}>
         <div style={s.planTop}>
           <div style={s.actIcon}>{meta?.icon ?? '📅'}</div>
@@ -150,12 +172,12 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
             <p style={s.planMeta}>🕐 {plan.time_window} · 📍 {plan.zone}</p>
           </div>
         </div>
-        {plan.note && <p style={s.note}>"{plan.note}"</p>}
-
-        {/* Private details — only for creator */}
+        {plan.note && (
+          <p style={s.note}>"{plan.note}"</p>
+        )}
         {isCreator && plan.exact_location && (
           <div style={s.privateBox}>
-            <p style={s.privateTitle}>🔒 Private details</p>
+            <p style={s.privateTitle}>🔒 Your private details</p>
             <p style={s.privateRow}>📍 {plan.exact_location}</p>
             <p style={s.privateRow}>🕐 {plan.exact_time}</p>
           </div>
@@ -169,19 +191,52 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
             ANONYMOUS APPLICANTS · {applicants.length} applied
           </p>
           {applicants.length === 0 && (
-            <p style={s.noApps}>No applicants yet. Share your plan!</p>
-          )}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {applicants.map(app => (
-              <ApplicantCard
-                key={app.id}
-                applicant={app}
-                onYes={() => handleYes(app.applicant_id)}
-                isCreator={true}
-                isPressing={pressing === app.applicant_id}
+            <div style={s.emptyApplicants}>
+              <img
+                src="/Empty-Inbox--Streamline-Dhaka.png"
+                alt=""
+                width={160}
+                height={160}
+                style={{ objectFit: 'contain' }}
+                loading="lazy"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
               />
-            ))}
-          </div>
+              <p style={{ fontFamily: 'Georgia, serif', fontSize: 16, color: 'var(--forest)', textAlign: 'center' }}>
+                No one has applied yet.
+              </p>
+              <p style={{ fontSize: 13, color: 'var(--sage)', textAlign: 'center' }}>Be patient 🥨</p>
+            </div>
+          )}
+          {pressing && applicants.length > 0 && (
+            <div style={s.waitingState}>
+              <img
+                src="/Patience--Streamline-Dhaka.png"
+                alt=""
+                width={160}
+                height={160}
+                style={{ objectFit: 'contain' }}
+                loading="lazy"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+              />
+              <p style={{ fontFamily: 'Georgia, serif', fontSize: 16, color: 'var(--forest)', textAlign: 'center' }}>
+                Confirming your match…
+              </p>
+              <div style={s.spinner} />
+            </div>
+          )}
+          {!pressing && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {applicants.map(app => (
+                <ApplicantCard
+                  key={app.id}
+                  applicant={app}
+                  onYes={() => handleYes(app.applicant_id)}
+                  isCreator={true}
+                  isPressing={pressing === app.applicant_id}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -205,23 +260,52 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
           )}
 
           {myApp.status === 'yes_creator' && (
-            <div style={s.statusCard}>
-              <p style={s.statusTitle}>Someone said yes to you.</p>
-              <p style={s.statusSub}>Do you want to go?</p>
+            <div style={{ ...s.revealPage, minHeight: 'auto', padding: '40px 24px' }}>
+              <img
+                src="/I-Have-A-Question--Streamline-Dhaka.png"
+                alt=""
+                width={160}
+                height={160}
+                style={{ objectFit: 'contain', display: 'block', margin: '0 auto 24px' }}
+                loading="lazy"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+              />
+              <p style={{ fontFamily: 'Georgia, serif', fontSize: 26, color: 'var(--butter)', textAlign: 'center', marginBottom: 8 }}>
+                Someone said yes to you.
+              </p>
+              <p style={{ fontSize: 17, color: 'var(--sage)', textAlign: 'center', marginBottom: 32 }}>
+                Do you want to go?
+              </p>
               <button
                 onClick={handleApplicantYes}
                 disabled={!!pressing}
-                style={{ ...s.yesBtn, marginTop: 16 }}
+                style={{
+                  ...s.yesBtn,
+                  display: 'block',
+                  margin: '0 auto',
+                  maxWidth: 320,
+                  background: 'var(--butter)',
+                  color: 'var(--forest)',
+                  border: 'none',
+                }}
               >
                 {pressing ? 'Confirming…' : 'Yes, I\'m in →'}
               </button>
-              <button style={s.declineBtn}>Not this time</button>
-            </div>
-          )}
-
-          {myApp.status === 'matched' && match && (
-            <div style={s.revealPage}>
-              <p style={s.revealLabel}>IT'S A MATCH</p>
+              <button style={{
+                display: 'block',
+                margin: '12px auto 0',
+                maxWidth: 320,
+                width: '100%',
+                height: 52,
+                background: 'transparent',
+                border: '1px solid var(--butter)',
+                borderRadius: 'var(--radius-md)',
+                fontSize: 15,
+                color: 'var(--butter)',
+                cursor: 'pointer',
+              }}>
+                Not this time
+              </button>
             </div>
           )}
 
@@ -229,7 +313,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
             <div style={s.statusCard}>
               <p style={s.statusTitle}>You declined this one.</p>
               <p style={s.statusSub}>More plans in the feed.</p>
-              <button onClick={() => router.push('/feed')} style={s.yesBtn}>
+              <button onClick={() => router.push('/feed')} style={{ ...s.yesBtn, marginTop: 16 }}>
                 Back to feed
               </button>
             </div>
@@ -249,79 +333,188 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
 
 const s: Record<string, React.CSSProperties> = {
   page: { minHeight: '100vh', background: 'var(--butter)' },
-  header: { padding: '16px', display: 'flex', alignItems: 'center' },
+  header: {
+    padding: '16px 20px 0',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerTitle: {
+    fontFamily: 'Georgia, serif',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'var(--forest)',
+    flex: 1,
+    textAlign: 'center',
+  },
   backBtn: {
-    background: 'transparent', border: 'none',
-    fontSize: 15, color: 'var(--forest)', cursor: 'pointer', fontWeight: 500,
+    background: 'transparent',
+    border: 'none',
+    fontSize: 20,
+    color: 'var(--forest)',
+    cursor: 'pointer',
+    padding: 0,
+    fontWeight: 500,
+    lineHeight: 1,
   },
   planCard: {
     background: 'var(--white)',
-    margin: '0 16px',
-    borderRadius: 16,
+    margin: '16px 16px 0',
+    borderRadius: 'var(--radius-lg)',
     padding: 16,
     border: '1px solid var(--border)',
   },
   planTop: { display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 10 },
   actIcon: {
-    width: 44, height: 44, borderRadius: '50%',
+    width: 42, height: 42, borderRadius: '50%',
     background: 'var(--mist)', display: 'flex', alignItems: 'center',
-    justifyContent: 'center', fontSize: 22, flexShrink: 0,
+    justifyContent: 'center', fontSize: 20, flexShrink: 0,
   },
-  actTitle: { fontFamily: 'Georgia, serif', fontSize: 17, fontWeight: 500, color: 'var(--forest)' },
+  actTitle: { fontFamily: 'Georgia, serif', fontSize: 17, fontWeight: 'bold', color: 'var(--forest)' },
   planMeta: { fontSize: 13, color: 'var(--sage)', marginTop: 3 },
-  note: { fontSize: 14, color: 'var(--sage)', fontStyle: 'italic', marginTop: 6 },
-  privateBox: { background: 'var(--mist)', borderRadius: 10, padding: 12, marginTop: 12 },
-  privateTitle: { fontSize: 12, fontWeight: 500, color: 'var(--forest)', marginBottom: 6 },
-  privateRow: { fontSize: 14, color: 'var(--forest)', marginBottom: 4 },
+  note: {
+    fontSize: 13,
+    color: 'var(--sage)',
+    fontStyle: 'italic',
+    marginTop: 10,
+    paddingLeft: 10,
+    borderLeft: '2px solid var(--mist)',
+    lineHeight: 1.5,
+  },
+  privateBox: { background: 'var(--mist)', borderRadius: 'var(--radius-md)', padding: 12, marginTop: 12 },
+  privateTitle: { fontSize: 11, fontWeight: 500, color: 'var(--forest)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 },
+  privateRow: { fontSize: 13, color: 'var(--forest)', marginBottom: 4 },
   section: { padding: '20px 16px' },
-  sectionLabel: { fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--sage)', marginBottom: 14 },
-  noApps: { fontSize: 14, color: 'var(--sage)', textAlign: 'center', padding: '24px 0' },
-  statusCard: { background: 'var(--white)', borderRadius: 16, padding: 20, border: '1px solid var(--border)' },
+  sectionLabel: {
+    fontSize: 11, textTransform: 'uppercase' as const,
+    letterSpacing: '0.08em', color: 'var(--sage)', marginBottom: 14,
+    fontWeight: 500,
+  },
+  emptyApplicants: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '40px 24px',
+    gap: 12,
+  },
+  waitingState: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '40px 24px',
+    gap: 16,
+  },
+  spinner: {
+    width: 24,
+    height: 24,
+    border: '2px solid var(--mist)',
+    borderTopColor: 'var(--forest)',
+    borderRadius: '50%',
+    animation: 'spin 0.8s linear infinite',
+  },
+  statusCard: {
+    background: 'var(--white)',
+    borderRadius: 'var(--radius-lg)',
+    padding: 20,
+    border: '1px solid var(--border)',
+  },
   statusTitle: { fontFamily: 'Georgia, serif', fontSize: 18, color: 'var(--forest)', marginBottom: 6 },
   statusSub: { fontSize: 14, color: 'var(--sage)', lineHeight: 1.5 },
   yesBtn: {
-    width: '100%', height: 52, background: 'var(--forest)', color: 'var(--butter)',
-    border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 500, cursor: 'pointer',
-  },
-  declineBtn: {
-    width: '100%', height: 44, background: 'transparent',
-    border: '1.5px solid var(--forest)', borderRadius: 12,
-    fontSize: 14, color: 'var(--forest)', cursor: 'pointer', marginTop: 10,
+    width: '100%',
+    height: 52,
+    background: 'var(--forest)',
+    color: 'var(--butter)',
+    border: 'none',
+    borderRadius: 'var(--radius-md)',
+    fontSize: 15,
+    fontWeight: 500,
+    cursor: 'pointer',
+    transition: 'transform 150ms ease',
   },
   // Reveal
   revealPage: {
-    minHeight: '100vh', background: 'var(--forest)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    minHeight: '100vh',
+    background: 'var(--forest)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   revealInner: {
-    padding: 32, display: 'flex', flexDirection: 'column',
-    alignItems: 'center', gap: 24, width: '100%', maxWidth: 360,
+    padding: '40px 24px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 400,
   },
   revealLabel: {
-    fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em',
-    color: 'var(--sage)', textAlign: 'center',
-  },
-  avatarRow: { display: 'flex', alignItems: 'flex-start', gap: 16, justifyContent: 'center' },
-  avatarCol: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 },
-  avatar: {
-    width: 72, height: 72, borderRadius: '50%',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontFamily: 'Georgia, serif', fontWeight: 'bold', fontSize: 24,
-  },
-  revealName: {
-    fontFamily: 'Georgia, serif', fontWeight: 'bold', fontSize: 22,
-    color: 'var(--butter)',
+    fontSize: 11,
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.15em',
+    color: 'var(--sage)',
+    textAlign: 'center',
+    marginBottom: 16,
   },
   matchCard: {
-    background: 'var(--white)', borderRadius: 16,
-    padding: 24, width: '100%', maxWidth: 300,
+    background: 'var(--white)',
+    borderRadius: 24,
+    padding: '32px 28px',
+    maxWidth: 320,
+    width: '100%',
   },
-  matchDetails: { display: 'flex', flexDirection: 'column', gap: 6 },
-  matchRow: { fontSize: 14, color: 'var(--forest)' },
-  matchFooter: { fontSize: 11, color: 'var(--sage)', textAlign: 'center', marginTop: 16 },
+  avatarRow: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    gap: 20,
+    marginBottom: 4,
+  },
+  avatarCol: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 8,
+  },
+  avatar: {
+    width: 64, height: 64, borderRadius: '50%',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontFamily: 'Georgia, serif', fontWeight: 'bold', fontSize: 22,
+  },
+  avatarLabel: {
+    fontSize: 12,
+    color: 'var(--sage)',
+    textAlign: 'center',
+  },
+  revealName: {
+    fontFamily: 'Georgia, serif',
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: 'var(--forest)',
+    textAlign: 'center',
+  },
+  divider: {
+    height: 1,
+    background: 'var(--border)',
+    margin: '24px 0',
+  },
+  matchDetails: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
+  },
+  matchRow: { fontSize: 14, color: 'var(--forest)', lineHeight: 1.5 },
+  matchFooter: { fontSize: 11, color: 'var(--sage)', textAlign: 'center', marginTop: 20 },
   feedBtn: {
-    height: 48, background: 'var(--butter)', color: 'var(--forest)',
-    border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 500,
-    cursor: 'pointer', padding: '0 28px',
+    marginTop: 32,
+    height: 52,
+    width: 200,
+    background: 'var(--butter)',
+    color: 'var(--forest)',
+    border: 'none',
+    borderRadius: 'var(--radius-md)',
+    fontSize: 15,
+    fontWeight: 500,
+    cursor: 'pointer',
   },
 }

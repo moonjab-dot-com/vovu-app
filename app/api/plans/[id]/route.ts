@@ -1,3 +1,5 @@
+export const dynamic = 'force-static'
+export function generateStaticParams() { return [] }
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase-server'
 import { getInitial } from '@/lib/utils'

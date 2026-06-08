@@ -74,8 +74,9 @@ export default function FeedPage() {
         <div>
           <h1 style={s.title}>Vovu</h1>
           {campus && (
-            <div style={{ marginTop: 4 }}>
-              <span style={s.campusChip}>✓ {campusName}</span>
+            <div style={s.campusChip}>
+              <span style={s.checkDot} />
+              <span>{campusName}</span>
             </div>
           )}
         </div>
@@ -88,25 +89,29 @@ export default function FeedPage() {
       </div>
 
       {/* Section label */}
-      {!loading && !error && plans.length > 0 && (
+      {!loading && !error && (
         <div style={s.sectionLabel}>Filtered to your vibe</div>
       )}
 
       {/* Loading skeletons */}
       {loading && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '0 16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '8px 16px 0' }}>
           {[0,1,2].map(i => (
-            <div key={i} className="skeleton" style={{ height: 120, animationDelay: `${i * 150}ms` }} />
+            <div
+              key={i}
+              className="skeleton"
+              style={{ height: 120, animationDelay: `${i * 200}ms` }}
+            />
           ))}
-          <div style={{ textAlign: 'center', marginTop: 8, opacity: 0.6 }}>
+          <div style={{ textAlign: 'center', paddingTop: 24, paddingBottom: 8 }}>
             <img
               src="/Patience--Streamline-Dhaka.png"
               alt=""
               width={140}
               height={140}
-              style={{ objectFit: 'contain' }}
               loading="lazy"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+              style={{ objectFit: 'contain', opacity: 0.6 }}
+              onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
             />
           </div>
         </div>
@@ -120,12 +125,12 @@ export default function FeedPage() {
             alt=""
             width={180}
             height={180}
-            style={{ objectFit: 'contain' }}
             loading="lazy"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+            style={{ objectFit: 'contain' }}
+            onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
           />
           <p style={s.emptyTitle}>Couldn't load plans.</p>
-          <button onClick={() => email && loadPlans(email)} style={s.retryBtn}>
+          <button onClick={() => email && loadPlans(email)} style={s.ghostBtn}>
             Try again
           </button>
         </div>
@@ -139,9 +144,9 @@ export default function FeedPage() {
             alt=""
             width={200}
             height={200}
-            style={{ objectFit: 'contain' }}
             loading="lazy"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+            style={{ objectFit: 'contain' }}
+            onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
           />
           <p style={s.emptyTitle}>No plans match your vibe yet.</p>
           <p style={s.emptySubtitle}>Be the first to post one.</p>
@@ -197,33 +202,44 @@ const s: Record<string, React.CSSProperties> = {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'var(--forest)',
+    marginBottom: 6,
   },
   campusChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
     fontSize: 12,
     fontWeight: 500,
     background: 'var(--mist)',
     color: 'var(--forest)',
-    padding: '6px 12px',
+    padding: '4px 12px',
     borderRadius: 'var(--radius-full)',
+  },
+  checkDot: {
     display: 'inline-block',
+    width: 8,
+    height: 8,
+    borderRadius: '50%',
+    background: '#1A7F5A',
+    flexShrink: 0,
   },
   countNumber: {
     fontFamily: 'Georgia, serif',
     fontSize: 22,
     fontWeight: 'bold',
     color: 'var(--forest)',
-    textAlign: 'right',
+    lineHeight: 1,
   },
   countLabel: {
     fontSize: 11,
     color: 'var(--sage)',
-    textAlign: 'right',
+    marginTop: 2,
   },
   sectionLabel: {
     padding: '16px 20px 8px',
     fontSize: 11,
     fontWeight: 500,
-    textTransform: 'uppercase' as const,
+    textTransform: 'uppercase',
     letterSpacing: '0.08em',
     color: 'var(--sage)',
   },
@@ -263,7 +279,7 @@ const s: Record<string, React.CSSProperties> = {
     fontWeight: 500,
     cursor: 'pointer',
   },
-  retryBtn: {
+  ghostBtn: {
     height: 40,
     background: 'transparent',
     border: '1.5px solid var(--forest)',

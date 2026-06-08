@@ -38,12 +38,12 @@ function VerifyInner() {
           alt=""
           width={160}
           height={160}
-          style={{ objectFit: 'contain' }}
+          style={{ objectFit: 'contain', display: 'block', margin: '0 auto' }}
           loading="lazy"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+          onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
         />
-        <p style={s.errorTitle}>{error}</p>
-        <a href="/login" style={s.backLink}>← Back to login</a>
+        <p style={{ ...s.title, marginTop: 24 }}>{error}</p>
+        <a href="/login" style={s.link}>← Back to login</a>
       </div>
     )
   }
@@ -55,11 +55,11 @@ function VerifyInner() {
         alt=""
         width={160}
         height={160}
-        style={{ objectFit: 'contain' }}
+        style={{ objectFit: 'contain', display: 'block', margin: '0 auto', opacity: 0.7 }}
         loading="lazy"
-        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+        onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
       />
-      <p style={s.loadingTitle}>Verifying…</p>
+      <p style={{ ...s.title, marginTop: 24 }}>Verifying…</p>
     </div>
   )
 }
@@ -82,22 +82,16 @@ const s: Record<string, React.CSSProperties> = {
     flexDirection: 'column',
     gap: 16,
     padding: 24,
-    textAlign: 'center',
   },
-  loadingTitle: {
-    fontFamily: 'Georgia, serif',
-    fontSize: 18,
-    color: 'var(--forest)',
-  },
-  errorTitle: {
+  title: {
     fontFamily: 'Georgia, serif',
     fontSize: 20,
     color: 'var(--forest)',
+    textAlign: 'center',
   },
-  backLink: {
+  link: {
     fontSize: 14,
     color: 'var(--sage)',
     textDecoration: 'none',
-    marginTop: 4,
   },
 }

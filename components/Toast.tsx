@@ -31,7 +31,7 @@ export default function Toast({ message, type, visible, onDismiss }: Props) {
       borderRadius: 'var(--radius-full)',
       maxWidth: 300,
       textAlign: 'center',
-      zIndex: 200,
+      zIndex: 999,
       opacity: visible ? 1 : 0,
       transition: 'transform 250ms ease, opacity 250ms ease',
       pointerEvents: visible ? 'auto' : 'none',

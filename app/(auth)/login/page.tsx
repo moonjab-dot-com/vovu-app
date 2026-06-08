@@ -5,10 +5,11 @@ import Logo from '@/components/Logo'
 import { isEduEmail, getEmailDomain, getCampusName } from '@/lib/utils'
 
 export default function LoginPage() {
-  const [email,   setEmail]   = useState('')
-  const [sent,    setSent]    = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error,   setError]   = useState('')
+  const [email,        setEmail]        = useState('')
+  const [sent,         setSent]         = useState(false)
+  const [loading,      setLoading]      = useState(false)
+  const [error,        setError]        = useState('')
+  const [inputFocused, setInputFocused] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const domain     = getEmailDomain(email.toLowerCase())
@@ -73,17 +74,17 @@ export default function LoginPage() {
             width={200}
             height={200}
             style={{ objectFit: 'contain', display: 'block', margin: '0 auto' }}
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+            onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
           />
           <h1 style={{ ...s.sentTitle, marginTop: 24 }}>Check your inbox</h1>
           <p style={s.sentBody}>
             We sent a link to{' '}
-            <strong style={{ color: 'var(--forest)' }}>{email}</strong>.
+            <strong style={{ color: 'var(--forest)', fontWeight: 600 }}>{email}</strong>.
           </p>
           <p style={{ fontSize: 12, color: 'var(--sage)', marginTop: 16, textAlign: 'center' }}>
             Expires in 15 minutes.
           </p>
-          <button onClick={() => setSent(false)} style={s.demoLink}>
+          <button onClick={() => setSent(false)} style={{ ...s.ghost, marginTop: 32 }}>
             ← Use a different email
           </button>
         </div>
@@ -94,60 +95,59 @@ export default function LoginPage() {
   return (
     <div style={s.page}>
       <div style={s.inner}>
-        {/* Illustration */}
+        {/* Hero illustration */}
         <img
           src="/Welcome--Streamline-Dhaka.png"
           alt=""
           width={200}
           height={200}
-          style={{ objectFit: 'contain', display: 'block', margin: '0 auto 28px' }}
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+          style={{ objectFit: 'contain', display: 'block', margin: '0 auto' }}
+          onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
         />
 
-        {/* Wordmark row */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center', marginBottom: 8 }}>
+        {/* Wordmark */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center', marginTop: 20, marginBottom: 6 }}>
           <Logo size="md" />
           <span style={s.brand}>Vovu</span>
         </div>
-
-        {/* Tagline */}
         <p style={s.tagline}>Plans that find you.</p>
 
-        {/* Spacer */}
         <div style={{ height: 32 }} />
 
         {/* Form card */}
         <div style={s.formCard}>
-          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <form onSubmit={handleSubmit}>
             <label style={s.label}>School email</label>
             <input
               ref={inputRef}
               type="email"
               value={email}
               onChange={e => { setEmail(e.target.value); setError('') }}
+              onFocus={() => setInputFocused(true)}
               onBlur={() => {
+                setInputFocused(false)
                 if (email && !valid) setError('Use your .edu email to continue.')
               }}
               placeholder="you@university.edu"
               style={{
                 ...s.input,
-                borderColor: error ? '#dc2626' : valid ? '#1A7F5A' : 'var(--border)',
+                borderColor: error ? '#dc2626' : inputFocused ? 'var(--forest)' : valid ? '#1A7F5A' : 'var(--border)',
+                background: inputFocused ? 'var(--white)' : 'var(--butter)',
               }}
               autoFocus
               autoComplete="email"
               inputMode="email"
             />
 
-            {/* Campus confirmation */}
             {valid && campusName && (
-              <div className="fade-in-fast" style={{ fontSize: 13, color: '#1A7F5A', marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a', flexShrink: 0 }} />
-                <span>{campusName}</span>
+              <div className="fade-in-opacity" style={s.campusRow}>
+                <div style={s.greenDot} />
+                <span style={s.campusText}>{campusName}</span>
               </div>
             )}
 
             {error && (
-              <div className="fade-in-fast" style={{ fontSize: 13, color: '#dc2626', marginTop: 6 }}>{error}</div>
+              <div className="fade-in-opacity" style={s.errorText}>{error}</div>
             )}
 
             <button
@@ -155,9 +155,7 @@ export default function LoginPage() {
               disabled={!valid || loading}
               style={{
                 ...s.btn,
-                background: !valid || loading ? '#E5E5E5' : 'var(--forest)',
-                color: !valid || loading ? 'var(--sage)' : 'var(--butter)',
-                cursor: !valid || loading ? 'not-allowed' : 'pointer',
+                ...(!valid || loading ? s.btnDisabled : {}),
                 marginTop: 20,
               }}
             >
@@ -166,7 +164,7 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <button onClick={handleDemo} disabled={loading} style={s.demoLink}>
+        <button onClick={handleDemo} style={s.demoLink}>
           Skip for demo →
         </button>
       </div>
@@ -197,7 +195,6 @@ const s: Record<string, React.CSSProperties> = {
     color: 'var(--forest)',
   },
   tagline: {
-    fontFamily: 'Georgia, serif',
     fontStyle: 'italic',
     fontSize: 16,
     color: 'var(--sage)',
@@ -220,23 +217,52 @@ const s: Record<string, React.CSSProperties> = {
   input: {
     width: '100%',
     height: 52,
-    background: 'var(--butter)',
     border: '1.5px solid var(--border)',
     borderRadius: 'var(--radius-md)',
     padding: '0 16px',
     fontSize: 16,
     color: 'var(--forest)',
     outline: 'none',
-    transition: 'border-color 200ms, background 200ms',
+    transition: 'border-color 200ms ease, background 200ms ease',
+  },
+  campusRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 8,
+  },
+  greenDot: {
+    width: 8,
+    height: 8,
+    borderRadius: '50%',
+    background: '#16a34a',
+    flexShrink: 0,
+  },
+  campusText: {
+    fontSize: 13,
+    color: '#16a34a',
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#dc2626',
+    marginTop: 6,
   },
   btn: {
     width: '100%',
     height: 52,
+    background: 'var(--forest)',
+    color: 'var(--butter)',
     border: 'none',
     borderRadius: 'var(--radius-md)',
     fontSize: 15,
     fontWeight: 500,
-    transition: 'background 150ms, transform 150ms',
+    cursor: 'pointer',
+    transition: 'background 150ms ease, transform 150ms ease',
+  },
+  btnDisabled: {
+    background: '#E5E5E5',
+    color: 'var(--sage)',
+    cursor: 'not-allowed',
   },
   demoLink: {
     background: 'transparent',
@@ -245,6 +271,14 @@ const s: Record<string, React.CSSProperties> = {
     color: 'var(--sage)',
     cursor: 'pointer',
     marginTop: 16,
+  },
+  ghost: {
+    background: 'transparent',
+    border: 'none',
+    fontSize: 13,
+    color: 'var(--sage)',
+    cursor: 'pointer',
+    textDecoration: 'underline',
   },
   sentTitle: {
     fontFamily: 'Georgia, serif',

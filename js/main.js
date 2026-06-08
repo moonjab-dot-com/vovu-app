@@ -1,5 +1,20 @@
 // main.js — Vovu interactions
 
+// TEST MODE: remove these emails before launch
+// TODO: delete TEST_EMAILS array before production
+const TEST_EMAILS = [
+  'moonjab.com@gmail.com',
+  'foulardperu@gmail.com',
+  'espanolsinfronteras1@gmail.com'
+];
+
+function isValidVovuEmail(email) {
+  const lower = email.trim().toLowerCase();
+  const isEdu  = lower.includes('@') && lower.endsWith('.edu');
+  const isTest = TEST_EMAILS.includes(lower);
+  return isEdu || isTest;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
   // ── Lucide icons ─────────────────────────────
@@ -147,7 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!emailInput) return;
 
       const email = emailInput.value.trim();
-      if (!email.includes('@') || !email.toLowerCase().endsWith('.edu')) {
+      // TEST MODE: isValidVovuEmail allows test Gmail addresses — remove before launch
+      if (!isValidVovuEmail(email)) {
         emailInput.classList.remove('shake');
         void emailInput.offsetWidth;
         emailInput.classList.add('shake');
@@ -195,7 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const nameEl = document.getElementById('campus-name-text');
       const sendBtn = document.getElementById('send-btn');
 
-      if (val.includes('@') && val.endsWith('.edu')) {
+      // TEST MODE: isValidVovuEmail allows test Gmail addresses — remove before launch
+      if (isValidVovuEmail(val)) {
         const domain = val.split('@')[1];
         if (nameEl) nameEl.textContent = (campusMap[domain] || domain) + ' detected';
         if (confirmEl) confirmEl.classList.remove('hidden');
@@ -227,7 +244,8 @@ function handleLogin() {
   if (!input) return;
 
   const email = input.value.trim();
-  if (!email.includes('@') || !email.toLowerCase().endsWith('.edu')) {
+  // TEST MODE: isValidVovuEmail allows test Gmail addresses — remove before launch
+  if (!isValidVovuEmail(email)) {
     input.classList.remove('shake');
     void input.offsetWidth;
     input.classList.add('shake');

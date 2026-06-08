@@ -235,12 +235,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── Login handler ───────────────────────────────
-function handleLogin() {
-  const input = document.getElementById('email-input');
-  const errorEl = document.getElementById('email-error');
+async function handleLogin() {
+  const input     = document.getElementById('email-input');
+  const errorEl   = document.getElementById('email-error');
   const loginForm = document.getElementById('login-form');
   const sentState = document.getElementById('sent-state');
   const sentEmail = document.getElementById('sent-email');
+  const sendBtn   = document.getElementById('send-btn');
   if (!input) return;
 
   const email = input.value.trim();
@@ -256,7 +257,28 @@ function handleLogin() {
     return;
   }
 
-  localStorage.setItem('vovu_email', email);
+  // Disable button while sending
+  if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = 'Sending…'; }
+  if (errorEl) errorEl.classList.add('hidden');
+
+  // Send magic link via Supabase
+  const redirectTo = window.location.origin + window.location.pathname.replace('login.html', '') + 'verify.html';
+  const { error } = await window._supabase.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: redirectTo }
+  });
+
+  if (error) {
+    if (sendBtn) { sendBtn.disabled = false; sendBtn.innerHTML = '<i data-lucide="mail"></i> Send me a link'; if (typeof lucide !== 'undefined') lucide.createIcons(); }
+    if (errorEl) {
+      errorEl.textContent = error.message || 'Could not send link. Try again.';
+      errorEl.classList.remove('hidden');
+    }
+    return;
+  }
+
+  // Success — store campus for later, show "check inbox" state
+  localStorage.setItem('vovu_email',  email);
   localStorage.setItem('vovu_campus', email.split('@')[1]);
   if (sentEmail) sentEmail.textContent = email;
   if (loginForm) loginForm.classList.add('hidden');

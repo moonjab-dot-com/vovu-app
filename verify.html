@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vovu — Signing in…</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/supabase-config.js"></script>
+</head>
+<body>
+<div style="min-height:100vh; background:var(--butter); display:flex; flex-direction:column;
+            align-items:center; justify-content:center; gap:16px; padding:32px;
+            font-family:var(--font-sans); color:var(--forest); text-align:center;">
+
+  <div id="status-icon" style="font-size:40px;">⏳</div>
+  <h2 id="status-title" style="margin:0; font-family:var(--font-serif); font-size:22px;">
+    Signing you in…
+  </h2>
+  <p id="status-sub" style="margin:0; font-size:14px; opacity:.7;">
+    Just a second.
+  </p>
+  <a id="retry-link" href="./login.html"
+     style="display:none; margin-top:16px; font-size:14px;
+            color:var(--forest); text-decoration:underline;">
+    Back to login
+  </a>
+</div>
+
+<script>
+  (async function () {
+    const titleEl  = document.getElementById('status-title');
+    const subEl    = document.getElementById('status-sub');
+    const iconEl   = document.getElementById('status-icon');
+    const retryEl  = document.getElementById('retry-link');
+
+    function showError(msg) {
+      iconEl.textContent  = '✗';
+      titleEl.textContent = 'Sign-in failed';
+      subEl.textContent   = msg || 'The link may have expired. Request a new one.';
+      retryEl.style.display = 'inline';
+    }
+
+    // Supabase v2: exchangeCodeForSession handles the ?code= param automatically.
+    // onAuthStateChange fires SIGNED_IN once the session is established.
+    const { data: { session }, error } = await window._supabase.auth.getSession();
+
+    if (error) { showError(error.message); return; }
+
+    if (session) {
+      // Already have a session (e.g. page reload)
+      redirect(session);
+      return;
+    }
+
+    // Wait for the auth callback to complete
+    window._supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        redirect(session);
+      } else if (event === 'TOKEN_REFRESHED') {
+        redirect(session);
+      }
+    });
+
+    // Timeout fallback — if nothing happens in 8 s, show error
+    setTimeout(() => {
+      const titleText = titleEl.textContent;
+      if (titleText === 'Signing you in…') {
+        showError('Link expired or already used. Request a new one.');
+      }
+    }, 8000);
+
+    function redirect(session) {
+      const email = session.user.email;
+      localStorage.setItem('vovu_email',  email);
+      localStorage.setItem('vovu_campus', email.split('@')[1]);
+
+      iconEl.textContent  = '✓';
+      titleEl.textContent = 'Signed in!';
+      subEl.textContent   = 'Taking you in…';
+
+      // TODO: check profiles table to decide onboarding vs feed
+      setTimeout(() => {
+        window.location.href = './onboarding.html';
+      }, 800);
+    }
+  })();
+</script>
+</body>
+</html>

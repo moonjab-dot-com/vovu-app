@@ -22,6 +22,7 @@ const STEPS = [
   },
   {
     id: 2, group: 'B', key: 'group_size', type: 'single-select',
+    illustration: './public/About-Our-Team-1--Streamline-Barcelona.png',
     question: 'How many people do you prefer?',
     options: [
       { key: '1on1',  label: 'Just the two of us' },
@@ -32,6 +33,7 @@ const STEPS = [
   },
   {
     id: 3, group: 'B', key: 'place_vibe', type: 'single-select',
+    illustration: './public/Digital-Nomad-Working-Near-Beach--Streamline-Seoul.png',
     question: 'Your kind of place',
     sub: 'Where do you actually feel comfortable?',
     options: [
@@ -43,6 +45,7 @@ const STEPS = [
   },
   {
     id: 4, group: 'B', key: 'plan_style', type: 'single-select',
+    illustration: './public/Shipping--Streamline-Dhaka.png',
     question: 'How do you usually make plans?',
     options: [
       { key: 'lastminute', label: 'Last minute — text me now' },
@@ -53,6 +56,7 @@ const STEPS = [
   },
   {
     id: 5, group: 'B', key: 'duration', type: 'single-select',
+    illustration: './public/Patience--Streamline-Dhaka.png',
     question: 'How long do you usually hang out?',
     options: [
       { key: 'quick',  label: 'Quick — 30 minutes' },
@@ -62,6 +66,7 @@ const STEPS = [
   },
   {
     id: 6, group: 'C', key: 'timing', type: 'multi-select',
+    illustration: './public/Space--Streamline-Seoul.png',
     question: 'When are you usually free?',
     sub: 'Pick all that apply.',
     options: [
@@ -106,12 +111,14 @@ const STEPS = [
   },
   {
     id: 10, group: 'D', key: 'follow_through', type: 'slider',
+    illustration: './public/Evaluate-Performance-Employee-Team--Streamline-Seoul.png',
     question: 'How often do you actually follow through on plans?',
     sub: 'Be honest. This also shows as a bar on your card.',
     min: 1, max: 5, leftLabel: 'I bail a lot', rightLabel: 'Always show up',
   },
   {
     id: 11, group: 'D', key: 'intent', type: 'single-select',
+    illustration: './public/Searching-1--Streamline-Dhaka.png',
     question: 'What are you actually looking for?',
     sub: 'This is the most important question. Be real.',
     options: [
@@ -132,6 +139,7 @@ const STEPS = [
   },
   {
     id: 13, group: 'D', key: 'talk_listen', type: 'single-select',
+    illustration: './public/Digital-Service-Call-Center--Streamline-Dhaka.png',
     question: 'With someone new, you\'re more likely to...',
     options: [
       { key: 'listen',   label: 'Listen mostly' },
@@ -141,6 +149,7 @@ const STEPS = [
   },
   {
     id: 14, group: 'D', key: 'recharge', type: 'single-select',
+    illustration: './public/Space--Streamline-Seoul.png',
     question: 'After hanging out, you usually want...',
     options: [
       { key: 'more',   label: 'To do it again soon' },
@@ -178,6 +187,7 @@ const STEPS = [
   },
   {
     id: 18, group: 'E', key: 'group_pref', type: 'single-select',
+    illustration: './public/About-Our-Team-1--Streamline-Barcelona.png',
     question: 'Plans you\'re most likely to actually show up to',
     options: [
       { key: 'one_on_one', label: '1-on-1 hangouts' },
@@ -209,6 +219,7 @@ const STEPS = [
   },
   {
     id: 20, group: 'F', key: 'current_vibe', type: 'text',
+    illustration: './public/Faq--Streamline-Dhaka.png',
     question: 'Your current vibe in 3 words',
     sub: 'No pressure. This shows on your profile.',
     placeholder: 'e.g. chaotic but thriving',
@@ -216,6 +227,7 @@ const STEPS = [
   },
   {
     id: 21, group: 'F', key: 'surprised_yourself', type: 'text-long',
+    illustration: './public/I-Have-A-Question--Streamline-Dhaka.png',
     question: 'Last thing you did that surprised yourself',
     sub: 'Shown only to your match as a conversation starter.',
     placeholder: 'e.g. stayed in the library until 2am and actually enjoyed it',

@@ -327,3 +327,44 @@ function updateNoteCounter() {
   counter.textContent = n + '/120';
   counter.className = 'char-counter' + (n >= 100 ? ' danger' : n >= 80 ? ' warn' : '');
 }
+
+window.switchFeedTab = function(tab, btn) {
+  document.querySelectorAll('.feed-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const discoverEl = document.getElementById('discover-section');
+  const yourPlansEl = document.getElementById('your-plans-section');
+  const filterRow = document.getElementById('filter-row');
+  if (tab === 'discover') {
+    discoverEl?.classList.remove('hidden');
+    yourPlansEl?.classList.add('hidden');
+    filterRow?.classList.remove('hidden');
+  } else {
+    discoverEl?.classList.add('hidden');
+    yourPlansEl?.classList.remove('hidden');
+    filterRow?.classList.add('hidden');
+  }
+};
+
+window.filterPlans = function(activity, btn) {
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const cards = document.querySelectorAll('.plan-card');
+  cards.forEach(card => {
+    if (activity === 'all' || card.dataset.activity === activity) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  const visible = Array.from(document.querySelectorAll('.plan-card')).filter(c => c.style.display !== 'none');
+  const countEl = document.getElementById('plan-count');
+  if (countEl) countEl.textContent = visible.length;
+};
+
+window.openPlan = function(role, planId) {
+  if (role === 'seeker') {
+    window.location.href = './plan-seeker.html?id=' + planId;
+  } else {
+    window.location.href = './plan-poster.html?id=' + planId;
+  }
+};

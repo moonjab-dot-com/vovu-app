@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vovu — View Plan</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+<div class="seeker-screen">
+
+  <!-- PAGE HEADER -->
+  <header class="page-header" style="display:flex; align-items:center; gap:12px; padding:16px; border-bottom:1px solid var(--border);">
+    <button onclick="history.back()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; color:var(--forest);">
+      <i data-lucide="arrow-left" style="width:20px;height:20px;"></i>
+    </button>
+    <h1 style="font-size:17px; margin:0; font-family:var(--font-serif);">Café this afternoon</h1>
+  </header>
+
+  <div style="padding: 16px 16px 0;">
+
+    <!-- PLAN SUMMARY CARD -->
+    <div class="plan-summary-card card fade-up" style="padding:16px; margin-bottom:16px;">
+      <div class="plan-summary-top">
+        <div class="activity-icon-circle">
+          <i data-lucide="coffee"></i>
+        </div>
+        <div style="flex:1; min-width:0;">
+          <div class="plan-summary-title">Café this afternoon</div>
+          <div class="plan-summary-meta">
+            <i data-lucide="clock" style="width:12px;height:12px;"></i>
+            3–4 pm today
+            <span class="meta-dot">·</span>
+            <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
+            Near the village
+          </div>
+        </div>
+        <span class="spots-badge">1 spot</span>
+      </div>
+
+      <div class="plan-note-full">
+        <i data-lucide="message-circle" style="width:14px;height:14px; flex-shrink:0; margin-top:1px;"></i>
+        "just want someone to sit and talk with"
+      </div>
+
+      <div class="public-info-notice">
+        <i data-lucide="eye-off" style="width:13px;height:13px;"></i>
+        Exact location only shared after mutual yes
+      </div>
+
+      <!-- COMPATIBILITY ROW -->
+      <div class="compatibility-row">
+        <div class="compat-score-display">
+          <div class="compat-score-circle">
+            <span class="compat-number">82</span><span class="compat-pct">%</span>
+          </div>
+          <div class="compat-label">
+            <div class="compat-title">Match</div>
+            <div class="compat-sub">score</div>
+          </div>
+        </div>
+        <div class="compat-bars">
+          <div class="compat-bar-row">
+            <span>Activities</span>
+            <div class="bar-track" style="flex:1;">
+              <div class="bar-fill compat-bar-anim" style="width:0;" data-target="90"></div>
+            </div>
+          </div>
+          <div class="compat-bar-row">
+            <span>Energy</span>
+            <div class="bar-track" style="flex:1;">
+              <div class="bar-fill compat-bar-anim" style="width:0;" data-target="75"></div>
+            </div>
+          </div>
+          <div class="compat-bar-row">
+            <span>Timing</span>
+            <div class="bar-track" style="flex:1;">
+              <div class="bar-fill compat-bar-anim" style="width:0;" data-target="80"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POSTER PROFILE CARD -->
+    <div class="poster-profile-card fade-up" style="animation-delay:80ms;">
+      <div class="poster-identity-row">
+        <div class="poster-avatar-circle">J·</div>
+        <div>
+          <div class="poster-anonymous-label">J· — Anonymous poster</div>
+          <div class="poster-reveal-note">
+            <i data-lucide="lock" style="width:11px;height:11px;"></i>
+            Full name revealed after mutual yes
+          </div>
+        </div>
+      </div>
+
+      <div class="poster-section">
+        <div class="poster-section-label">
+          <i data-lucide="zap" style="width:11px;height:11px;"></i>
+          Activities
+        </div>
+        <div class="tags-row">
+          <span class="tag">Café</span>
+          <span class="tag">Study</span>
+          <span class="tag">Walks</span>
+          <span class="tag">Movies</span>
+        </div>
+      </div>
+
+      <div class="poster-section">
+        <div class="poster-section-label">
+          <i data-lucide="bar-chart-2" style="width:11px;height:11px;"></i>
+          Vibe
+        </div>
+        <div class="vibe-bars-list">
+          <div class="vibe-bar-row">
+            <span class="vibe-bar-label">Follows through</span>
+            <div class="bar-track" style="flex:1;">
+              <div class="bar-fill vibe-bar-anim" style="width:0;" data-target="80"></div>
+            </div>
+          </div>
+          <div class="vibe-bar-row">
+            <span class="vibe-bar-label">Open to new people</span>
+            <div class="bar-track" style="flex:1;">
+              <div class="bar-fill vibe-bar-anim" style="width:0;" data-target="65"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="poster-section">
+        <div class="poster-section-label">
+          <i data-lucide="heart" style="width:11px;height:11px;"></i>
+          Looking for
+        </div>
+        <span class="intent-chip">
+          <i data-lucide="users" style="width:12px;height:12px;"></i>
+          New friends honestly
+        </span>
+      </div>
+
+      <div class="poster-section" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
+        <div class="poster-section-label">
+          <i data-lucide="sun" style="width:11px;height:11px;"></i>
+          Current vibe
+        </div>
+        <div class="current-vibe-text">"chaotic but thriving"</div>
+      </div>
+    </div>
+
+    <!-- PRIVACY ASSURANCE -->
+    <div class="privacy-assurance-box fade-up" style="animation-delay:120ms;">
+      <i data-lucide="shield-check" style="width:20px;height:20px; flex-shrink:0; color:var(--success); margin-top:1px;"></i>
+      <div>
+        <div class="privacy-assurance-title">Your identity is protected</div>
+        <div class="privacy-assurance-sub">
+          They won't know you applied until you both say yes. Last name never shared by Vovu.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /padding wrapper -->
+
+  <!-- FIXED ACTION BAR -->
+  <div class="plan-action-bar" id="action-bar">
+    <div id="apply-state">
+      <button class="btn-apply-now" onclick="applyNow()">
+        <i data-lucide="send" style="width:16px;height:16px;"></i>
+        Apply anonymously
+      </button>
+      <p class="apply-note">They'll see your vibe — not your name.</p>
+    </div>
+
+    <div id="applied-state" class="hidden">
+      <div class="applied-confirmation">
+        <i data-lucide="check-circle" class="applied-icon" style="width:20px;height:20px;"></i>
+        <div>
+          <div class="applied-title">Application sent</div>
+          <div class="applied-sub">You'll be notified if it's a match.</div>
+        </div>
+      </div>
+      <button class="btn-withdraw" onclick="withdrawApplication()">
+        Withdraw application
+      </button>
+    </div>
+  </div>
+
+</div><!-- /seeker-screen -->
+
+<script src="./js/main.js"></script>
+<script>
+  lucide.createIcons();
+
+  // Restore apply state
+  const applied = JSON.parse(localStorage.getItem('vovu_applied') || '{}');
+  const planId = new URLSearchParams(location.search).get('id') || 'plan-001';
+  if (applied[planId]) {
+    document.getElementById('apply-state').classList.add('hidden');
+    document.getElementById('applied-state').classList.remove('hidden');
+  }
+
+  // Animate bars on load
+  setTimeout(() => {
+    document.querySelectorAll('.compat-bar-anim, .vibe-bar-anim').forEach(bar => {
+      bar.style.transition = 'width 600ms ease';
+      bar.style.width = bar.dataset.target + '%';
+    });
+  }, 200);
+
+  function applyNow() {
+    const applied = JSON.parse(localStorage.getItem('vovu_applied') || '{}');
+    applied[planId] = true;
+    localStorage.setItem('vovu_applied', JSON.stringify(applied));
+    document.getElementById('apply-state').classList.add('hidden');
+    document.getElementById('applied-state').classList.remove('hidden');
+  }
+
+  function withdrawApplication() {
+    const applied = JSON.parse(localStorage.getItem('vovu_applied') || '{}');
+    delete applied[planId];
+    localStorage.setItem('vovu_applied', JSON.stringify(applied));
+    document.getElementById('applied-state').classList.add('hidden');
+    document.getElementById('apply-state').classList.remove('hidden');
+  }
+</script>
+</body>
+</html>

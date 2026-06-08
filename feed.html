@@ -10,153 +10,326 @@
 <body>
 <div class="feed-screen">
 
-  <header class="feed-header">
-    <div class="feed-header-row">
+  <!-- HEADER -->
+  <header class="feed-header" style="padding: 20px 16px 8px;">
+    <div class="feed-header-left">
+      <img src="./VOVU LOGO OFICIAL.png" alt="Vovu" width="32" height="32"
+           style="object-fit:contain;" onerror="this.style.display='none'">
       <div>
-        <div class="feed-title">Vovu</div>
-        <div class="campus-chip" style="margin-top:4px;">
-          <i data-lucide="shield-check" style="width:12px;height:12px;color:var(--success);"></i>
+        <h1 style="font-size:20px;margin:0;line-height:1;">Vovu</h1>
+        <div class="campus-chip" style="margin-top:3px;font-size:11px;">
+          <i data-lucide="shield-check" style="width:11px;height:11px;color:var(--success);"></i>
           kenyon.edu
         </div>
       </div>
-      <div class="plan-count" style="text-align:right;">
-        <span class="plan-count-num">4</span>
-        <span class="plan-count-label">plans for you</span>
-      </div>
+    </div>
+    <div class="feed-header-right">
+      <span class="count-big" id="plan-count">4</span>
+      <span class="count-label">plans for you</span>
     </div>
   </header>
 
-  <div class="feed-section-label">
-    <span class="section-label">Filtered to your vibe</span>
+  <!-- TABS -->
+  <div class="feed-tabs">
+    <button class="feed-tab active" id="tab-discover"
+            onclick="switchFeedTab('discover', this)">
+      <i data-lucide="compass" style="width:15px;height:15px;"></i>
+      Discover
+    </button>
+    <button class="feed-tab" id="tab-your-plans"
+            onclick="switchFeedTab('your-plans', this)">
+      <i data-lucide="bookmark" style="width:15px;height:15px;"></i>
+      Your plans
+      <span class="tab-badge">2</span>
+    </button>
   </div>
 
-  <div class="feed-cards">
+  <!-- FILTER PILLS (Discover only) -->
+  <div class="filter-row" id="filter-row">
+    <button class="filter-pill active" onclick="filterPlans('all', this)">
+      All
+    </button>
+    <button class="filter-pill" onclick="filterPlans('cafe', this)">
+      <i data-lucide="coffee" style="width:13px;height:13px;"></i>
+      Café
+    </button>
+    <button class="filter-pill" onclick="filterPlans('gym', this)">
+      <i data-lucide="dumbbell" style="width:13px;height:13px;"></i>
+      Gym
+    </button>
+    <button class="filter-pill" onclick="filterPlans('study', this)">
+      <i data-lucide="book-open" style="width:13px;height:13px;"></i>
+      Study
+    </button>
+    <button class="filter-pill" onclick="filterPlans('dining', this)">
+      <i data-lucide="utensils" style="width:13px;height:13px;"></i>
+      Dining
+    </button>
+  </div>
+
+  <!-- ══════════════════════════
+       DISCOVER SECTION
+       ══════════════════════════ -->
+  <div id="discover-section" style="padding: 0 16px;">
 
     <!-- Card 1: Café -->
-    <div class="plan-card card-enter" onclick="window.location.href='./plan.html'">
-      <div class="plan-card-top">
-        <div class="plan-card-left">
+    <div class="plan-card card-enter" data-activity="cafe" style="margin-bottom:12px;">
+      <div class="plan-card-top" style="margin-bottom:10px;">
+        <div class="plan-activity-row">
           <div class="activity-icon-circle">
             <i data-lucide="coffee"></i>
           </div>
           <div class="plan-info">
-            <div class="plan-title">Café</div>
+            <div class="plan-title">Café this afternoon</div>
             <div class="plan-meta">
               <i data-lucide="clock" style="width:12px;height:12px;"></i>
-              3–4pm
-              &nbsp;·&nbsp;
+              3–4 pm
+              <span class="meta-dot">·</span>
               <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
-              Near village coffee shop
+              Near the village
             </div>
           </div>
         </div>
-        <span class="badge-green">1 spot</span>
-      </div>
-      <div class="plan-note">"just want someone to sit and talk with"</div>
-      <div class="plan-card-footer">
-        <div class="applicant-dots">
-          <div class="app-dot filled">?</div>
-          <div class="app-dot empty"></div>
-          <span class="applied-count">1 applied</span>
+        <div class="plan-right-col">
+          <span class="match-badge">
+            <i data-lucide="zap" style="width:11px;height:11px;"></i>
+            82% match
+          </span>
+          <span class="spots-badge">1 spot</span>
         </div>
-        <button class="apply-btn" onclick="markApplied(event, this)">Apply</button>
+      </div>
+
+      <div class="plan-note" style="margin-bottom:12px;">
+        "just want someone to sit and talk with"
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <div class="poster-preview">
+          <div class="poster-initial-circle">J·</div>
+          <div class="poster-tags-preview">
+            <span class="tag-mini">Café</span>
+            <span class="tag-mini">Study</span>
+            <span class="tag-mini tag-more">+2</span>
+          </div>
+        </div>
+        <button class="btn-view-plan" onclick="openPlan('seeker', 'plan-001')">
+          View
+          <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+        </button>
       </div>
     </div>
 
-    <!-- Card 2: Dinner -->
-    <div class="plan-card card-enter" onclick="window.location.href='./plan.html'">
-      <div class="plan-card-top">
-        <div class="plan-card-left">
+    <!-- Card 2: Dining -->
+    <div class="plan-card card-enter" data-activity="dining" style="margin-bottom:12px;">
+      <div class="plan-card-top" style="margin-bottom:10px;">
+        <div class="plan-activity-row">
           <div class="activity-icon-circle">
             <i data-lucide="utensils"></i>
           </div>
           <div class="plan-info">
-            <div class="plan-title">Dinner</div>
+            <div class="plan-title">Dinner together</div>
             <div class="plan-meta">
               <i data-lucide="clock" style="width:12px;height:12px;"></i>
-              7–8pm
-              &nbsp;·&nbsp;
+              7–8 pm
+              <span class="meta-dot">·</span>
               <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
               North campus dining
             </div>
           </div>
         </div>
-        <span class="badge-green">1 spot</span>
-      </div>
-      <div class="plan-note">"always eat alone, looking for company"</div>
-      <div class="plan-card-footer">
-        <div class="applicant-dots">
-          <div class="app-dot filled">?</div>
-          <div class="app-dot filled">?</div>
-          <div class="app-dot empty"></div>
-          <span class="applied-count">2 applied</span>
+        <div class="plan-right-col">
+          <span class="match-badge">
+            <i data-lucide="zap" style="width:11px;height:11px;"></i>
+            74% match
+          </span>
+          <span class="spots-badge">1 spot</span>
         </div>
-        <button class="apply-btn" onclick="markApplied(event, this)">Apply</button>
+      </div>
+
+      <div class="plan-note" style="margin-bottom:12px;">
+        "always eat alone, looking for company"
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <div class="poster-preview">
+          <div class="poster-initial-circle">M·</div>
+          <div class="poster-tags-preview">
+            <span class="tag-mini">Dining</span>
+            <span class="tag-mini">Movies</span>
+            <span class="tag-mini tag-more">+1</span>
+          </div>
+        </div>
+        <button class="btn-view-plan" onclick="openPlan('seeker', 'plan-002')">
+          View
+          <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+        </button>
       </div>
     </div>
 
     <!-- Card 3: Gym -->
-    <div class="plan-card card-enter" onclick="window.location.href='./plan.html'">
-      <div class="plan-card-top">
-        <div class="plan-card-left">
+    <div class="plan-card card-enter" data-activity="gym" style="margin-bottom:12px;">
+      <div class="plan-card-top" style="margin-bottom:10px;">
+        <div class="plan-activity-row">
           <div class="activity-icon-circle">
             <i data-lucide="dumbbell"></i>
           </div>
           <div class="plan-info">
-            <div class="plan-title">Gym</div>
+            <div class="plan-title">Gym session</div>
             <div class="plan-meta">
               <i data-lucide="clock" style="width:12px;height:12px;"></i>
-              4:30–5:30pm
-              &nbsp;·&nbsp;
+              4:30–5:30 pm
+              <span class="meta-dot">·</span>
               <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
               Campus rec center
             </div>
           </div>
         </div>
-        <span class="badge-green">1 spot</span>
-      </div>
-      <div class="plan-card-footer">
-        <div class="applicant-dots">
-          <div class="app-dot empty"></div>
-          <span class="applied-count">0 applied</span>
+        <div class="plan-right-col">
+          <span class="match-badge">
+            <i data-lucide="zap" style="width:11px;height:11px;"></i>
+            68% match
+          </span>
+          <span class="spots-badge">1 spot</span>
         </div>
-        <button class="apply-btn" onclick="markApplied(event, this)">Apply</button>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <div class="poster-preview">
+          <div class="poster-initial-circle">R·</div>
+          <div class="poster-tags-preview">
+            <span class="tag-mini">Gym</span>
+            <span class="tag-mini">Café</span>
+          </div>
+        </div>
+        <button class="btn-view-plan" onclick="openPlan('seeker', 'plan-003')">
+          View
+          <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+        </button>
       </div>
     </div>
 
     <!-- Card 4: Study -->
-    <div class="plan-card card-enter" onclick="window.location.href='./plan.html'">
-      <div class="plan-card-top">
-        <div class="plan-card-left">
+    <div class="plan-card card-enter" data-activity="study" style="margin-bottom:12px;">
+      <div class="plan-card-top" style="margin-bottom:10px;">
+        <div class="plan-activity-row">
           <div class="activity-icon-circle">
             <i data-lucide="book-open"></i>
           </div>
           <div class="plan-info">
-            <div class="plan-title">Study</div>
+            <div class="plan-title">Study block</div>
             <div class="plan-meta">
               <i data-lucide="clock" style="width:12px;height:12px;"></i>
-              8–9pm
-              &nbsp;·&nbsp;
+              8–9 pm
+              <span class="meta-dot">·</span>
               <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
               Main library
             </div>
           </div>
         </div>
-        <span class="badge-green">1 spot</span>
-      </div>
-      <div class="plan-note">"orgo problem set, misery loves company"</div>
-      <div class="plan-card-footer">
-        <div class="applicant-dots">
-          <div class="app-dot filled">?</div>
-          <div class="app-dot filled">?</div>
-          <div class="app-dot empty"></div>
-          <span class="applied-count">2 applied</span>
+        <div class="plan-right-col">
+          <span class="match-badge">
+            <i data-lucide="zap" style="width:11px;height:11px;"></i>
+            79% match
+          </span>
+          <span class="spots-badge">1 spot</span>
         </div>
-        <button class="apply-btn" onclick="markApplied(event, this)">Apply</button>
+      </div>
+
+      <div class="plan-note" style="margin-bottom:12px;">
+        "orgo problem set, misery loves company"
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <div class="poster-preview">
+          <div class="poster-initial-circle">T·</div>
+          <div class="poster-tags-preview">
+            <span class="tag-mini">Study</span>
+            <span class="tag-mini">Café</span>
+            <span class="tag-mini tag-more">+1</span>
+          </div>
+        </div>
+        <button class="btn-view-plan" onclick="openPlan('seeker', 'plan-004')">
+          View
+          <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+        </button>
       </div>
     </div>
 
-  </div>
+  </div><!-- /discover-section -->
+
+  <!-- ══════════════════════════
+       YOUR PLANS SECTION
+       ══════════════════════════ -->
+  <div id="your-plans-section" class="hidden" style="padding: 0 16px;">
+
+    <!-- Active plan (poster view) -->
+    <div class="your-plan-card" onclick="openPlan('poster', 'your-plan-001')">
+      <div class="your-plan-top">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="activity-icon-circle activity-icon-owned">
+            <i data-lucide="coffee"></i>
+          </div>
+          <div>
+            <div class="plan-title" style="font-size:15px;">Café this afternoon</div>
+            <div class="plan-meta" style="margin-top:2px;">
+              <i data-lucide="clock" style="width:12px;height:12px;"></i>
+              3–4 pm · today
+            </div>
+          </div>
+        </div>
+        <span class="plan-status-badge status-active">
+          <i data-lucide="circle" style="width:8px;height:8px;fill:currentColor;"></i>
+          Active
+        </span>
+      </div>
+
+      <div class="applicants-preview-row">
+        <div class="applicant-initials-row">
+          <div class="applicant-bubble">J·</div>
+          <div class="applicant-bubble avatar-color-2">M·</div>
+          <div class="applicant-bubble avatar-color-3">R·</div>
+        </div>
+        <span class="applicants-waiting-text">3 people applied — waiting for you</span>
+      </div>
+
+      <button class="btn-review-applicants" onclick="openPlan('poster', 'your-plan-001')">
+        <i data-lucide="users" style="width:16px;height:16px;"></i>
+        Review applicants
+      </button>
+    </div>
+
+    <!-- Expired plan -->
+    <div class="your-plan-card your-plan-expired">
+      <div class="your-plan-top">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="activity-icon-circle">
+            <i data-lucide="book-open"></i>
+          </div>
+          <div>
+            <div class="plan-title" style="font-size:15px;">Study session</div>
+            <div class="plan-meta" style="margin-top:2px;">
+              <i data-lucide="clock" style="width:12px;height:12px;"></i>
+              8–9 pm · yesterday
+            </div>
+          </div>
+        </div>
+        <span class="plan-status-badge status-expired">
+          Expired
+        </span>
+      </div>
+      <p class="expired-note">This plan has passed. Post a new one to get more matches.</p>
+    </div>
+
+    <!-- Post CTA -->
+    <div class="post-cta-section">
+      <p class="post-cta-text">Want more connections? Post another plan.</p>
+      <a href="./post.html" class="btn-post-new">
+        <i data-lucide="plus" style="width:16px;height:16px;"></i>
+        Post a new plan
+      </a>
+    </div>
+
+  </div><!-- /your-plans-section -->
 
   <!-- Empty state -->
   <div class="feed-empty hidden" id="empty-state">
@@ -168,17 +341,6 @@
     <h3>No plans match your vibe yet.</h3>
     <p>Be the first to post one.</p>
     <a href="./post.html" class="btn-primary" style="width:160px; margin-top:8px;">Post a plan</a>
-  </div>
-
-  <!-- Error state -->
-  <div class="feed-empty hidden" id="error-state">
-    <img src="./public/Something-Went-Wrong--Streamline-Dhaka.png"
-         width="180" height="180"
-         loading="lazy"
-         style="object-fit:contain;"
-         onerror="this.style.display='none'">
-    <h3>Couldn't load plans.</h3>
-    <button class="btn-ghost" style="width:160px;">Try again</button>
   </div>
 
   <!-- Bottom Nav -->

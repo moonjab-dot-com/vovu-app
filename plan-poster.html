@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vovu — Your Plan</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+<div class="poster-screen">
+
+  <!-- PAGE HEADER -->
+  <header class="page-header" style="display:flex; align-items:center; gap:12px; padding:16px; border-bottom:1px solid var(--border);">
+    <button onclick="history.back()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; color:var(--forest);">
+      <i data-lucide="arrow-left" style="width:20px;height:20px;"></i>
+    </button>
+    <h1 style="font-size:17px; margin:0; font-family:var(--font-serif);">Your café plan</h1>
+  </header>
+
+  <div style="padding: 16px 16px 0;">
+
+    <!-- YOUR PLAN SUMMARY -->
+    <div class="your-plan-summary fade-up" style="margin-bottom:20px;">
+      <div class="your-plan-summary-inner">
+        <div class="activity-icon-circle activity-icon-owned">
+          <i data-lucide="coffee"></i>
+        </div>
+        <div style="flex:1; min-width:0;">
+          <div class="plan-title">Café this afternoon</div>
+          <div class="plan-private-detail">
+            <i data-lucide="map-pin" style="width:11px;height:11px;"></i>
+            Wiggin Street Coffee, back corner table · 3:15pm
+          </div>
+          <div class="plan-meta" style="margin-top:4px;">
+            <i data-lucide="lock" style="width:11px;height:11px;"></i>
+            Private — only shown after mutual yes
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPLICANTS HEADER -->
+    <div class="applicants-header-row fade-up" style="animation-delay:40ms;">
+      <h2 style="font-size:17px; margin:0;">Who applied</h2>
+      <span class="applicant-count-badge">3 applicants</span>
+    </div>
+
+    <div class="compare-hint fade-up" style="animation-delay:60ms; margin-top:8px;">
+      <i data-lucide="info" style="width:13px;height:13px; flex-shrink:0; margin-top:1px;"></i>
+      Review each person's vibe. Pass or pick — your choice, no pressure.
+    </div>
+
+    <!-- APPLICANTS STACK -->
+    <div class="applicants-stack" id="applicants-stack">
+
+      <!-- Applicant 1: J· -->
+      <div class="applicant-full-card fade-up" id="applicant-1" style="animation-delay:80ms;">
+        <div class="applicant-card-header">
+          <span class="applicant-number-badge">Applicant 1 of 3</span>
+          <span class="applicant-compat-badge">
+            <i data-lucide="zap" style="width:11px;height:11px;"></i>
+            82% match
+          </span>
+        </div>
+
+        <div class="applicant-identity-row">
+          <div class="applicant-avatar">J·</div>
+          <div>
+            <div class="applicant-anonymous">J· — Anonymous applicant</div>
+            <div class="applicant-reveal-note">
+              <i data-lucide="lock" style="width:11px;height:11px;"></i>
+              Full name after mutual yes
+            </div>
+          </div>
+        </div>
+
+        <div class="applicant-section">
+          <div class="applicant-section-label">
+            <i data-lucide="zap" style="width:11px;height:11px;"></i>
+            Activities
+          </div>
+          <div class="tags-row">
+            <span class="tag">Café</span>
+            <span class="tag">Study</span>
+            <span class="tag">Walks</span>
+            <span class="tag">Movies</span>
+          </div>
+        </div>
+
+        <div class="applicant-section">
+          <div class="applicant-section-label">
+            <i data-lucide="bar-chart-2" style="width:11px;height:11px;"></i>
+            Vibe
+          </div>
+          <div class="vibe-bars-list">
+            <div class="vibe-bar-row">
+              <span class="vibe-bar-label">Follows through</span>
+              <div class="bar-track" style="flex:1;">
+                <div class="bar-fill vibe-bar-anim" style="width:0;" data-target="80"></div>
+              </div>
+            </div>
+            <div class="vibe-bar-row">
+              <span class="vibe-bar-label">Open to new people</span>
+              <div class="bar-track" style="flex:1;">
+                <div class="bar-fill vibe-bar-anim" style="width:0;" data-target="65"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="applicant-section">
+          <div class="applicant-section-label">
+            <i data-lucide="heart" style="width:11px;height:11px;"></i>
+            Looking for
+          </div>
+          <span class="intent-chip">
+            <i data-lucide="users" style="width:12px;height:12px;"></i>
+            New friends honestly
+          </span>
+        </div>
+
+        <div class="applicant-section">
+          <div class="applicant-section-label">
+            <i data-lucide="sun" style="width:11px;height:11px;"></i>
+            Current vibe
+          </div>
+          <div class="current-vibe-text">"chaotic but thriving"</div>
+        </div>
+
+        <div class="compat-breakdown">
+          <div class="applicant-section-label">
+            <i data-lucide="check-circle" style="width:11px;height:11px;"></i>
+            Compatibility breakdown
+          </div>
+          <div class="compat-breakdown-grid">
+            <div class="compat-item compat-high">
+              <i data-lucide="check" style="width:12px;height:12px;"></i>
+              Same activities
+            </div>
+            <div class="compat-item compat-high">
+              <i data-lucide="check" style="width:12px;height:12px;"></i>
+              Similar energy
+            </div>
+            <div class="compat-item compat-med">
+              <i data-lucide="minus" style="width:12px;height:12px;"></i>
+              Different timing
+            </div>
+            <div class="compat-item compat-high">
+              <i data-lucide="check" style="width:12px;height:12px;"></i>
+              Same intent
+            </div>
+          </div>
+        </div>
+
+        <div class="applicant-decision-row">
+          <button class="btn-pass" onclick="passApplicant(1)">
+            <i data-lucide="x" style="width:15px;height:15px;"></i>
+            Pass
+          </button>
+          <button class="btn-yes-applicant" onclick="pickApplicant(1, 'J')">
+            <i data-lucide="heart-handshake" style="width:16px;height:16px;"></i>
+            Yes, it's a match
+          </button>
+        </div>
+      </div>
+
+      <!-- Applicant 2: M· -->
+      <div class="applicant-full-card fade-up" id="applicant-2" style="animation-delay:120ms;">
+        <div class="applicant-card-header">
+          <span class="applicant-number-badge">Applicant 2 of 3</span>
+          <span class="applicant-compat-badge compat-high-badge">
+            <i data-lucide="zap" style="width:11px;height:11px;"></i>
+            91% match
+          </span>
+        </div>
+
+        <div class="applicant-identity-row">
+          <div class="applicant-avatar avatar-color-2">M·</div>
+          <div>
+            <div class="applicant-anonymous">M· — Anonymous applicant</div>
+            <div class="applicant-reveal-note">
+              <i data-lucide="lock" style="width:11px;height:11px;"></i>
+              Full name after mutual yes
+            </div>
+          </div>
+        </div>
+
+        <div class="applicant-section">
+          <div class="applicant-section-label">
+            <i data-lucide="zap" style="width:11px;height:11px;"></i>
+            Activities
+          </div>
+          <div class="tags-row">
+            <span class="tag">Café</span>
+            <span class="tag">Off-campus</span>
+            <span class="tag">Movies</span>
+          </div>
+        </div>
+
+        <div class="applicant-section">
+          <div class="applicant-section-label">
+            <i data-lucide="bar-chart-2" style="width:11px;height:11px;"></i>
+            Vibe
+          </div>
+          <div class="vibe-bars-list">
+            <div class="vibe-bar-row">
+              <span class="vibe-bar-label">Follows through</span>
+              <div class="bar-track" style="flex:1;">
+                <div class="bar-fill vibe-bar-anim" style="width:0;" data-target="100"></div>
+              </div>
+            </div>
+            <div class="vibe-bar-row">
+              <span class="vibe-bar-label">Open to new people</span>
+              <div class="bar-track" style="flex:1;">
+                <div class="bar-fill vibe-bar-anim" style="width:0;" data-target="80"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="applicant-section">
+          <div class="applicant-section-label">
+            <i data-lucide="heart" style="width:11px;height:11px;"></i>
+            Looking for
+          </div>
+          <span class="intent-chip">
+            <i data-lucide="users" style="width:12px;height:12px;"></i>
+            Someone to do things with
+          </span>
+        </div>
+
+        <div class="applicant-section">
+          <div class="applicant-section-label">
+            <i data-lucide="sun" style="width:11px;height:11px;"></i>
+            Current vibe
+          </div>
+          <div class="current-vibe-text">"tired but present"</div>
+        </div>
+
+        <div class="compat-breakdown">
+          <div class="applicant-section-label">
+            <i data-lucide="check-circle" style="width:11px;height:11px;"></i>
+            Compatibility breakdown
+          </div>
+          <div class="compat-breakdown-grid">
+            <div class="compat-item compat-high">
+              <i data-lucide="check" style="width:12px;height:12px;"></i>
+              Same activities
+            </div>
+            <div class="compat-item compat-high">
+              <i data-lucide="check" style="width:12px;height:12px;"></i>
+              Similar energy
+            </div>
+            <div class="compat-item compat-high">
+              <i data-lucide="check" style="width:12px;height:12px;"></i>
+              Same timing
+            </div>
+            <div class="compat-item compat-high">
+              <i data-lucide="check" style="width:12px;height:12px;"></i>
+              Same intent
+            </div>
+          </div>
+        </div>
+
+        <div class="applicant-decision-row">
+          <button class="btn-pass" onclick="passApplicant(2)">
+            <i data-lucide="x" style="width:15px;height:15px;"></i>
+            Pass
+          </button>
+          <button class="btn-yes-applicant" onclick="pickApplicant(2, 'M')">
+            <i data-lucide="heart-handshake" style="width:16px;height:16px;"></i>
+            Yes, it's a match
+          </button>
+        </div>
+      </div>
+
+      <!-- Applicant 3: R· -->
+      <div class="applicant-full-card fade-up" id="applicant-3" style="animation-delay:160ms;">
+        <div class="applicant-card-header">
+          <span class="applicant-number-badge">Applicant 3 of 3</span>
+          <span class="applicant-compat-badge">
+            <i data-lucide="zap" style="width:11px;height:11px;"></i>
+            64% match
+          </span>
+        </div>
+
+        <div class="applicant-identity-row">
+          <div class="applicant-avatar avatar-color-3">R·</div>
+          <div>
+            <div class="applicant-anonymous">R· — Anonymous applicant</div>
+            <div class="applicant-reveal-note">
+              <i data-lucide="lock" style="width:11px;height:11px;"></i>
+              Full name after mutual yes
+            </div>
+          </div>
+        </div>
+
+        <div class="applicant-section">
+          <div class="applicant-section-label">
+            <i data-lucide="zap" style="width:11px;height:11px;"></i>
+            Activities
+          </div>
+          <div class="tags-row">
+            <span class="tag">Café</span>
+            <span class="tag">Gym</span>
+          </div>
+        </div>
+
+        <div class="applicant-section">
+          <div class="applicant-section-label">
+            <i data-lucide="bar-chart-2" style="width:11px;height:11px;"></i>
+            Vibe
+          </div>
+          <div class="vibe-bars-list">
+            <div class="vibe-bar-row">
+              <span class="vibe-bar-label">Follows through</span>
+              <div class="bar-track" style="flex:1;">
+                <div class="bar-fill vibe-bar-anim" style="width:0;" data-target="40"></div>
+              </div>
+            </div>
+            <div class="vibe-bar-row">
+              <span class="vibe-bar-label">Open to new people</span>
+              <div class="bar-track" style="flex:1;">
+                <div class="bar-fill vibe-bar-anim" style="width:0;" data-target="90"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="applicant-section" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
+          <div class="applicant-section-label">
+            <i data-lucide="sun" style="width:11px;height:11px;"></i>
+            Current vibe
+          </div>
+          <div class="current-vibe-text">"surviving finals week"</div>
+        </div>
+
+        <div class="compat-breakdown">
+          <div class="applicant-section-label">
+            <i data-lucide="check-circle" style="width:11px;height:11px;"></i>
+            Compatibility breakdown
+          </div>
+          <div class="compat-breakdown-grid">
+            <div class="compat-item compat-high">
+              <i data-lucide="check" style="width:12px;height:12px;"></i>
+              Same activities
+            </div>
+            <div class="compat-item compat-low">
+              <i data-lucide="x" style="width:12px;height:12px;"></i>
+              Different energy
+            </div>
+            <div class="compat-item compat-med">
+              <i data-lucide="minus" style="width:12px;height:12px;"></i>
+              Different timing
+            </div>
+            <div class="compat-item compat-med">
+              <i data-lucide="minus" style="width:12px;height:12px;"></i>
+              Similar intent
+            </div>
+          </div>
+        </div>
+
+        <div class="applicant-decision-row">
+          <button class="btn-pass" onclick="passApplicant(3)">
+            <i data-lucide="x" style="width:15px;height:15px;"></i>
+            Pass
+          </button>
+          <button class="btn-yes-applicant" onclick="pickApplicant(3, 'R')">
+            <i data-lucide="heart-handshake" style="width:16px;height:16px;"></i>
+            Yes, it's a match
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /applicants-stack -->
+
+    <!-- ALL PASSED STATE -->
+    <div class="all-passed-state hidden" id="all-passed-state">
+      <img src="./public/Searching--Streamline-Dhaka.png"
+           width="160" height="160"
+           loading="lazy"
+           style="object-fit:contain;"
+           onerror="this.style.display='none'">
+      <h2>No applicants left</h2>
+      <p>You've reviewed everyone who applied to this plan.</p>
+      <button class="btn-post-new" onclick="resetApplicants()" style="display:inline-flex; align-items:center; gap:8px; padding:12px 24px; background:var(--forest); color:var(--butter); border:none; border-radius:var(--r-md); font-size:14px; font-weight:500; cursor:pointer;">
+        <i data-lucide="refresh-cw" style="width:15px;height:15px;"></i>
+        Start over (demo)
+      </button>
+    </div>
+
+  </div><!-- /padding wrapper -->
+
+  <!-- WAITING OVERLAY -->
+  <div class="waiting-overlay hidden" id="waiting-overlay">
+    <div class="waiting-content">
+      <img src="./public/Patience--Streamline-Dhaka.png"
+           width="160" height="160"
+           loading="eager"
+           style="object-fit:contain;"
+           onerror="this.style.display='none'">
+      <h2 id="waiting-name">It's a match.</h2>
+      <p class="waiting-sub">Hang tight — we're revealing their name.<br>One moment.</p>
+      <div style="margin-top:24px; display:flex; justify-content:center;">
+        <div style="width:24px; height:24px; border:2px solid var(--butter); border-top-color:transparent; border-radius:50; animation:spin 800ms linear infinite;"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /poster-screen -->
+
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin-ring { animation: spin 800ms linear infinite; }
+</style>
+
+<script src="./js/main.js"></script>
+<script>
+  lucide.createIcons();
+
+  let passedCount = 0;
+  const totalApplicants = 3;
+
+  // Animate vibe bars on load
+  setTimeout(() => {
+    document.querySelectorAll('.vibe-bar-anim').forEach(bar => {
+      bar.style.transition = 'width 600ms ease';
+      bar.style.width = bar.dataset.target + '%';
+    });
+  }, 200);
+
+  function passApplicant(id) {
+    const card = document.getElementById('applicant-' + id);
+    if (!card) return;
+    card.style.opacity = '0';
+    card.style.transform = 'translateX(-20px)';
+    setTimeout(() => {
+      card.style.display = 'none';
+      passedCount++;
+      if (passedCount >= totalApplicants) {
+        document.getElementById('all-passed-state').classList.remove('hidden');
+      }
+    }, 300);
+  }
+
+  function pickApplicant(id, initial) {
+    const overlay = document.getElementById('waiting-overlay');
+    document.getElementById('waiting-name').textContent = 'It\'s a match with ' + initial + '·';
+    overlay.classList.remove('hidden');
+    setTimeout(() => {
+      window.location.href = './match.html';
+    }, 3000);
+  }
+
+  function resetApplicants() {
+    passedCount = 0;
+    document.getElementById('all-passed-state').classList.add('hidden');
+    [1, 2, 3].forEach(id => {
+      const card = document.getElementById('applicant-' + id);
+      if (card) {
+        card.style.display = '';
+        card.style.opacity = '1';
+        card.style.transform = '';
+      }
+    });
+  }
+</script>
+</body>
+</html>

@@ -7,32 +7,25 @@
 function handleWaitlist(e) {
   if (e) e.preventDefault();
   const emailInput = document.getElementById('waitlist-email');
-  const errorEl = document.getElementById('waitlist-error');
-  const form = document.getElementById('waitlist-form');
-  const success = document.getElementById('success-state');
+  const errorEl   = document.getElementById('waitlist-error');
+  const form      = document.getElementById('waitlist-form');
+  const success   = document.getElementById('success-state');
   if (!emailInput) return;
 
   const email = emailInput.value.trim();
   if (!email.includes('@') || !email.toLowerCase().endsWith('.edu')) {
     emailInput.classList.remove('shake');
-    void emailInput.offsetWidth; // reflow to restart animation
+    void emailInput.offsetWidth;
     emailInput.classList.add('shake');
-    if (errorEl) {
-      errorEl.textContent = 'Please use your .edu email address.';
-      errorEl.classList.remove('hidden');
-    }
+    if (errorEl) { errorEl.textContent = 'Please use your .edu email address.'; errorEl.classList.remove('hidden'); }
     return;
   }
 
   if (errorEl) errorEl.classList.add('hidden');
-
-  // Save to localStorage
   const list = JSON.parse(localStorage.getItem('vovu_waitlist') || '[]');
-  const campus = email.split('@')[1];
-  list.push({ email, campus, ts: Date.now() });
+  list.push({ email, campus: email.split('@')[1], ts: Date.now() });
   localStorage.setItem('vovu_waitlist', JSON.stringify(list));
-
-  if (form) form.classList.add('hidden');
+  if (form)    form.classList.add('hidden');
   if (success) success.classList.remove('hidden');
 }
 
@@ -71,14 +64,14 @@ const campusMap = {
 };
 
 function onEmailInput() {
-  const input = document.getElementById('email-input');
+  const input   = document.getElementById('email-input');
   const confirm = document.getElementById('campus-confirm');
+  const nameEl  = document.getElementById('campus-name-text');
   if (!input || !confirm) return;
   const email = input.value.trim().toLowerCase();
   if (email.includes('@') && email.endsWith('.edu')) {
     const domain = email.split('@')[1];
-    const name = campusMap[domain] || domain;
-    confirm.innerHTML = `<span class="campus-dot"></span><span>${name} detected</span>`;
+    if (nameEl) nameEl.textContent = (campusMap[domain] || domain) + ' detected';
     confirm.classList.remove('hidden');
   } else {
     confirm.classList.add('hidden');
@@ -86,8 +79,8 @@ function onEmailInput() {
 }
 
 function handleLogin() {
-  const input = document.getElementById('email-input');
-  const errorEl = document.getElementById('email-error');
+  const input     = document.getElementById('email-input');
+  const errorEl   = document.getElementById('email-error');
   const loginForm = document.getElementById('login-form');
   const sentState = document.getElementById('sent-state');
   const sentEmail = document.getElementById('sent-email');
@@ -98,19 +91,15 @@ function handleLogin() {
     input.classList.remove('shake');
     void input.offsetWidth;
     input.classList.add('shake');
-    if (errorEl) {
-      errorEl.textContent = 'Please use your .edu email.';
-      errorEl.classList.remove('hidden');
-    }
+    if (errorEl) { errorEl.textContent = 'Please use your .edu email.'; errorEl.classList.remove('hidden'); }
     return;
   }
 
-  localStorage.setItem('vovu_email', email);
+  localStorage.setItem('vovu_email',  email);
   localStorage.setItem('vovu_campus', email.split('@')[1]);
-
-  if (sentEmail) sentEmail.textContent = email;
-  if (loginForm) loginForm.classList.add('hidden');
-  if (sentState) sentState.classList.remove('hidden');
+  if (sentEmail)  sentEmail.textContent = email;
+  if (loginForm)  loginForm.classList.add('hidden');
+  if (sentState)  sentState.classList.remove('hidden');
 }
 
 // =============================================
@@ -141,7 +130,6 @@ function showStep(n) {
 
 function nextStep() {
   if (currentStep === totalSteps) {
-    // Save and go to feed
     const profile = JSON.parse(localStorage.getItem('vovu_profile') || '{}');
     Object.assign(profile, answers);
     localStorage.setItem('vovu_profile', JSON.stringify(profile));
@@ -159,9 +147,7 @@ function prevStep() {
 
 function selectOption(btn, key, value) {
   const group = btn.closest('.options-group');
-  if (group) {
-    group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-  }
+  if (group) group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   answers[key] = value;
 }
@@ -173,7 +159,11 @@ function toggleActivity(btn, activity) {
   if (idx === -1) answers.activities.push(activity);
   else answers.activities.splice(idx, 1);
   const counter = document.getElementById('activity-counter');
-  if (counter) counter.textContent = answers.activities.length + ' selected';
+  if (counter) {
+    const n = answers.activities.length;
+    counter.textContent = n + ' selected';
+    counter.className = 'activity-counter' + (n > 0 ? ' has-selection' : '');
+  }
 }
 
 function toggleTime(btn, time) {
@@ -189,17 +179,15 @@ function updateSlider(input, dotContainerId, key) {
   const container = document.getElementById(dotContainerId);
   if (!container) return;
   const dots = container.querySelectorAll('.dot');
-  dots.forEach((dot, i) => {
-    dot.classList.toggle('filled', i < parseInt(input.value));
-  });
+  dots.forEach((dot, i) => dot.classList.toggle('filled', i < parseInt(input.value)));
 }
 
 // =============================================
 // FEED (feed.html)
 // =============================================
 
-function markApplied(btn) {
-  event.stopPropagation();
+function markApplied(e, btn) {
+  e.stopPropagation();
   btn.textContent = '✓ Applied';
   btn.classList.add('applied');
   btn.disabled = true;
@@ -209,7 +197,7 @@ function markApplied(btn) {
 // POST (post.html)
 // =============================================
 
-let postData = { activity: null, zone: null, time: null };
+let postData = { activity: null, zone: null };
 
 function selectActivity(btn, activity) {
   document.querySelectorAll('.post-activity-btn').forEach(b => b.classList.remove('selected'));
@@ -222,6 +210,8 @@ function selectZone(chip) {
   document.querySelectorAll('.suggestion-chip').forEach(c => c.classList.remove('selected'));
   chip.classList.add('selected');
   postData.zone = chip.textContent;
+  const customInput = document.getElementById('zone-custom');
+  if (customInput) customInput.value = '';
   checkPostReady();
 }
 
@@ -234,60 +224,50 @@ function selectSpot(btn, n) {
 function checkPostReady() {
   const submitBtn = document.getElementById('submit-plan-btn');
   if (!submitBtn) return;
-  const timeEl = document.getElementById('time-select');
+  const timeEl  = document.getElementById('time-select');
   const timeVal = timeEl ? timeEl.value : '';
-  const ready = postData.activity && postData.zone && timeVal;
-  submitBtn.disabled = !ready;
+  submitBtn.disabled = !(postData.activity && postData.zone && timeVal);
 }
 
 function submitPlan() {
-  const form = document.getElementById('post-form');
+  const form    = document.getElementById('post-form');
   const success = document.getElementById('post-success');
-  if (form) form.classList.add('hidden');
-  const bar = document.querySelector('.submit-bar');
-  if (bar) bar.classList.add('hidden');
+  const bar     = document.getElementById('submit-bar');
+  if (form)    form.classList.add('hidden');
+  if (bar)     bar.classList.add('hidden');
   if (success) success.classList.remove('hidden');
 }
 
 function updateNoteCounter() {
   const textarea = document.getElementById('plan-note');
-  const counter = document.getElementById('note-counter');
+  const counter  = document.getElementById('note-counter');
   if (!textarea || !counter) return;
-  counter.textContent = textarea.value.length + '/120';
-  if (textarea.value.length > 120) {
-    textarea.value = textarea.value.slice(0, 120);
-    counter.textContent = '120/120';
-  }
+  if (textarea.value.length > 120) textarea.value = textarea.value.slice(0, 120);
+  const n = textarea.value.length;
+  counter.textContent = n + '/120';
+  counter.className = 'char-counter' + (n >= 100 ? ' danger' : n >= 80 ? ' warn' : '');
 }
 
-// Init on DOM ready
+// =============================================
+// INIT
+// =============================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Onboarding init
-  if (document.getElementById('steps-wrapper')) {
-    showStep(1);
-  }
+  // Onboarding
+  if (document.getElementById('steps-wrapper')) showStep(1);
 
   // Waitlist form
   const waitlistForm = document.getElementById('waitlist-form');
-  if (waitlistForm) {
-    waitlistForm.addEventListener('submit', handleWaitlist);
-  }
+  if (waitlistForm) waitlistForm.addEventListener('submit', handleWaitlist);
 
-  // Login email input live detection
+  // Login email input
   const emailInput = document.getElementById('email-input');
-  if (emailInput) {
-    emailInput.addEventListener('input', onEmailInput);
-  }
+  if (emailInput) emailInput.addEventListener('input', onEmailInput);
 
-  // Post page time select
+  // Post time select
   const timeSelect = document.getElementById('time-select');
-  if (timeSelect) {
-    timeSelect.addEventListener('change', checkPostReady);
-  }
+  if (timeSelect) timeSelect.addEventListener('change', checkPostReady);
 
   // Note textarea counter
   const noteTextarea = document.getElementById('plan-note');
-  if (noteTextarea) {
-    noteTextarea.addEventListener('input', updateNoteCounter);
-  }
+  if (noteTextarea) noteTextarea.addEventListener('input', updateNoteCounter);
 });

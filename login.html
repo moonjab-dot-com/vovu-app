@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vovu — Sign in</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<div class="login-screen">
+
+  <!-- Illustration -->
+  <img src="./public/Welcome--Streamline-Dhaka.png"
+       width="200" height="200"
+       class="fade-in"
+       style="object-fit:contain; margin-bottom:24px;"
+       onerror="this.style.display='none'">
+
+  <!-- Wordmark -->
+  <div class="wordmark fade-in-delay-1">
+    <img src="./public/VOVU LOGO OFICIAL.png"
+         width="44" height="44"
+         onerror="this.style.display='none'">
+    <span>Vovu</span>
+  </div>
+
+  <!-- Tagline -->
+  <p class="tagline fade-in-delay-2">Plans that find you.</p>
+
+  <!-- Form Card -->
+  <div class="form-card fade-in-delay-3" id="login-form">
+    <label for="email-input">School email</label>
+    <input type="email" id="email-input"
+           class="input"
+           placeholder="you@university.edu"
+           autocomplete="email"
+           style="margin-bottom:0;">
+
+    <div id="campus-confirm" class="campus-confirm hidden">
+      <span class="campus-dot"></span>
+      <span id="campus-name-text"></span>
+    </div>
+
+    <p id="email-error" class="error-text hidden"></p>
+
+    <button id="send-btn"
+            class="btn btn-primary btn-full"
+            style="margin-top:16px;"
+            onclick="handleLogin()">
+      Send me a link →
+    </button>
+  </div>
+
+  <!-- Sent state (hidden initially) -->
+  <div id="sent-state" class="sent-state hidden">
+    <img src="./public/Enter-Your-Password--Streamline-Dhaka.png"
+         width="200" height="200"
+         style="object-fit:contain; margin:0 auto;"
+         onerror="this.style.display='none'">
+    <h2>Check your inbox</h2>
+    <p>We sent a link to <strong id="sent-email" style="color:var(--forest);"></strong></p>
+    <p class="expiry">Expires in 15 minutes.</p>
+  </div>
+
+  <!-- Demo skip -->
+  <a href="./onboarding.html" class="demo-link fade-in-delay-3">Skip for demo →</a>
+
+</div>
+
+<script src="./js/main.js"></script>
+<script src="./js/nav.js"></script>
+</body>
+</html>

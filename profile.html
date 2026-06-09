@@ -24,13 +24,13 @@
     <div class="skeleton skeleton-d2" style="height:120px; border-radius:var(--r-lg);"></div>
   </div>
 
-  <!-- No-profile banner (shown if onboarding not completed) -->
-  <div id="no-profile-banner" class="hidden" style="margin:0 16px 12px;">
+  <!-- Complete-profile banner (shown when onboarding not done) -->
+  <div id="complete-profile-banner" class="hidden" style="margin:0 16px 12px;">
     <div style="background:var(--forest); color:var(--butter); border-radius:var(--r-lg); padding:16px 20px; display:flex; align-items:center; gap:12px;">
       <i data-lucide="alert-circle" style="width:20px;height:20px; flex-shrink:0;"></i>
       <div style="flex:1;">
         <div style="font-weight:600; font-size:14px; margin-bottom:4px;">Complete your profile to start matching</div>
-        <div style="font-size:13px; opacity:0.8;">Answer 22 quick questions so others can see your vibe.</div>
+        <div style="font-size:13px; opacity:0.8;">Answer a few quick questions so others can see your vibe.</div>
       </div>
       <a href="./onboarding.html" style="background:var(--butter); color:var(--forest); border-radius:var(--r-md); padding:8px 14px; font-size:13px; font-weight:600; white-space:nowrap; text-decoration:none;">Start</a>
     </div>
@@ -46,12 +46,12 @@
           <div class="avatar avatar-anon avatar-large" id="avatar-initial">?</div>
           <div class="campus-chip">
             <i data-lucide="shield-check" style="width:12px;height:12px;color:var(--success);"></i>
-            <span id="campus-chip-text">…</span>
+            <span id="profile-campus">…</span>
           </div>
         </div>
         <div class="identity-right">
-          <h2 id="user-name">…</h2>
-          <p id="user-email" style="font-size:13px; color:var(--sage);">…</p>
+          <h2 id="profile-name">…</h2>
+          <p id="profile-email" style="font-size:13px; color:var(--sage);">…</p>
         </div>
       </div>
       <img src="./public/Leadership--Streamline-Dhaka.png"
@@ -62,7 +62,7 @@
            onerror="this.style.display='none'">
     </div>
 
-    <!-- How others see you -->
+    <!-- Anonymous card preview -->
     <div class="profile-section card fade-up-d1" style="margin:12px 16px 0;">
       <div class="profile-section-header">
         <span class="section-label">How others see you</span>
@@ -81,18 +81,18 @@
           <span class="badge-you">You</span>
         </div>
 
-        <div class="tags-row" id="preview-activities" style="margin-bottom:14px;"></div>
+        <div class="tags-row" id="activity-tags" style="margin-bottom:14px;"></div>
 
         <div class="bar-row">
           <span class="bar-label">Follows through</span>
           <div class="bar-track">
-            <div class="bar-fill" id="follow-through-bar" style="width:60%;"></div>
+            <div class="bar-fill" id="bar-follow-through" style="width:60%;"></div>
           </div>
         </div>
         <div class="bar-row">
           <span class="bar-label">Open to new people</span>
           <div class="bar-track">
-            <div class="bar-fill" id="openness-bar" style="width:60%;"></div>
+            <div class="bar-fill" id="bar-openness" style="width:60%;"></div>
           </div>
         </div>
       </div>
@@ -104,7 +104,30 @@
         <span class="section-label">Your vibe</span>
         <a href="./onboarding.html?edit=true" class="edit-link">Edit</a>
       </div>
-      <div class="tags-row" id="vibe-activities" style="margin-top:14px;"></div>
+
+      <!-- Intent -->
+      <div style="margin-bottom:14px;">
+        <div class="section-label" style="margin-bottom:6px;">Looking for</div>
+        <div id="profile-intent" style="font-size:14px; color:var(--forest);">—</div>
+      </div>
+
+      <!-- Current vibe -->
+      <div style="margin-bottom:14px;">
+        <div class="section-label" style="margin-bottom:6px;">Right now</div>
+        <div id="profile-current-vibe" class="current-vibe-text">—</div>
+      </div>
+
+      <!-- Semester goal -->
+      <div style="margin-bottom:14px;">
+        <div class="section-label" style="margin-bottom:6px;">Before this semester ends</div>
+        <div id="profile-semester-goal" style="font-size:14px; color:var(--forest); font-style:italic;">—</div>
+      </div>
+
+      <!-- Interests -->
+      <div>
+        <div class="section-label" style="margin-bottom:8px;">Could talk for hours about</div>
+        <div class="tags-row" id="profile-interests"></div>
+      </div>
     </div>
 
     <!-- Privacy -->
@@ -127,6 +150,35 @@
         Sign out
       </button>
     </div>
+
+    <footer class="site-footer footer-with-nav">
+      <div class="footer-inner">
+        <div class="footer-grid">
+          <div>
+            <div class="footer-col-label">Company</div>
+            <a href="#" class="footer-link">About</a>
+            <a href="#" class="footer-link">Blog</a>
+            <a href="#" class="footer-link">Careers</a>
+          </div>
+          <div>
+            <div class="footer-col-label">Legal</div>
+            <a href="#" class="footer-link">Privacy</a>
+            <a href="#" class="footer-link">Terms</a>
+            <a href="#" class="footer-link">Cookies</a>
+          </div>
+          <div>
+            <div class="footer-col-label">Support</div>
+            <a href="#" class="footer-link">Help center</a>
+            <a href="#" class="footer-link">Contact</a>
+            <a href="#" class="footer-link">Safety</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span class="footer-brand-text">Vovu</span>
+          <span class="footer-tagline">© 2025 Vovu · Making campus less lonely</span>
+        </div>
+      </div>
+    </footer>
 
   </div><!-- /profile-content -->
 
@@ -153,13 +205,22 @@
 <script>
 lucide.createIcons();
 
-const ACTIVITY_LABELS_PROFILE = {
+const ACTIVITY_LABELS_MAP = {
   cafe: 'Café', food: 'Dining hall', gym: 'Gym', study: 'Study',
   walk: 'Walk', movie: 'Movie', sports: 'Sports', offcampus: 'Off-campus',
   party: 'Party', other: 'Other'
 };
 
-window.addEventListener('load', async () => {
+const INTENT_LABELS_MAP = {
+  things_together: 'Someone to do things with',
+  study_partner:   'A study partner',
+  off_phone:       'Just to get off my phone',
+  new_friends:     'New friends, honestly'
+};
+
+window.addEventListener('load', initProfile);
+
+async function initProfile() {
   const session = await Auth.getSession();
   if (!session) { window.location.href = './login.html'; return; }
 
@@ -171,62 +232,82 @@ window.addEventListener('load', async () => {
 
   try {
     const [user, profile] = await Promise.all([
-      DB.getUser(window.currentUser.id),
+      DB.getUser(window.currentUser.id).catch(() => null),
       DB.getProfile(window.currentUser.id)
     ]);
 
     document.getElementById('profile-skeleton').classList.add('hidden');
-    populateProfile(user, profile);
+    populateProfileContent(user, profile);
   } catch (err) {
     console.error('Profile load error:', err);
     document.getElementById('profile-skeleton').classList.add('hidden');
-    // Still show something
-    populateProfile({ email: window.currentUser.email, campus: window.currentUser.campus }, null);
+    populateProfileContent(null, null);
   }
-});
+}
 
-function populateProfile(user, profile) {
-  const email    = user.email || window.currentUser.email;
-  const campus   = user.campus || window.currentUser.campus;
-  const firstName = user.first_name || email.split('@')[0].split('.')[0];
-  const initial  = firstName.charAt(0).toUpperCase();
+function populateProfileContent(user, profile) {
+  const email     = (user && user.email) || window.currentUser.email;
+  const campus    = (user && user.campus) || window.currentUser.campus;
+  const emailUser = email.split('@')[0];
+  const firstName = (user && user.first_name)
+    || (emailUser.split('.')[0].charAt(0).toUpperCase() + emailUser.split('.')[0].slice(1));
+  const initial   = firstName.charAt(0).toUpperCase();
 
-  // Identity card
-  document.getElementById('avatar-initial').textContent    = initial;
-  document.getElementById('campus-chip-text').textContent  = campus;
-  document.getElementById('user-name').textContent         = firstName;
-  document.getElementById('user-email').textContent        = email;
+  // Identity
+  document.getElementById('avatar-initial').textContent   = initial;
+  document.getElementById('profile-campus').textContent   = campus;
+  document.getElementById('profile-name').textContent     = firstName;
+  document.getElementById('profile-email').textContent    = email;
+  document.getElementById('preview-avatar').textContent   = initial;
+  document.getElementById('preview-anon-label').textContent = initial + '· — Anonymous applicant';
 
-  if (!profile) {
-    // No profile yet — show banner and limited view
-    document.getElementById('no-profile-banner').classList.remove('hidden');
-    // Still show identity card but with no activity data
-    document.getElementById('preview-avatar').textContent      = initial;
-    document.getElementById('preview-anon-label').textContent  = initial + '· — Anonymous applicant';
-    document.getElementById('profile-content').classList.remove('hidden');
+  // Show content
+  document.getElementById('profile-content').classList.remove('hidden');
+
+  // No profile yet → show banner, skip the rest
+  if (!profile || !(profile.activities && profile.activities.length > 0)) {
+    document.getElementById('complete-profile-banner').classList.remove('hidden');
     lucide.createIcons();
     return;
   }
 
-  // Preview card
-  document.getElementById('preview-avatar').textContent      = initial;
-  document.getElementById('preview-anon-label').textContent  = initial + '· — Anonymous applicant';
-
-  // Activities (preview + vibe section)
+  // Activity tags
   const acts = profile.activities || [];
   const actHtml = acts.map(a =>
-    `<span class="tag">${ACTIVITY_LABELS_PROFILE[a] || a}</span>`
+    `<span class="tag">${ACTIVITY_LABELS_MAP[a] || a}</span>`
   ).join('');
-  document.getElementById('preview-activities').innerHTML = actHtml;
-  document.getElementById('vibe-activities').innerHTML    = actHtml;
+  document.getElementById('activity-tags').innerHTML = actHtml;
 
-  // Bars
+  // Vibe bars
   const ftPct = Math.round((profile.follow_through || 3) / 5 * 100);
   const opPct = Math.round((profile.openness       || 3) / 5 * 100);
-  document.getElementById('follow-through-bar').style.width = ftPct + '%';
-  document.getElementById('openness-bar').style.width       = opPct + '%';
+  document.getElementById('bar-follow-through').style.width = ftPct + '%';
+  document.getElementById('bar-openness').style.width       = opPct + '%';
 
-  document.getElementById('profile-content').classList.remove('hidden');
+  // Intent
+  if (profile.intent) {
+    document.getElementById('profile-intent').textContent =
+      INTENT_LABELS_MAP[profile.intent] || profile.intent;
+  }
+
+  // Current vibe
+  if (profile.current_vibe) {
+    document.getElementById('profile-current-vibe').textContent = profile.current_vibe;
+  }
+
+  // Semester goal
+  if (profile.semester_goal) {
+    document.getElementById('profile-semester-goal').textContent = profile.semester_goal;
+  }
+
+  // Interests
+  if (profile.interests && profile.interests.length > 0) {
+    document.getElementById('profile-interests').innerHTML =
+      profile.interests.map(i =>
+        `<span class="tag">${i.charAt(0).toUpperCase() + i.slice(1)}</span>`
+      ).join('');
+  }
+
   lucide.createIcons();
 }
 </script>

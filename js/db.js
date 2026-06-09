@@ -109,6 +109,17 @@ const DB = {
   },
 
   async createPlan(planData) {
+    // ── FK guard: ensure public.users row exists before inserting plan ──
+    // plans.creator_id → users.id; if the row is missing the INSERT fails.
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) throw new Error('Not authenticated');
+    await sb
+      .from('users')
+      .upsert(
+        { id: session.user.id, email: session.user.email, campus: planData.campus },
+        { onConflict: 'id' }
+      );
+
     // Enforce max 2 active plans per user
     const { count, error: countErr } = await sb
       .from('plans')
@@ -117,6 +128,7 @@ const DB = {
       .eq('is_active', true);
     if (countErr) throw countErr;
     if (count >= 2) { const e = new Error('MAX_PLANS'); e.code = 'MAX_PLANS'; throw e; }
+
     const { data, error } = await sb.from('plans').insert(planData).select().single();
     if (error) throw error;
     return data;

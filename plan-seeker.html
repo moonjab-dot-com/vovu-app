@@ -31,6 +31,25 @@
   <!-- Real content -->
   <div id="seeker-content" class="hidden" style="padding: 16px 16px 120px;">
 
+    <!-- Creator said YES screen — shown when poster picked this applicant -->
+    <div id="creator-said-yes" class="creator-yes-screen hidden" style="display:none;">
+      <img src="./public/I-Have-A-Question--Streamline-Dhaka.png"
+           width="140" height="140"
+           loading="lazy"
+           style="object-fit:contain; margin:0 auto;"
+           onerror="this.style.display='none'">
+      <h2>Someone said yes to you.</h2>
+      <p>Do you want to go? If you say yes, you'll both see each other's first name and the exact plan details.</p>
+      <button class="btn-primary btn-yes-confirm" id="applicant-yes-btn"
+              onclick="applicantConfirmsYes()">
+        <i data-lucide="heart-handshake"></i>
+        Yes, I'm in
+      </button>
+      <button class="btn-outline btn-decline" onclick="applicantDeclines()">
+        Not this time
+      </button>
+    </div>
+
     <div class="plan-summary-card card fade-up" style="padding:16px; margin-bottom:16px;">
       <div class="plan-summary-top">
         <div class="activity-icon-circle" id="plan-act-icon"><i data-lucide="calendar"></i></div>
@@ -160,6 +179,7 @@
 lucide.createIcons();
 
 const planId = new URLSearchParams(location.search).get('id');
+let currentAppId = null; // set when creator says YES — needed for applicantConfirmsYes/Declines
 
 window.addEventListener('load', async () => {
   const session = await Auth.getSession();
@@ -288,10 +308,23 @@ function populatePage(plan, cp, myProfile) {
 }
 
 function showApplyState(myApp) {
-  if (myApp && (myApp.status === 'pending' || myApp.status === 'yes_creator')) {
+  if (!myApp) return; // no application — default: apply button visible
+
+  if (myApp.status === 'yes_creator') {
+    // Creator picked this applicant — show the YES confirmation screen
+    currentAppId = myApp.id;
+    document.getElementById('apply-state').classList.add('hidden');
+    document.getElementById('applied-state').classList.add('hidden');
+    document.getElementById('action-bar').style.display = 'none';
+    showCreatorYesScreen();
+  } else if (myApp.status === 'pending') {
     document.getElementById('apply-state').classList.add('hidden');
     document.getElementById('applied-state').classList.remove('hidden');
+  } else if (myApp.status === 'declined') {
+    // Application was declined — just hide the apply button silently
+    document.getElementById('apply-state').classList.add('hidden');
   }
+  // 'matched' is handled by the redirect in loadPlan before we reach here
 }
 
 function showError() {
@@ -303,10 +336,77 @@ async function applyNow() {
   const btn = document.getElementById('apply-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner spinner-butter" style="width:18px;height:18px;border-width:2px;"></span>';
+
   try {
-    await DB.applyToPlan(planId, window.currentUser.id);
+    // 1. Validate plan ID
+    if (!planId) throw new Error('No plan ID in URL.');
+
+    // 2. Fresh session
+    const { data: { session }, error: sessErr } = await sb.auth.getSession();
+    if (sessErr || !session) { window.location.href = './login.html'; return; }
+
+    const applicantId = session.user.id;
+    const email       = session.user.email;
+    const campus      = email.split('@')[1];
+    const emailUser   = email.split('@')[0];
+    const firstName   = emailUser.split('.')[0].charAt(0).toUpperCase()
+                      + emailUser.split('.')[0].slice(1);
+
+    // 3. Ensure user row exists (first_name + verified required)
+    await sb.from('users').upsert(
+      { id: applicantId, email, campus, first_name: firstName, verified: true },
+      { onConflict: 'id', ignoreDuplicates: false }
+    );
+
+    // 4. Verify the plan still exists and is active
+    //    This explicit check prevents PLAN_NOT_FOUND from a trigger or RLS sub-query
+    const { data: plan, error: planErr } = await sb
+      .from('plans')
+      .select('id, creator_id, is_active, is_matched, spots')
+      .eq('id', planId)
+      .maybeSingle();
+
+    console.log('Plan check:', plan, planErr);
+
+    if (planErr) throw planErr;
+
+    if (!plan) {
+      throw new Error('This plan is no longer available.');
+    }
+    if (!plan.is_active || plan.is_matched) {
+      throw new Error('This plan has already been matched.');
+    }
+    if (plan.creator_id === applicantId) {
+      throw new Error('You cannot apply to your own plan.');
+    }
+
+    // 5. Check for existing application
+    const { data: existing } = await sb
+      .from('applications')
+      .select('id, status')
+      .eq('plan_id', planId)
+      .eq('applicant_id', applicantId)
+      .maybeSingle();
+
+    if (existing) {
+      // Already applied — just show the applied state
+      document.getElementById('apply-state').classList.add('hidden');
+      document.getElementById('applied-state').classList.remove('hidden');
+      return;
+    }
+
+    // 6. Insert application
+    const { error: appErr } = await sb
+      .from('applications')
+      .insert({ plan_id: planId, applicant_id: applicantId, status: 'pending' });
+
+    if (appErr) throw appErr;
+
+    // 7. Success
     document.getElementById('apply-state').classList.add('hidden');
     document.getElementById('applied-state').classList.remove('hidden');
+    if (window.showToast) showToast('Applied anonymously');
+
   } catch (err) {
     console.error('Apply error:', err);
     btn.disabled = false;
@@ -327,6 +427,60 @@ async function withdrawNow() {
     lucide.createIcons();
   } catch (err) {
     if (window.showToast) showToast('Could not withdraw. Try again.', 'error');
+  }
+}
+
+// ── Bug 5: YES mechanic — applicant confirmation ──────────────────────
+
+function showCreatorYesScreen() {
+  const screen = document.getElementById('creator-said-yes');
+  if (screen) {
+    screen.classList.remove('hidden');
+    screen.style.display = 'block';
+    lucide.createIcons();
+  }
+}
+
+async function applicantConfirmsYes() {
+  const yesBtn = document.getElementById('applicant-yes-btn');
+  if (yesBtn) {
+    yesBtn.disabled = true;
+    yesBtn.innerHTML = '<span class="spinner spinner-butter" style="width:18px;height:18px;border-width:2px;"></span> Confirming…';
+  }
+
+  try {
+    // Call createMatch — the RPC atomically creates the match row,
+    // updates application to 'matched', and marks the plan as inactive.
+    const matchId = await DB.createMatch(currentAppId);
+    window.location.href = './match.html?id=' + matchId;
+  } catch (err) {
+    console.error('Applicant YES error:', err);
+    if (yesBtn) {
+      yesBtn.disabled = false;
+      yesBtn.innerHTML = '<i data-lucide="heart-handshake"></i> Yes, I\'m in';
+      lucide.createIcons();
+    }
+    if (window.showToast) showToast(err.message || 'Something went wrong. Try again.', 'error');
+  }
+}
+
+async function applicantDeclines() {
+  try {
+    await DB.updateApplication(currentAppId, 'declined');
+    // Hide YES screen, show normal apply button
+    const screen = document.getElementById('creator-said-yes');
+    if (screen) { screen.classList.add('hidden'); screen.style.display = 'none'; }
+    document.getElementById('action-bar').style.display = '';
+    document.getElementById('apply-state').classList.remove('hidden');
+    const btn = document.getElementById('apply-btn');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i data-lucide="send" style="width:16px;height:16px;"></i> Apply anonymously';
+      lucide.createIcons();
+    }
+    if (window.showToast) showToast('Maybe next time.');
+  } catch (err) {
+    if (window.showToast) showToast('Could not decline. Try again.', 'error');
   }
 }
 </script>

@@ -135,6 +135,19 @@ async function loadPosterView() {
       return;
     }
 
+    // If plan is matched, find the match row and go directly to reveal
+    if (plan.is_matched) {
+      const { data: match } = await window._supabase
+        .from('matches')
+        .select('id')
+        .eq('plan_id', planId)
+        .maybeSingle();
+      if (match) {
+        window.location.replace('./match.html?id=' + match.id);
+        return;
+      }
+    }
+
     // Get private details (creator only, via security definer function)
     const priv = await DB.getPlanPrivate(planId);
 
@@ -304,18 +317,44 @@ function passApplicant(appId) {
 
 async function pickApplicant(appId, initial) {
   const overlay = document.getElementById('waiting-overlay');
-  document.getElementById('waiting-name').textContent = 'It\'s a match with ' + initial + '·';
+  const titleEl = document.getElementById('waiting-name');
+  const subEl   = overlay.querySelector('.waiting-sub');
+  titleEl.textContent = 'Sending YES to ' + initial + '·…';
   overlay.classList.remove('hidden');
 
   try {
-    const matchId = await DB.createMatch(appId);
-    setTimeout(() => {
-      window.location.href = './match.html?id=' + matchId;
-    }, 2000);
+    // Step 1: Decline all other pending applications for this plan
+    await window._supabase
+      .from('applications')
+      .update({ status: 'declined' })
+      .eq('plan_id', planId)
+      .neq('id', appId)
+      .in('status', ['pending', 'yes_creator']);
+
+    // Step 2: Update chosen application to 'yes_creator'
+    //         Do NOT create the match yet — applicant must confirm
+    const { error } = await window._supabase
+      .from('applications')
+      .update({ status: 'yes_creator' })
+      .eq('id', appId);
+
+    if (error) throw error;
+
+    // Step 3: Show waiting state
+    titleEl.textContent = 'YES sent to ' + initial + '·';
+    if (subEl) subEl.textContent = 'Waiting for them to confirm. You\'ll see the reveal in Your Plans.';
+
+    // Hide spinner — nothing more to wait for right now
+    const spinnerEl = overlay.querySelector('.spinner');
+    if (spinnerEl) spinnerEl.style.display = 'none';
+
+    // Return to feed after 3 seconds
+    setTimeout(() => { window.location.href = './feed.html'; }, 3000);
+
   } catch (err) {
-    console.error('Create match error:', err);
+    console.error('pickApplicant error:', err);
     overlay.classList.add('hidden');
-    if (window.showToast) showToast(err.message || 'Could not create match. Try again.', 'error');
+    if (window.showToast) showToast(err.message || 'Could not send. Try again.', 'error');
   }
 }
 

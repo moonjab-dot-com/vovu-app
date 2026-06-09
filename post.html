@@ -88,6 +88,25 @@
              oninput="if(this.value.trim()){postData.zone=this.value.trim();document.querySelectorAll('.suggestion-chip').forEach(c=>c.classList.remove('selected'));}else if(!document.querySelector('.suggestion-chip.selected')){postData.zone=null;}">
     </div>
 
+    <!-- Day -->
+    <div class="form-section">
+      <div class="form-section-label">
+        Day
+        <span class="label-note" style="color:var(--sage);">(shown publicly)</span>
+      </div>
+      <div class="day-selector" id="day-selector">
+        <button class="day-btn" onclick="selectDay('today', this)">Today</button>
+        <button class="day-btn" onclick="selectDay('tomorrow', this)">Tomorrow</button>
+        <button class="day-btn" onclick="selectDay('monday', this)">Monday</button>
+        <button class="day-btn" onclick="selectDay('tuesday', this)">Tuesday</button>
+        <button class="day-btn" onclick="selectDay('wednesday', this)">Wednesday</button>
+        <button class="day-btn" onclick="selectDay('thursday', this)">Thursday</button>
+        <button class="day-btn" onclick="selectDay('friday', this)">Friday</button>
+        <button class="day-btn" onclick="selectDay('saturday', this)">Saturday</button>
+        <button class="day-btn" onclick="selectDay('sunday', this)">Sunday</button>
+      </div>
+    </div>
+
     <!-- Time window -->
     <div class="form-section">
       <div class="form-section-label">
@@ -299,6 +318,7 @@ async function submitPlan() {
       activity,
       zone,
       time_window:    timeVal,
+      day:            getSelectedDay() || 'today',
       note:           noteVal.trim() || null,
       spots:          postData.spots || 1,
       exact_location: locVal,

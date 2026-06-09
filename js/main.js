@@ -319,7 +319,7 @@ function markApplied(e, btn) {
 }
 
 // ── Post form ───────────────────────────────────
-let postData = { activity: null, zone: null, spots: 1 };
+let postData = { activity: null, zone: null, spots: 1, day: null };
 
 function selectActivity(btn, activity) {
   document.querySelectorAll('.post-activity-btn').forEach(b => b.classList.remove('selected'));
@@ -341,6 +341,16 @@ function selectSpot(btn, n) {
   document.querySelectorAll('.spot-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   postData.spots = n;
+}
+
+function selectDay(day, btn) {
+  document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  postData.day = day;
+}
+
+function getSelectedDay() {
+  return postData.day;
 }
 
 function checkPostReady() {

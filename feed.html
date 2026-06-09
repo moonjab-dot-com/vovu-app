@@ -191,7 +191,8 @@ function renderPlanCard(plan, cp, compatScore) {
           <div class="plan-info">
             <div class="plan-title">${label} — ${plan.zone}</div>
             <div class="plan-meta">
-              <i data-lucide="clock" style="width:12px;height:12px;"></i> ${time}
+              <i data-lucide="clock" style="width:12px;height:12px;"></i>
+              ${plan.day ? plan.day.charAt(0).toUpperCase() + plan.day.slice(1) + ' · ' : ''}${time}
             </div>
           </div>
         </div>
@@ -289,7 +290,8 @@ window.addEventListener('load', async () => {
 async function loadDiscover() {
   try {
     const [plans, myProfile] = await Promise.all([
-      DB.getFeedPlans(window.currentUser.campus),
+      // Pass current user's id — getFeedPlans excludes their own plans from Discover
+      DB.getFeedPlans(window.currentUser.campus, window.currentUser.id),
       DB.getProfile(window.currentUser.id)
     ]);
 

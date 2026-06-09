@@ -88,13 +88,20 @@ const DB = {
   },
 
   // Only public columns — never requests exact_location / exact_time
-  async getFeedPlans(campus) {
-    const { data, error } = await sb
+  // excludeUserId: pass current user's id to hide their own plans from Discover
+  async getFeedPlans(campus, excludeUserId = null) {
+    let query = sb
       .from('plans')
-      .select('id, creator_id, campus, activity, zone, time_window, note, spots, is_active, expires_at, created_at')
+      .select('id, creator_id, campus, activity, zone, time_window, day, note, spots, is_active, expires_at, created_at')
       .eq('campus', campus)
       .eq('is_active', true)
       .order('created_at', { ascending: false });
+
+    if (excludeUserId) {
+      query = query.neq('creator_id', excludeUserId);
+    }
+
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },
@@ -230,6 +237,15 @@ const DB = {
       .eq('plan_id', planId)
       .eq('applicant_id', applicantId)
       .eq('status', 'pending');
+    if (error) throw error;
+  },
+
+  // Update a single application's status (used by poster and applicant for YES mechanic)
+  async updateApplication(appId, status) {
+    const { error } = await sb
+      .from('applications')
+      .update({ status })
+      .eq('id', appId);
     if (error) throw error;
   },
 

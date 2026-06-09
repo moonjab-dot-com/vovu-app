@@ -1708,3 +1708,71 @@ input[type="range"]::-webkit-slider-thumb {
 .footer-with-nav {
   padding-bottom: 96px;
 }
+
+/* ── Day selector (post.html) ───────────────────────────── */
+.day-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.day-btn {
+  padding: 8px 16px;
+  border-radius: var(--r-full);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--forest);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.day-btn.selected {
+  background: var(--forest);
+  color: var(--butter);
+  border-color: var(--forest);
+}
+
+/* ── Creator-yes screen (plan-seeker.html) ──────────────── */
+.creator-yes-screen {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  padding: 32px 24px;
+  text-align: center;
+  margin: 0 0 16px;
+}
+.creator-yes-screen h2 {
+  margin: 16px 0 8px;
+  font-size: 20px;
+}
+.creator-yes-screen p {
+  color: var(--sage);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+.btn-yes-confirm {
+  width: 100%;
+  height: 52px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.btn-decline {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.apply-privacy-note {
+  font-size: 12px;
+  color: var(--sage);
+  margin-top: 16px;
+  line-height: 1.6;
+}

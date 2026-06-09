@@ -479,63 +479,97 @@ async function obNext() {
     btn.disabled = true;
     btn.innerHTML = 'Saving… <span class="spinner" style="width:18px;height:18px;border-width:2px;border-color:rgba(255,239,179,0.35);border-top-color:var(--butter);"></span>';
 
-    // Always save to localStorage first — guaranteed fallback
-    localStorage.setItem('vovu_profile', JSON.stringify(obAnswers));
-
     try {
-      if (typeof Auth !== 'undefined' && typeof DB !== 'undefined') {
-        const session = await Auth.getSession();
-        if (!session) { window.location.href = './login.html'; return; }
-
-        // Derive display name from email (e.g. "john.smith@kenyon.edu" → "John")
-        const emailUser  = session.user.email.split('@')[0];
-        const firstName  = emailUser.split('.')[0].charAt(0).toUpperCase() +
-                           emailUser.split('.')[0].slice(1);
-        const initial    = firstName.charAt(0).toUpperCase();
-        const campus     = localStorage.getItem('vovu_campus') ||
-                           session.user.email.split('@')[1];
-
-        // upsertUser creates the row if the auth trigger hasn't run yet
-        await DB.upsertUser(session.user.id, session.user.email, campus, {
-          first_name: firstName
-        });
-
-        await DB.saveProfile(session.user.id, {
-          activities:     obAnswers.activities     || [],
-          group_size:     obAnswers.group_size,
-          place_vibe:     obAnswers.place_vibe,
-          plan_style:     obAnswers.plan_style,
-          duration:       obAnswers.duration,
-          timing:         obAnswers.timing         || [],
-          time_of_day:    obAnswers.time_of_day,
-          best_days:      obAnswers.best_days       || [],
-          openness:       obAnswers.openness        || 3,
-          follow_through: obAnswers.follow_through  || 3,
-          intent:         obAnswers.intent,
-          energy_level:   obAnswers.energy_level,
-          talk_listen:    obAnswers.talk_listen,
-          recharge:       obAnswers.recharge,
-          silence:        obAnswers.silence,
-          distance:       obAnswers.distance,
-          notice:         obAnswers.notice,
-          group_pref:     obAnswers.group_pref,
-          interests:      obAnswers.interests       || [],
-          current_vibe:   obAnswers.current_vibe,
-          surprised_self: obAnswers.surprised_self,
-          semester_goal:  obAnswers.semester_goal,
-          initial:        initial,
-        });
-
-        localStorage.removeItem('vovu_profile');
-        localStorage.removeItem('vovu_onboarding_answers');
+      // 1. Fresh session — never use cache
+      const { data: { session }, error: sessErr } = await window._supabase.auth.getSession();
+      if (sessErr || !session) {
+        window.location.href = './login.html';
+        return;
       }
+
+      const uid        = session.user.id;
+      const email      = session.user.email;
+      const campus     = email.split('@')[1];
+      const emailUser  = email.split('@')[0];
+      const firstName  = emailUser.split('.')[0].charAt(0).toUpperCase()
+                       + emailUser.split('.')[0].slice(1);
+      const initial    = firstName.charAt(0).toUpperCase();
+
+      console.log('Saving onboarding for:', uid, email);
+
+      // 2. Upsert user row — must succeed before profile save
+      //    first_name + verified: both NOT NULL, both required
+      const { error: userErr } = await window._supabase
+        .from('users')
+        .upsert(
+          { id: uid, email, campus, first_name: firstName, verified: true },
+          { onConflict: 'id', ignoreDuplicates: false }
+        );
+
+      if (userErr) {
+        console.error('User upsert failed:', userErr);
+        throw new Error('Could not save your account: ' + userErr.message);
+      }
+
+      // 3. Build and save profile — every answer mapped explicitly
+      const profileData = {
+        id:             uid,
+        activities:     obAnswers.activities     || [],
+        group_size:     obAnswers.group_size      || null,
+        place_vibe:     obAnswers.place_vibe      || null,
+        plan_style:     obAnswers.plan_style      || null,
+        duration:       obAnswers.duration        || null,
+        timing:         obAnswers.timing          || [],
+        time_of_day:    obAnswers.time_of_day     || null,
+        best_days:      obAnswers.best_days       || [],
+        openness:       parseInt(obAnswers.openness)       || 3,
+        follow_through: parseInt(obAnswers.follow_through) || 3,
+        intent:         obAnswers.intent          || null,
+        energy_level:   obAnswers.energy_level    || null,
+        talk_listen:    obAnswers.talk_listen     || null,
+        recharge:       obAnswers.recharge        || null,
+        silence:        obAnswers.silence         || null,
+        distance:       obAnswers.distance        || null,
+        notice:         obAnswers.notice          || null,
+        group_pref:     obAnswers.group_pref      || null,
+        interests:      obAnswers.interests       || [],
+        current_vibe:   obAnswers.current_vibe    || null,
+        surprised_self: obAnswers.surprised_self  || null,
+        semester_goal:  obAnswers.semester_goal   || null,
+        initial:        initial,
+      };
+
+      console.log('Profile to save:', profileData);
+
+      const { error: profileErr } = await window._supabase
+        .from('profiles')
+        .upsert(profileData, { onConflict: 'id', ignoreDuplicates: false });
+
+      if (profileErr) {
+        console.error('Profile save failed:', profileErr);
+        throw new Error('Could not save your profile: ' + profileErr.message);
+      }
+
+      // 4. Cache to localStorage
+      localStorage.setItem('vovu_uid',        uid);
+      localStorage.setItem('vovu_email',      email);
+      localStorage.setItem('vovu_campus',     campus);
+      localStorage.setItem('vovu_first_name', firstName);
+      localStorage.setItem('vovu_profile',    JSON.stringify(profileData));
+      localStorage.removeItem('vovu_onboarding_answers');
+
+      // 5. Done
+      window.location.href = './feed.html';
+
     } catch (err) {
-      // Log but don't block — localStorage copy was already saved above.
-      // User proceeds to feed; profile will sync on next save.
-      console.error('Onboarding save error (continuing anyway):', err);
+      console.error('Onboarding save error:', err);
+      btn.disabled = false;
+      btn.innerHTML = 'Enter Vovu <i data-lucide="arrow-right"></i>';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      // Alert so the user knows it failed — not a silent swallow
+      alert('Could not save your profile.\n\n' + err.message + '\n\nPlease try again.');
     }
 
-    window.location.href = './feed.html';
     return;
   }
 

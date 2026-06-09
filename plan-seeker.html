@@ -6,42 +6,50 @@
   <title>Vovu — View Plan</title>
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/supabase-config.js"></script>
+  <script src="./js/db.js"></script>
+  <script src="./js/matching.js"></script>
 </head>
 <body>
 <div class="seeker-screen">
 
-  <!-- PAGE HEADER -->
   <header class="page-header" style="display:flex; align-items:center; gap:12px; padding:16px; border-bottom:1px solid var(--border);">
     <button onclick="history.back()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; color:var(--forest);">
       <i data-lucide="arrow-left" style="width:20px;height:20px;"></i>
     </button>
-    <h1 style="font-size:17px; margin:0; font-family:var(--font-serif);">Café this afternoon</h1>
+    <h1 id="page-title" style="font-size:17px; margin:0; font-family:var(--font-serif);">Loading…</h1>
   </header>
 
-  <div style="padding: 16px 16px 0;">
+  <!-- Skeleton -->
+  <div id="seeker-skeleton" style="padding:16px;">
+    <div class="skeleton" style="height:160px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+    <div class="skeleton skeleton-d1" style="height:220px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+    <div class="skeleton skeleton-d2" style="height:72px; border-radius:var(--r-lg);"></div>
+  </div>
 
-    <!-- PLAN SUMMARY CARD -->
+  <!-- Real content -->
+  <div id="seeker-content" class="hidden" style="padding: 16px 16px 120px;">
+
     <div class="plan-summary-card card fade-up" style="padding:16px; margin-bottom:16px;">
       <div class="plan-summary-top">
-        <div class="activity-icon-circle">
-          <i data-lucide="coffee"></i>
-        </div>
+        <div class="activity-icon-circle" id="plan-act-icon"><i data-lucide="calendar"></i></div>
         <div style="flex:1; min-width:0;">
-          <div class="plan-summary-title">Café this afternoon</div>
+          <div class="plan-summary-title" id="plan-summary-title">—</div>
           <div class="plan-summary-meta">
             <i data-lucide="clock" style="width:12px;height:12px;"></i>
-            3–4 pm today
+            <span id="plan-time">—</span>
             <span class="meta-dot">·</span>
             <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
-            Near the village
+            <span id="plan-zone">—</span>
           </div>
         </div>
-        <span class="spots-badge">1 spot</span>
+        <span class="spots-badge" id="plan-spots">—</span>
       </div>
 
-      <div class="plan-note-full">
+      <div class="plan-note-full" id="plan-note" style="display:none;">
         <i data-lucide="message-circle" style="width:14px;height:14px; flex-shrink:0; margin-top:1px;"></i>
-        "just want someone to sit and talk with"
+        <span id="plan-note-text"></span>
       </div>
 
       <div class="public-info-notice">
@@ -49,46 +57,25 @@
         Exact location only shared after mutual yes
       </div>
 
-      <!-- COMPATIBILITY ROW -->
-      <div class="compatibility-row">
+      <div class="compatibility-row" id="compat-row" style="display:none;">
         <div class="compat-score-display">
           <div class="compat-score-circle">
-            <span class="compat-number">82</span><span class="compat-pct">%</span>
+            <span class="compat-number" id="compat-number">—</span><span class="compat-pct">%</span>
           </div>
           <div class="compat-label">
             <div class="compat-title">Match</div>
             <div class="compat-sub">score</div>
           </div>
         </div>
-        <div class="compat-bars">
-          <div class="compat-bar-row">
-            <span>Activities</span>
-            <div class="bar-track" style="flex:1;">
-              <div class="bar-fill compat-bar-anim" style="width:0;" data-target="90"></div>
-            </div>
-          </div>
-          <div class="compat-bar-row">
-            <span>Energy</span>
-            <div class="bar-track" style="flex:1;">
-              <div class="bar-fill compat-bar-anim" style="width:0;" data-target="75"></div>
-            </div>
-          </div>
-          <div class="compat-bar-row">
-            <span>Timing</span>
-            <div class="bar-track" style="flex:1;">
-              <div class="bar-fill compat-bar-anim" style="width:0;" data-target="80"></div>
-            </div>
-          </div>
-        </div>
+        <div class="compat-bars" id="compat-bars"></div>
       </div>
     </div>
 
-    <!-- POSTER PROFILE CARD -->
     <div class="poster-profile-card fade-up" style="animation-delay:80ms;">
       <div class="poster-identity-row">
-        <div class="poster-avatar-circle">J·</div>
+        <div class="poster-avatar-circle" id="poster-avatar">?·</div>
         <div>
-          <div class="poster-anonymous-label">J· — Anonymous poster</div>
+          <div class="poster-anonymous-label" id="poster-anon-label">— Anonymous poster</div>
           <div class="poster-reveal-note">
             <i data-lucide="lock" style="width:11px;height:11px;"></i>
             Full name revealed after mutual yes
@@ -96,61 +83,38 @@
         </div>
       </div>
 
-      <div class="poster-section">
+      <div class="poster-section" id="poster-acts-section">
         <div class="poster-section-label">
-          <i data-lucide="zap" style="width:11px;height:11px;"></i>
-          Activities
+          <i data-lucide="zap" style="width:11px;height:11px;"></i> Activities
         </div>
-        <div class="tags-row">
-          <span class="tag">Café</span>
-          <span class="tag">Study</span>
-          <span class="tag">Walks</span>
-          <span class="tag">Movies</span>
-        </div>
+        <div class="tags-row" id="poster-activities"></div>
       </div>
 
       <div class="poster-section">
         <div class="poster-section-label">
-          <i data-lucide="bar-chart-2" style="width:11px;height:11px;"></i>
-          Vibe
+          <i data-lucide="bar-chart-2" style="width:11px;height:11px;"></i> Vibe
         </div>
-        <div class="vibe-bars-list">
-          <div class="vibe-bar-row">
-            <span class="vibe-bar-label">Follows through</span>
-            <div class="bar-track" style="flex:1;">
-              <div class="bar-fill vibe-bar-anim" style="width:0;" data-target="80"></div>
-            </div>
-          </div>
-          <div class="vibe-bar-row">
-            <span class="vibe-bar-label">Open to new people</span>
-            <div class="bar-track" style="flex:1;">
-              <div class="bar-fill vibe-bar-anim" style="width:0;" data-target="65"></div>
-            </div>
-          </div>
-        </div>
+        <div class="vibe-bars-list" id="poster-vibe-bars"></div>
       </div>
 
-      <div class="poster-section">
+      <div class="poster-section" id="poster-intent-section">
         <div class="poster-section-label">
-          <i data-lucide="heart" style="width:11px;height:11px;"></i>
-          Looking for
+          <i data-lucide="heart" style="width:11px;height:11px;"></i> Looking for
         </div>
         <span class="intent-chip">
           <i data-lucide="users" style="width:12px;height:12px;"></i>
-          New friends honestly
+          <span id="poster-intent-text">—</span>
         </span>
       </div>
 
-      <div class="poster-section" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
+      <div class="poster-section" id="poster-vibe-section" style="border-bottom:none;margin-bottom:0;padding-bottom:0;">
         <div class="poster-section-label">
-          <i data-lucide="sun" style="width:11px;height:11px;"></i>
-          Current vibe
+          <i data-lucide="sun" style="width:11px;height:11px;"></i> Current vibe
         </div>
-        <div class="current-vibe-text">"chaotic but thriving"</div>
+        <div class="current-vibe-text" id="poster-current-vibe">—</div>
       </div>
     </div>
 
-    <!-- PRIVACY ASSURANCE -->
     <div class="privacy-assurance-box fade-up" style="animation-delay:120ms;">
       <i data-lucide="shield-check" style="width:20px;height:20px; flex-shrink:0; color:var(--success); margin-top:1px;"></i>
       <div>
@@ -160,19 +124,23 @@
         </div>
       </div>
     </div>
+  </div>
 
-  </div><!-- /padding wrapper -->
+  <!-- Error -->
+  <div id="seeker-error" class="hidden" style="padding:48px 24px; text-align:center;">
+    <p style="color:var(--sage); margin-bottom:12px;">This plan isn't available.</p>
+    <a href="./feed.html" style="color:var(--forest); text-decoration:underline; font-size:14px;">Back to feed</a>
+  </div>
 
-  <!-- FIXED ACTION BAR -->
-  <div class="plan-action-bar" id="action-bar">
+  <!-- Action bar -->
+  <div class="plan-action-bar" id="action-bar" style="display:none;">
     <div id="apply-state">
-      <button class="btn-apply-now" onclick="applyNow()">
+      <button class="btn-apply-now" id="apply-btn" onclick="applyNow()">
         <i data-lucide="send" style="width:16px;height:16px;"></i>
         Apply anonymously
       </button>
       <p class="apply-note">They'll see your vibe — not your name.</p>
     </div>
-
     <div id="applied-state" class="hidden">
       <div class="applied-confirmation">
         <i data-lucide="check-circle" class="applied-icon" style="width:20px;height:20px;"></i>
@@ -181,49 +149,186 @@
           <div class="applied-sub">You'll be notified if it's a match.</div>
         </div>
       </div>
-      <button class="btn-withdraw" onclick="withdrawApplication()">
-        Withdraw application
-      </button>
+      <button class="btn-withdraw" onclick="withdrawNow()">Withdraw application</button>
     </div>
   </div>
 
-</div><!-- /seeker-screen -->
+</div>
 
 <script src="./js/main.js"></script>
 <script>
-  lucide.createIcons();
+lucide.createIcons();
 
-  // Restore apply state
-  const applied = JSON.parse(localStorage.getItem('vovu_applied') || '{}');
-  const planId = new URLSearchParams(location.search).get('id') || 'plan-001';
-  if (applied[planId]) {
-    document.getElementById('apply-state').classList.add('hidden');
-    document.getElementById('applied-state').classList.remove('hidden');
+const planId = new URLSearchParams(location.search).get('id');
+
+window.addEventListener('load', async () => {
+  const session = await Auth.getSession();
+  if (!session) { window.location.href = './login.html'; return; }
+  window.currentUser = {
+    id:     session.user.id,
+    email:  session.user.email,
+    campus: localStorage.getItem('vovu_campus') || session.user.email.split('@')[1]
+  };
+  if (!planId) { showError(); return; }
+  await loadPlan();
+});
+
+async function loadPlan() {
+  try {
+    const plan = await DB.getPlan(planId);
+
+    // Creator → redirect to poster view
+    if (plan.creator_id === window.currentUser.id) {
+      window.location.replace('./plan-poster.html?id=' + planId);
+      return;
+    }
+
+    // Already matched → go to match reveal
+    const myApps = await DB.getMyApplications(window.currentUser.id);
+    const myApp  = myApps.find(a => a.plan_id === planId);
+    if (myApp && myApp.status === 'matched') {
+      const { data: match } = await window._supabase
+        .from('matches').select('id')
+        .or(`creator_id.eq.${window.currentUser.id},applicant_id.eq.${window.currentUser.id}`)
+        .eq('plan_id', planId).single();
+      if (match) { window.location.replace('./match.html?id=' + match.id); return; }
+    }
+
+    const [cp, myProfile] = await Promise.all([
+      DB.getProfile(plan.creator_id),
+      DB.getProfile(window.currentUser.id)
+    ]);
+
+    populatePage(plan, cp, myProfile);
+    showApplyState(myApp);
+  } catch (err) {
+    console.error('Plan load error:', err);
+    showError();
+  }
+}
+
+function populatePage(plan, cp, myProfile) {
+  const label = ACTIVITY_LABELS[plan.activity] || plan.activity;
+  const icon  = ACTIVITY_ICONS[plan.activity]  || 'calendar';
+  const time  = TIME_LABELS[plan.time_window]  || plan.time_window;
+
+  document.getElementById('page-title').textContent      = label + ' — ' + plan.zone;
+  document.getElementById('plan-act-icon').innerHTML     = `<i data-lucide="${icon}"></i>`;
+  document.getElementById('plan-summary-title').textContent = label + ' — ' + plan.zone;
+  document.getElementById('plan-time').textContent       = time;
+  document.getElementById('plan-zone').textContent       = plan.zone;
+  document.getElementById('plan-spots').textContent      = plan.spots + ' spot' + (plan.spots !== 1 ? 's' : '');
+
+  if (plan.note) {
+    document.getElementById('plan-note').style.display = '';
+    document.getElementById('plan-note-text').textContent = '"' + plan.note + '"';
   }
 
-  // Animate bars on load
+  if (myProfile && cp) {
+    const score = calculateCompatibility(myProfile, cp);
+    const ftPct = Math.round((cp.follow_through || 3) / 5 * 100);
+    const opPct = Math.round((cp.openness       || 3) / 5 * 100);
+    document.getElementById('compat-number').textContent = score;
+    document.getElementById('compat-row').style.display = '';
+    document.getElementById('compat-bars').innerHTML = `
+      <div class="compat-bar-row"><span>Activities</span>
+        <div class="bar-track" style="flex:1;"><div class="bar-fill compat-bar-anim" style="width:0;" data-target="${score}"></div></div>
+      </div>
+      <div class="compat-bar-row"><span>Follows through</span>
+        <div class="bar-track" style="flex:1;"><div class="bar-fill compat-bar-anim" style="width:0;" data-target="${ftPct}"></div></div>
+      </div>
+      <div class="compat-bar-row"><span>Open to new people</span>
+        <div class="bar-track" style="flex:1;"><div class="bar-fill compat-bar-anim" style="width:0;" data-target="${opPct}"></div></div>
+      </div>`;
+    setTimeout(() => {
+      document.querySelectorAll('.compat-bar-anim').forEach(b => {
+        b.style.transition = 'width 600ms ease'; b.style.width = b.dataset.target + '%';
+      });
+    }, 200);
+  }
+
+  const initial = (cp && cp.initial) ? cp.initial : '?';
+  document.getElementById('poster-avatar').textContent     = initial + '·';
+  document.getElementById('poster-anon-label').textContent = initial + '· — Anonymous poster';
+
+  if (cp && cp.activities && cp.activities.length) {
+    document.getElementById('poster-activities').innerHTML =
+      cp.activities.map(a => `<span class="tag">${ACTIVITY_LABELS[a] || a}</span>`).join('');
+  } else {
+    document.getElementById('poster-acts-section').style.display = 'none';
+  }
+
+  const ftBar = cp ? Math.round((cp.follow_through || 3) / 5 * 100) : 60;
+  const opBar = cp ? Math.round((cp.openness       || 3) / 5 * 100) : 60;
+  document.getElementById('poster-vibe-bars').innerHTML = `
+    <div class="vibe-bar-row"><span class="vibe-bar-label">Follows through</span>
+      <div class="bar-track" style="flex:1;"><div class="bar-fill vibe-bar-anim" style="width:0;" data-target="${ftBar}"></div></div>
+    </div>
+    <div class="vibe-bar-row"><span class="vibe-bar-label">Open to new people</span>
+      <div class="bar-track" style="flex:1;"><div class="bar-fill vibe-bar-anim" style="width:0;" data-target="${opBar}"></div></div>
+    </div>`;
   setTimeout(() => {
-    document.querySelectorAll('.compat-bar-anim, .vibe-bar-anim').forEach(bar => {
-      bar.style.transition = 'width 600ms ease';
-      bar.style.width = bar.dataset.target + '%';
+    document.querySelectorAll('.vibe-bar-anim').forEach(b => {
+      b.style.transition = 'width 600ms ease'; b.style.width = b.dataset.target + '%';
     });
-  }, 200);
+  }, 300);
 
-  function applyNow() {
-    const applied = JSON.parse(localStorage.getItem('vovu_applied') || '{}');
-    applied[planId] = true;
-    localStorage.setItem('vovu_applied', JSON.stringify(applied));
+  if (cp && cp.intent) {
+    document.getElementById('poster-intent-text').textContent = INTENT_LABELS[cp.intent] || cp.intent;
+  } else { document.getElementById('poster-intent-section').style.display = 'none'; }
+
+  if (cp && cp.current_vibe) {
+    document.getElementById('poster-current-vibe').textContent = '"' + cp.current_vibe + '"';
+  } else { document.getElementById('poster-vibe-section').style.display = 'none'; }
+
+  document.getElementById('seeker-skeleton').classList.add('hidden');
+  document.getElementById('seeker-content').classList.remove('hidden');
+  document.getElementById('action-bar').style.display = '';
+  lucide.createIcons();
+}
+
+function showApplyState(myApp) {
+  if (myApp && (myApp.status === 'pending' || myApp.status === 'yes_creator')) {
     document.getElementById('apply-state').classList.add('hidden');
     document.getElementById('applied-state').classList.remove('hidden');
   }
+}
 
-  function withdrawApplication() {
-    const applied = JSON.parse(localStorage.getItem('vovu_applied') || '{}');
-    delete applied[planId];
-    localStorage.setItem('vovu_applied', JSON.stringify(applied));
+function showError() {
+  document.getElementById('seeker-skeleton').classList.add('hidden');
+  document.getElementById('seeker-error').classList.remove('hidden');
+}
+
+async function applyNow() {
+  const btn = document.getElementById('apply-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner spinner-butter" style="width:18px;height:18px;border-width:2px;"></span>';
+  try {
+    await DB.applyToPlan(planId, window.currentUser.id);
+    document.getElementById('apply-state').classList.add('hidden');
+    document.getElementById('applied-state').classList.remove('hidden');
+  } catch (err) {
+    console.error('Apply error:', err);
+    btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="send" style="width:16px;height:16px;"></i> Apply anonymously';
+    lucide.createIcons();
+    if (window.showToast) showToast(err.message || 'Could not apply. Try again.', 'error');
+  }
+}
+
+async function withdrawNow() {
+  try {
+    await DB.withdrawApplication(planId, window.currentUser.id);
     document.getElementById('applied-state').classList.add('hidden');
     document.getElementById('apply-state').classList.remove('hidden');
+    const btn = document.getElementById('apply-btn');
+    btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="send" style="width:16px;height:16px;"></i> Apply anonymously';
+    lucide.createIcons();
+  } catch (err) {
+    if (window.showToast) showToast('Could not withdraw. Try again.', 'error');
   }
+}
 </script>
 </body>
 </html>

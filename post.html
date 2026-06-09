@@ -6,6 +6,9 @@
   <title>Vovu — Drop a plan</title>
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/supabase-config.js"></script>
+  <script src="./js/db.js"></script>
 </head>
 <body>
 <div class="post-screen">
@@ -109,8 +112,12 @@
         <i data-lucide="lock"></i>
         Private — revealed only after match
       </div>
-      <input type="text" class="private-input" placeholder="Exact location (e.g. Wiggin St Coffee, back corner)">
-      <input type="text" class="private-input" placeholder="Exact time (e.g. 3:15pm)">
+      <input type="text" class="private-input" id="exact-location"
+             placeholder="Exact location (e.g. Wiggin St Coffee, back corner)"
+             oninput="checkPostReady()">
+      <input type="text" class="private-input" id="exact-time"
+             placeholder="Exact time (e.g. 3:15pm)"
+             oninput="checkPostReady()">
     </div>
 
     <!-- Note -->
@@ -180,6 +187,76 @@
 </div>
 
 <script src="./js/main.js"></script>
-<script>lucide.createIcons();</script>
+<script>
+lucide.createIcons();
+
+// Auth check + set currentUser
+window.addEventListener('load', async () => {
+  const session = await Auth.getSession();
+  if (!session) { window.location.href = './login.html'; return; }
+  window.currentUser = {
+    id:     session.user.id,
+    email:  session.user.email,
+    campus: localStorage.getItem('vovu_campus') || session.user.email.split('@')[1]
+  };
+});
+
+// Override checkPostReady to include private fields (Problem 2)
+function checkPostReady() {
+  const submitBtn = document.getElementById('submit-plan-btn');
+  if (!submitBtn) return;
+  const timeVal  = (document.getElementById('time-select') || {}).value || '';
+  const locVal   = (document.getElementById('exact-location') || {}).value || '';
+  const timeExact = (document.getElementById('exact-time') || {}).value || '';
+  submitBtn.disabled = !(postData.activity && postData.zone && timeVal && locVal.trim() && timeExact.trim());
+}
+
+// Override submitPlan to save to Supabase (Problem 2)
+async function submitPlan() {
+  const btn = document.getElementById('submit-plan-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner spinner-butter" style="width:18px;height:18px;border-width:2px;"></span> Posting…';
+
+  try {
+    const timeVal    = document.getElementById('time-select').value;
+    const locVal     = document.getElementById('exact-location').value.trim();
+    const timeExact  = document.getElementById('exact-time').value.trim();
+    const noteVal    = (document.getElementById('plan-note') || {}).value || '';
+
+    // Calculate expiry: 8 hours from now
+    const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString();
+
+    await DB.createPlan({
+      creator_id:     window.currentUser.id,
+      campus:         window.currentUser.campus,
+      activity:       postData.activity,
+      zone:           postData.zone,
+      time_window:    timeVal,
+      note:           noteVal.trim() || null,
+      spots:          postData.spots || 1,
+      exact_location: locVal,
+      exact_time:     timeExact,
+      expires_at:     expiresAt,
+    });
+
+    // Success — navigate to feed with toast
+    localStorage.setItem('vovu_toast', 'Plan posted');
+    window.location.href = './feed.html';
+  } catch (err) {
+    console.error('Create plan error:', err);
+    btn.disabled = false;
+    btn.innerHTML = 'Drop this plan <i data-lucide="arrow-right"></i>';
+    lucide.createIcons();
+
+    if (err.code === 'MAX_PLANS') {
+      if (window.showToast) showToast(
+        'You already have 2 active plans. Wait for one to expire or get matched.', 'error'
+      );
+    } else {
+      if (window.showToast) showToast(err.message || 'Could not post plan. Try again.', 'error');
+    }
+  }
+}
+</script>
 </body>
 </html>

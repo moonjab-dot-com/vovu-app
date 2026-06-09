@@ -6,6 +6,9 @@
   <title>Vovu — Profile</title>
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/supabase-config.js"></script>
+  <script src="./js/db.js"></script>
 </head>
 <body>
 <div class="profile-screen">
@@ -14,100 +17,118 @@
     <h1>Profile</h1>
   </div>
 
-  <!-- Identity card -->
-  <div class="identity-card card fade-up">
-    <div class="identity-card-inner">
-      <div class="identity-left">
-        <div class="avatar avatar-anon avatar-large">A</div>
-        <div class="campus-chip">
-          <i data-lucide="shield-check" style="width:12px;height:12px;color:var(--success);"></i>
-          kenyon.edu
+  <!-- Skeleton while loading -->
+  <div id="profile-skeleton" style="padding:0 16px;">
+    <div class="skeleton" style="height:100px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+    <div class="skeleton skeleton-d1" style="height:160px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+    <div class="skeleton skeleton-d2" style="height:120px; border-radius:var(--r-lg);"></div>
+  </div>
+
+  <!-- No-profile banner (shown if onboarding not completed) -->
+  <div id="no-profile-banner" class="hidden" style="margin:0 16px 12px;">
+    <div style="background:var(--forest); color:var(--butter); border-radius:var(--r-lg); padding:16px 20px; display:flex; align-items:center; gap:12px;">
+      <i data-lucide="alert-circle" style="width:20px;height:20px; flex-shrink:0;"></i>
+      <div style="flex:1;">
+        <div style="font-weight:600; font-size:14px; margin-bottom:4px;">Complete your profile to start matching</div>
+        <div style="font-size:13px; opacity:0.8;">Answer 22 quick questions so others can see your vibe.</div>
+      </div>
+      <a href="./onboarding.html" style="background:var(--butter); color:var(--forest); border-radius:var(--r-md); padding:8px 14px; font-size:13px; font-weight:600; white-space:nowrap; text-decoration:none;">Start</a>
+    </div>
+  </div>
+
+  <!-- Real profile content -->
+  <div id="profile-content" class="hidden">
+
+    <!-- Identity card -->
+    <div class="identity-card card fade-up" style="margin:0 16px;">
+      <div class="identity-card-inner">
+        <div class="identity-left">
+          <div class="avatar avatar-anon avatar-large" id="avatar-initial">?</div>
+          <div class="campus-chip">
+            <i data-lucide="shield-check" style="width:12px;height:12px;color:var(--success);"></i>
+            <span id="campus-chip-text">…</span>
+          </div>
+        </div>
+        <div class="identity-right">
+          <h2 id="user-name">…</h2>
+          <p id="user-email" style="font-size:13px; color:var(--sage);">…</p>
         </div>
       </div>
-      <div class="identity-right">
-        <h2>Alex</h2>
-        <p>alex@kenyon.edu</p>
+      <img src="./public/Leadership--Streamline-Dhaka.png"
+           width="80" height="80"
+           class="identity-illustration"
+           loading="lazy"
+           style="object-fit:contain;"
+           onerror="this.style.display='none'">
+    </div>
+
+    <!-- How others see you -->
+    <div class="profile-section card fade-up-d1" style="margin:12px 16px 0;">
+      <div class="profile-section-header">
+        <span class="section-label">How others see you</span>
       </div>
-    </div>
-    <img src="./public/Leadership--Streamline-Dhaka.png"
-         width="80" height="80"
-         class="identity-illustration"
-         loading="lazy"
-         style="object-fit:contain;"
-         onerror="this.style.display='none'">
-  </div>
+      <p style="font-size:12px;color:var(--sage);margin-bottom:16px;">
+        This is your anonymous card when you apply to a plan.
+      </p>
 
-  <!-- How others see you -->
-  <div class="profile-section card fade-up-d1" style="margin:12px 16px 0;">
-    <div class="profile-section-header">
-      <span class="section-label">How others see you</span>
-    </div>
-    <p style="font-size:12px;color:var(--sage);margin-bottom:16px;">This is your anonymous card when you apply to a plan.</p>
-
-    <div class="profile-card-preview applicant-card" style="margin-bottom:0;">
-      <div class="app-header-row">
-        <div class="avatar avatar-anon" style="width:40px;height:40px;font-size:16px;">A</div>
-        <div class="app-header-info">
-          <p>A· — Anonymous applicant</p>
-          <span>Name revealed after mutual yes</span>
+      <div class="profile-card-preview applicant-card" style="margin-bottom:0;">
+        <div class="app-header-row">
+          <div class="avatar avatar-anon" id="preview-avatar" style="width:40px;height:40px;font-size:16px;">?</div>
+          <div class="app-header-info">
+            <p id="preview-anon-label">?· — Anonymous applicant</p>
+            <span>Name revealed after mutual yes</span>
+          </div>
+          <span class="badge-you">You</span>
         </div>
-        <span class="badge-you">You</span>
-      </div>
 
-      <div class="tags-row" style="margin-bottom:14px;">
-        <span class="tag">Café</span>
-        <span class="tag">Study</span>
-        <span class="tag">Walks</span>
-      </div>
+        <div class="tags-row" id="preview-activities" style="margin-bottom:14px;"></div>
 
-      <div class="bar-row">
-        <span class="bar-label">Follows through</span>
-        <div class="bar-track"><div class="bar-fill" style="width:80%;"></div></div>
-      </div>
-      <div class="bar-row">
-        <span class="bar-label">Open to new people</span>
-        <div class="bar-track"><div class="bar-fill" style="width:65%;"></div></div>
+        <div class="bar-row">
+          <span class="bar-label">Follows through</span>
+          <div class="bar-track">
+            <div class="bar-fill" id="follow-through-bar" style="width:60%;"></div>
+          </div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Open to new people</span>
+          <div class="bar-track">
+            <div class="bar-fill" id="openness-bar" style="width:60%;"></div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Your vibe -->
-  <div class="profile-section card fade-up-d2" style="margin:12px 16px 0;">
-    <div class="profile-section-header">
-      <span class="section-label">Your vibe</span>
-      <a href="./onboarding.html" class="edit-link">Edit</a>
+    <!-- Your vibe -->
+    <div class="profile-section card fade-up-d2" style="margin:12px 16px 0;">
+      <div class="profile-section-header">
+        <span class="section-label">Your vibe</span>
+        <a href="./onboarding.html?edit=true" class="edit-link">Edit</a>
+      </div>
+      <div class="tags-row" id="vibe-activities" style="margin-top:14px;"></div>
     </div>
-    <div class="tags-row" style="margin-top:14px;">
-      <span class="tag tag-active">Café</span>
-      <span class="tag tag-active">Dining</span>
-      <span class="tag tag-active">Study</span>
-      <span class="tag tag-active">Walk</span>
-      <span class="tag" style="text-decoration:line-through;color:var(--sage);">Party</span>
+
+    <!-- Privacy -->
+    <div class="privacy-box fade-up-d2">
+      <p><i data-lucide="lock" style="width:14px;height:14px;"></i> Your privacy at Vovu</p>
+      <p>Last name: never shared</p>
+      <p>Exact plans: only after mutual yes</p>
+      <p>Campus email: only to your match</p>
     </div>
-  </div>
 
-  <!-- Privacy -->
-  <div class="privacy-box fade-up-d2">
-    <p>
-      <i data-lucide="lock" style="width:14px;height:14px;"></i>
-      Your privacy at Vovu
-    </p>
-    <p>Last name: never shared</p>
-    <p>Exact plans: only after mutual yes</p>
-    <p>Campus email: only to your match</p>
-  </div>
+    <!-- Actions -->
+    <div class="profile-actions fade-up-d3">
+      <a href="./onboarding.html?edit=true" class="btn-outline">
+        <i data-lucide="sliders-horizontal"></i>
+        Update my profile
+      </a>
+      <button class="btn-danger"
+              style="height:52px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-md);font-size:14px;font-weight:500;cursor:pointer;"
+              onclick="Auth.signOut()">
+        Sign out
+      </button>
+    </div>
 
-  <!-- Actions -->
-  <div class="profile-actions fade-up-d3">
-    <a href="./onboarding.html" class="btn-outline">
-      <i data-lucide="sliders-horizontal"></i>
-      Update my profile
-    </a>
-    <button class="btn-danger" style="height:52px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-md);font-size:14px;font-weight:500;cursor:pointer;"
-            onclick="window.location.href='./login.html'">
-      Sign out
-    </button>
-  </div>
+  </div><!-- /profile-content -->
 
   <nav class="bottom-nav">
     <a href="./feed.html" class="nav-tab">
@@ -129,6 +150,85 @@
 </div>
 
 <script src="./js/main.js"></script>
-<script>lucide.createIcons();</script>
+<script>
+lucide.createIcons();
+
+const ACTIVITY_LABELS_PROFILE = {
+  cafe: 'Café', food: 'Dining hall', gym: 'Gym', study: 'Study',
+  walk: 'Walk', movie: 'Movie', sports: 'Sports', offcampus: 'Off-campus',
+  party: 'Party', other: 'Other'
+};
+
+window.addEventListener('load', async () => {
+  const session = await Auth.getSession();
+  if (!session) { window.location.href = './login.html'; return; }
+
+  window.currentUser = {
+    id:     session.user.id,
+    email:  session.user.email,
+    campus: localStorage.getItem('vovu_campus') || session.user.email.split('@')[1]
+  };
+
+  try {
+    const [user, profile] = await Promise.all([
+      DB.getUser(window.currentUser.id),
+      DB.getProfile(window.currentUser.id)
+    ]);
+
+    document.getElementById('profile-skeleton').classList.add('hidden');
+    populateProfile(user, profile);
+  } catch (err) {
+    console.error('Profile load error:', err);
+    document.getElementById('profile-skeleton').classList.add('hidden');
+    // Still show something
+    populateProfile({ email: window.currentUser.email, campus: window.currentUser.campus }, null);
+  }
+});
+
+function populateProfile(user, profile) {
+  const email    = user.email || window.currentUser.email;
+  const campus   = user.campus || window.currentUser.campus;
+  const firstName = user.first_name || email.split('@')[0].split('.')[0];
+  const initial  = firstName.charAt(0).toUpperCase();
+
+  // Identity card
+  document.getElementById('avatar-initial').textContent    = initial;
+  document.getElementById('campus-chip-text').textContent  = campus;
+  document.getElementById('user-name').textContent         = firstName;
+  document.getElementById('user-email').textContent        = email;
+
+  if (!profile) {
+    // No profile yet — show banner and limited view
+    document.getElementById('no-profile-banner').classList.remove('hidden');
+    // Still show identity card but with no activity data
+    document.getElementById('preview-avatar').textContent      = initial;
+    document.getElementById('preview-anon-label').textContent  = initial + '· — Anonymous applicant';
+    document.getElementById('profile-content').classList.remove('hidden');
+    lucide.createIcons();
+    return;
+  }
+
+  // Preview card
+  document.getElementById('preview-avatar').textContent      = initial;
+  document.getElementById('preview-anon-label').textContent  = initial + '· — Anonymous applicant';
+
+  // Activities (preview + vibe section)
+  const acts = profile.activities || [];
+  const actHtml = acts.map(a =>
+    `<span class="tag">${ACTIVITY_LABELS_PROFILE[a] || a}</span>`
+  ).join('');
+  document.getElementById('preview-activities').innerHTML = actHtml;
+  document.getElementById('vibe-activities').innerHTML    = actHtml;
+
+  // Bars
+  const ftPct = Math.round((profile.follow_through || 3) / 5 * 100);
+  const opPct = Math.round((profile.openness       || 3) / 5 * 100);
+  document.getElementById('follow-through-bar').style.width = ftPct + '%';
+  document.getElementById('openness-bar').style.width       = opPct + '%';
+
+  document.getElementById('profile-content').classList.remove('hidden');
+  lucide.createIcons();
+}
+</script>
 </body>
 </html>

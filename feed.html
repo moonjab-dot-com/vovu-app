@@ -6,6 +6,10 @@
   <title>Vovu — Feed</title>
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/supabase-config.js"></script>
+  <script src="./js/db.js"></script>
+  <script src="./js/matching.js"></script>
 </head>
 <body>
 <div class="feed-screen">
@@ -19,12 +23,12 @@
         <h1 style="font-size:20px;margin:0;line-height:1;">Vovu</h1>
         <div class="campus-chip" style="margin-top:3px;font-size:11px;">
           <i data-lucide="shield-check" style="width:11px;height:11px;color:var(--success);"></i>
-          kenyon.edu
+          <span id="campus-label">…</span>
         </div>
       </div>
     </div>
     <div class="feed-header-right">
-      <span class="count-big" id="plan-count">4</span>
+      <span class="count-big" id="plan-count">–</span>
       <span class="count-label">plans for you</span>
     </div>
   </header>
@@ -40,307 +44,67 @@
             onclick="switchFeedTab('your-plans', this)">
       <i data-lucide="bookmark" style="width:15px;height:15px;"></i>
       Your plans
-      <span class="tab-badge">2</span>
+      <span class="tab-badge" id="my-plans-badge" style="display:none;"></span>
     </button>
   </div>
 
   <!-- FILTER PILLS (Discover only) -->
   <div class="filter-row" id="filter-row">
-    <button class="filter-pill active" onclick="filterPlans('all', this)">
-      All
-    </button>
+    <button class="filter-pill active" onclick="filterPlans('all', this)">All</button>
     <button class="filter-pill" onclick="filterPlans('cafe', this)">
-      <i data-lucide="coffee" style="width:13px;height:13px;"></i>
-      Café
+      <i data-lucide="coffee" style="width:13px;height:13px;"></i> Café
     </button>
     <button class="filter-pill" onclick="filterPlans('gym', this)">
-      <i data-lucide="dumbbell" style="width:13px;height:13px;"></i>
-      Gym
+      <i data-lucide="dumbbell" style="width:13px;height:13px;"></i> Gym
     </button>
     <button class="filter-pill" onclick="filterPlans('study', this)">
-      <i data-lucide="book-open" style="width:13px;height:13px;"></i>
-      Study
+      <i data-lucide="book-open" style="width:13px;height:13px;"></i> Study
     </button>
-    <button class="filter-pill" onclick="filterPlans('dining', this)">
-      <i data-lucide="utensils" style="width:13px;height:13px;"></i>
-      Dining
+    <button class="filter-pill" onclick="filterPlans('food', this)">
+      <i data-lucide="utensils" style="width:13px;height:13px;"></i> Dining
     </button>
   </div>
 
-  <!-- ══════════════════════════
-       DISCOVER SECTION
-       ══════════════════════════ -->
+  <!-- ══ DISCOVER SECTION ══════════════════════════════════════════════ -->
   <div id="discover-section" style="padding: 0 16px;">
 
-    <!-- Card 1: Café -->
-    <div class="plan-card card-enter" data-activity="cafe" style="margin-bottom:12px;">
-      <div class="plan-card-top" style="margin-bottom:10px;">
-        <div class="plan-activity-row">
-          <div class="activity-icon-circle">
-            <i data-lucide="coffee"></i>
-          </div>
-          <div class="plan-info">
-            <div class="plan-title">Café this afternoon</div>
-            <div class="plan-meta">
-              <i data-lucide="clock" style="width:12px;height:12px;"></i>
-              3–4 pm
-              <span class="meta-dot">·</span>
-              <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
-              Near the village
-            </div>
-          </div>
-        </div>
-        <div class="plan-right-col">
-          <span class="match-badge">
-            <i data-lucide="zap" style="width:11px;height:11px;"></i>
-            82% match
-          </span>
-          <span class="spots-badge">1 spot</span>
-        </div>
-      </div>
-
-      <div class="plan-note" style="margin-bottom:12px;">
-        "just want someone to sit and talk with"
-      </div>
-
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-        <div class="poster-preview">
-          <div class="poster-initial-circle">J·</div>
-          <div class="poster-tags-preview">
-            <span class="tag-mini">Café</span>
-            <span class="tag-mini">Study</span>
-            <span class="tag-mini tag-more">+2</span>
-          </div>
-        </div>
-        <button class="btn-view-plan" onclick="openPlan('seeker', 'plan-001')">
-          View
-          <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
-        </button>
+    <!-- Skeleton — shown while fetching -->
+    <div id="feed-skeleton" style="padding-top:4px;">
+      <div class="skeleton" style="height:126px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+      <div class="skeleton skeleton-d1" style="height:126px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+      <div class="skeleton skeleton-d2" style="height:126px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+      <div style="text-align:center; padding:8px 0 20px;">
+        <img src="./public/Patience--Streamline-Dhaka.png" width="100" height="100"
+             loading="lazy" style="object-fit:contain; margin:0 auto; opacity:0.45;"
+             onerror="this.style.display='none'">
       </div>
     </div>
 
-    <!-- Card 2: Dining -->
-    <div class="plan-card card-enter" data-activity="dining" style="margin-bottom:12px;">
-      <div class="plan-card-top" style="margin-bottom:10px;">
-        <div class="plan-activity-row">
-          <div class="activity-icon-circle">
-            <i data-lucide="utensils"></i>
-          </div>
-          <div class="plan-info">
-            <div class="plan-title">Dinner together</div>
-            <div class="plan-meta">
-              <i data-lucide="clock" style="width:12px;height:12px;"></i>
-              7–8 pm
-              <span class="meta-dot">·</span>
-              <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
-              North campus dining
-            </div>
-          </div>
-        </div>
-        <div class="plan-right-col">
-          <span class="match-badge">
-            <i data-lucide="zap" style="width:11px;height:11px;"></i>
-            74% match
-          </span>
-          <span class="spots-badge">1 spot</span>
-        </div>
-      </div>
+    <!-- Real cards — JS populates then shows -->
+    <div id="feed-cards" class="hidden" style="padding-top:4px;"></div>
 
-      <div class="plan-note" style="margin-bottom:12px;">
-        "always eat alone, looking for company"
-      </div>
-
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-        <div class="poster-preview">
-          <div class="poster-initial-circle">M·</div>
-          <div class="poster-tags-preview">
-            <span class="tag-mini">Dining</span>
-            <span class="tag-mini">Movies</span>
-            <span class="tag-mini tag-more">+1</span>
-          </div>
-        </div>
-        <button class="btn-view-plan" onclick="openPlan('seeker', 'plan-002')">
-          View
-          <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Card 3: Gym -->
-    <div class="plan-card card-enter" data-activity="gym" style="margin-bottom:12px;">
-      <div class="plan-card-top" style="margin-bottom:10px;">
-        <div class="plan-activity-row">
-          <div class="activity-icon-circle">
-            <i data-lucide="dumbbell"></i>
-          </div>
-          <div class="plan-info">
-            <div class="plan-title">Gym session</div>
-            <div class="plan-meta">
-              <i data-lucide="clock" style="width:12px;height:12px;"></i>
-              4:30–5:30 pm
-              <span class="meta-dot">·</span>
-              <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
-              Campus rec center
-            </div>
-          </div>
-        </div>
-        <div class="plan-right-col">
-          <span class="match-badge">
-            <i data-lucide="zap" style="width:11px;height:11px;"></i>
-            68% match
-          </span>
-          <span class="spots-badge">1 spot</span>
-        </div>
-      </div>
-
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-        <div class="poster-preview">
-          <div class="poster-initial-circle">R·</div>
-          <div class="poster-tags-preview">
-            <span class="tag-mini">Gym</span>
-            <span class="tag-mini">Café</span>
-          </div>
-        </div>
-        <button class="btn-view-plan" onclick="openPlan('seeker', 'plan-003')">
-          View
-          <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Card 4: Study -->
-    <div class="plan-card card-enter" data-activity="study" style="margin-bottom:12px;">
-      <div class="plan-card-top" style="margin-bottom:10px;">
-        <div class="plan-activity-row">
-          <div class="activity-icon-circle">
-            <i data-lucide="book-open"></i>
-          </div>
-          <div class="plan-info">
-            <div class="plan-title">Study block</div>
-            <div class="plan-meta">
-              <i data-lucide="clock" style="width:12px;height:12px;"></i>
-              8–9 pm
-              <span class="meta-dot">·</span>
-              <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
-              Main library
-            </div>
-          </div>
-        </div>
-        <div class="plan-right-col">
-          <span class="match-badge">
-            <i data-lucide="zap" style="width:11px;height:11px;"></i>
-            79% match
-          </span>
-          <span class="spots-badge">1 spot</span>
-        </div>
-      </div>
-
-      <div class="plan-note" style="margin-bottom:12px;">
-        "orgo problem set, misery loves company"
-      </div>
-
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-        <div class="poster-preview">
-          <div class="poster-initial-circle">T·</div>
-          <div class="poster-tags-preview">
-            <span class="tag-mini">Study</span>
-            <span class="tag-mini">Café</span>
-            <span class="tag-mini tag-more">+1</span>
-          </div>
-        </div>
-        <button class="btn-view-plan" onclick="openPlan('seeker', 'plan-004')">
-          View
-          <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
-        </button>
-      </div>
+    <!-- Empty state -->
+    <div id="feed-empty" class="hidden" style="text-align:center; padding:40px 0 20px;">
+      <img src="./public/Searching--Streamline-Dhaka.png" width="200" height="200"
+           loading="lazy" style="object-fit:contain; margin:0 auto;"
+           onerror="this.style.display='none'">
+      <h3 style="margin:16px 0 8px; font-family:var(--font-serif);">No plans yet.</h3>
+      <p style="color:var(--sage); margin-bottom:20px;">Be the first to post one.</p>
+      <a href="./post.html" class="btn-primary"
+         style="display:inline-flex; align-items:center; gap:8px; padding:0 24px; height:52px;
+                border-radius:var(--r-md); font-size:15px; font-weight:500; text-decoration:none;">
+        Post a plan <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+      </a>
     </div>
 
   </div><!-- /discover-section -->
 
-  <!-- ══════════════════════════
-       YOUR PLANS SECTION
-       ══════════════════════════ -->
+  <!-- ══ YOUR PLANS SECTION ════════════════════════════════════════════ -->
   <div id="your-plans-section" class="hidden" style="padding: 0 16px;">
-
-    <!-- Active plan (poster view) -->
-    <div class="your-plan-card" onclick="openPlan('poster', 'your-plan-001')">
-      <div class="your-plan-top">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div class="activity-icon-circle activity-icon-owned">
-            <i data-lucide="coffee"></i>
-          </div>
-          <div>
-            <div class="plan-title" style="font-size:15px;">Café this afternoon</div>
-            <div class="plan-meta" style="margin-top:2px;">
-              <i data-lucide="clock" style="width:12px;height:12px;"></i>
-              3–4 pm · today
-            </div>
-          </div>
-        </div>
-        <span class="plan-status-badge status-active">
-          <i data-lucide="circle" style="width:8px;height:8px;fill:currentColor;"></i>
-          Active
-        </span>
-      </div>
-
-      <div class="applicants-preview-row">
-        <div class="applicant-initials-row">
-          <div class="applicant-bubble">J·</div>
-          <div class="applicant-bubble avatar-color-2">M·</div>
-          <div class="applicant-bubble avatar-color-3">R·</div>
-        </div>
-        <span class="applicants-waiting-text">3 people applied — waiting for you</span>
-      </div>
-
-      <button class="btn-review-applicants" onclick="openPlan('poster', 'your-plan-001')">
-        <i data-lucide="users" style="width:16px;height:16px;"></i>
-        Review applicants
-      </button>
+    <div id="your-plans-loading" style="padding:20px 0; text-align:center; color:var(--sage); font-size:14px;">
+      Loading…
     </div>
-
-    <!-- Expired plan -->
-    <div class="your-plan-card your-plan-expired">
-      <div class="your-plan-top">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div class="activity-icon-circle">
-            <i data-lucide="book-open"></i>
-          </div>
-          <div>
-            <div class="plan-title" style="font-size:15px;">Study session</div>
-            <div class="plan-meta" style="margin-top:2px;">
-              <i data-lucide="clock" style="width:12px;height:12px;"></i>
-              8–9 pm · yesterday
-            </div>
-          </div>
-        </div>
-        <span class="plan-status-badge status-expired">
-          Expired
-        </span>
-      </div>
-      <p class="expired-note">This plan has passed. Post a new one to get more matches.</p>
-    </div>
-
-    <!-- Post CTA -->
-    <div class="post-cta-section">
-      <p class="post-cta-text">Want more connections? Post another plan.</p>
-      <a href="./post.html" class="btn-post-new">
-        <i data-lucide="plus" style="width:16px;height:16px;"></i>
-        Post a new plan
-      </a>
-    </div>
-
-  </div><!-- /your-plans-section -->
-
-  <!-- Empty state -->
-  <div class="feed-empty hidden" id="empty-state">
-    <img src="./public/Searching--Streamline-Dhaka.png"
-         width="200" height="200"
-         loading="lazy"
-         style="object-fit:contain;"
-         onerror="this.style.display='none'">
-    <h3>No plans match your vibe yet.</h3>
-    <p>Be the first to post one.</p>
-    <a href="./post.html" class="btn-primary" style="width:160px; margin-top:8px;">Post a plan</a>
+    <div id="your-plans-content" class="hidden"></div>
   </div>
 
   <!-- Bottom Nav -->
@@ -361,9 +125,226 @@
     </a>
   </nav>
 
-</div>
+</div><!-- /feed-screen -->
 
 <script src="./js/main.js"></script>
-<script>lucide.createIcons();</script>
+<script>
+lucide.createIcons();
+
+// ── Card builders ──────────────────────────────────────────────────────
+
+function renderPlanCard(plan, cp, compatScore) {
+  const icon    = ACTIVITY_ICONS[plan.activity]  || 'calendar';
+  const label   = ACTIVITY_LABELS[plan.activity] || plan.activity;
+  const time    = TIME_LABELS[plan.time_window]  || plan.time_window;
+  const initial = (cp && cp.initial) ? cp.initial : '?';
+
+  const acts    = (cp && cp.activities) ? cp.activities : [];
+  const actTags = acts.slice(0, 2).map(a =>
+    `<span class="tag-mini">${ACTIVITY_LABELS[a] || a}</span>`).join('');
+  const moreTag = acts.length > 2
+    ? `<span class="tag-mini tag-more">+${acts.length - 2}</span>` : '';
+
+  const noteHtml = plan.note
+    ? `<div class="plan-note" style="margin-bottom:12px;">"${plan.note}"</div>` : '';
+
+  const matchBadge = (typeof compatScore === 'number')
+    ? `<span class="match-badge">
+         <i data-lucide="zap" style="width:11px;height:11px;"></i>
+         ${compatScore}% match
+       </span>` : '';
+
+  return `
+    <div class="plan-card card-enter" data-activity="${plan.activity}" style="margin-bottom:12px;">
+      <div class="plan-card-top" style="margin-bottom:10px;">
+        <div class="plan-activity-row">
+          <div class="activity-icon-circle"><i data-lucide="${icon}"></i></div>
+          <div class="plan-info">
+            <div class="plan-title">${label} — ${plan.zone}</div>
+            <div class="plan-meta">
+              <i data-lucide="clock" style="width:12px;height:12px;"></i> ${time}
+            </div>
+          </div>
+        </div>
+        <div class="plan-right-col">
+          ${matchBadge}
+          <span class="spots-badge">${plan.spots} spot${plan.spots !== 1 ? 's' : ''}</span>
+        </div>
+      </div>
+      ${noteHtml}
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <div class="poster-preview">
+          <div class="poster-initial-circle">${initial}·</div>
+          <div class="poster-tags-preview">${actTags}${moreTag}</div>
+        </div>
+        <button class="btn-view-plan" onclick="openPlan('seeker','${plan.id}')">
+          View <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+        </button>
+      </div>
+    </div>`;
+}
+
+function renderMyPlanCard(plan, appCount) {
+  const icon  = ACTIVITY_ICONS[plan.activity]  || 'calendar';
+  const label = ACTIVITY_LABELS[plan.activity] || plan.activity;
+  const time  = TIME_LABELS[plan.time_window]  || plan.time_window;
+
+  if (!plan.is_active) {
+    return `
+      <div class="your-plan-card your-plan-expired" style="margin-bottom:12px;">
+        <div class="your-plan-top">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="activity-icon-circle"><i data-lucide="${icon}"></i></div>
+            <div>
+              <div class="plan-title" style="font-size:15px;">${label}</div>
+              <div class="plan-meta" style="margin-top:2px;">
+                <i data-lucide="clock" style="width:12px;height:12px;"></i> ${time}
+              </div>
+            </div>
+          </div>
+          <span class="plan-status-badge ${plan.is_matched ? 'status-matched' : 'status-expired'}">
+            ${plan.is_matched ? 'Matched' : 'Expired'}
+          </span>
+        </div>
+        <p class="expired-note">
+          ${plan.is_matched ? 'This plan was matched.' : 'This plan has passed. Post a new one to get more matches.'}
+        </p>
+      </div>`;
+  }
+
+  const txt = appCount > 0
+    ? `${appCount} ${appCount === 1 ? 'person' : 'people'} applied — waiting for you`
+    : 'Waiting for applicants…';
+
+  return `
+    <div class="your-plan-card" style="cursor:pointer;margin-bottom:12px;" onclick="openPlan('poster','${plan.id}')">
+      <div class="your-plan-top">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="activity-icon-circle activity-icon-owned"><i data-lucide="${icon}"></i></div>
+          <div>
+            <div class="plan-title" style="font-size:15px;">${label}</div>
+            <div class="plan-meta" style="margin-top:2px;">
+              <i data-lucide="clock" style="width:12px;height:12px;"></i> ${time}
+            </div>
+          </div>
+        </div>
+        <span class="plan-status-badge status-active">
+          <i data-lucide="circle" style="width:8px;height:8px;fill:currentColor;"></i> Active
+        </span>
+      </div>
+      <div class="applicants-preview-row">
+        <span class="applicants-waiting-text">${txt}</span>
+      </div>
+      <button class="btn-review-applicants" onclick="event.stopPropagation();openPlan('poster','${plan.id}')">
+        <i data-lucide="users" style="width:16px;height:16px;"></i> Review applicants
+      </button>
+    </div>`;
+}
+
+// ── Page init ──────────────────────────────────────────────────────────
+
+window.addEventListener('load', async () => {
+  const session = await Auth.getSession();
+  if (!session) { window.location.href = './login.html'; return; }
+
+  window.currentUser = {
+    id:     session.user.id,
+    email:  session.user.email,
+    campus: localStorage.getItem('vovu_campus') || session.user.email.split('@')[1]
+  };
+  document.getElementById('campus-label').textContent = window.currentUser.campus;
+
+  await Promise.all([loadDiscover(), loadYourPlans()]);
+});
+
+async function loadDiscover() {
+  try {
+    const [plans, myProfile] = await Promise.all([
+      DB.getFeedPlans(window.currentUser.campus),
+      DB.getProfile(window.currentUser.id)
+    ]);
+
+    document.getElementById('feed-skeleton').classList.add('hidden');
+
+    if (plans.length === 0) {
+      document.getElementById('feed-empty').classList.remove('hidden');
+      document.getElementById('plan-count').textContent = '0';
+      return;
+    }
+
+    const creatorIds     = [...new Set(plans.map(p => p.creator_id))];
+    const creatorProfs   = await DB.getProfilesBulk(creatorIds);
+    const profileMap     = {};
+    creatorProfs.forEach(p => { profileMap[p.id] = p; });
+
+    const cardsEl = document.getElementById('feed-cards');
+    cardsEl.innerHTML = plans.map(plan => {
+      const cp    = profileMap[plan.creator_id] || null;
+      const score = (myProfile && cp) ? calculateCompatibility(myProfile, cp) : null;
+      return renderPlanCard(plan, cp, score);
+    }).join('');
+    cardsEl.classList.remove('hidden');
+    document.getElementById('plan-count').textContent = plans.length;
+    lucide.createIcons();
+    setTimeout(() => {
+      document.querySelectorAll('#feed-cards .card-enter').forEach(el => el.classList.add('visible'));
+    }, 60);
+  } catch (err) {
+    console.error('Discover load error:', err);
+    document.getElementById('feed-skeleton').classList.add('hidden');
+    document.getElementById('feed-empty').classList.remove('hidden');
+    document.getElementById('plan-count').textContent = '0';
+  }
+}
+
+async function loadYourPlans() {
+  try {
+    const myPlans    = await DB.getMyPlans(window.currentUser.id);
+    const active     = myPlans.filter(p => p.is_active);
+
+    // Badge
+    const badge = document.getElementById('my-plans-badge');
+    if (active.length > 0) { badge.textContent = active.length; badge.style.display = ''; }
+
+    // Application counts
+    const appCountMap = {};
+    for (const p of active) {
+      try {
+        const apps = await DB.getApplications(p.id);
+        appCountMap[p.id] = apps.length;
+      } catch { appCountMap[p.id] = 0; }
+    }
+
+    document.getElementById('your-plans-loading').classList.add('hidden');
+    const contentEl = document.getElementById('your-plans-content');
+
+    if (myPlans.length === 0) {
+      contentEl.innerHTML = `
+        <div class="post-cta-section" style="padding:24px 0;">
+          <p class="post-cta-text">You haven't posted any plans yet.</p>
+          <a href="./post.html" class="btn-post-new">
+            <i data-lucide="plus" style="width:16px;height:16px;"></i> Post your first plan
+          </a>
+        </div>`;
+    } else {
+      const activeHtml = active.map(p => renderMyPlanCard(p, appCountMap[p.id] || 0)).join('');
+      const pastHtml   = myPlans.filter(p => !p.is_active).map(p => renderMyPlanCard(p, 0)).join('');
+      contentEl.innerHTML = activeHtml + pastHtml + `
+        <div class="post-cta-section" style="padding:16px 0 24px;">
+          <p class="post-cta-text">Want more connections? Post another plan.</p>
+          <a href="./post.html" class="btn-post-new">
+            <i data-lucide="plus" style="width:16px;height:16px;"></i> Post a new plan
+          </a>
+        </div>`;
+    }
+
+    contentEl.classList.remove('hidden');
+    lucide.createIcons();
+  } catch (err) {
+    console.error('Your plans load error:', err);
+    document.getElementById('your-plans-loading').textContent = 'Could not load your plans.';
+  }
+}
+</script>
 </body>
 </html>

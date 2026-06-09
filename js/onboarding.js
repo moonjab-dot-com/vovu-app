@@ -1,4 +1,7 @@
 // onboarding.js — 22-step vibe profile form
+// Problem 4: fresh vs ?edit=true detection
+// Problem 5: saves to Supabase on final step
+// Problem 6: steps 20–22 are now single-select (no free text anywhere)
 
 const STEPS = [
   {
@@ -81,7 +84,7 @@ const STEPS = [
   },
   {
     id: 7, group: 'C', key: 'time_of_day', type: 'single-select',
-    question: 'You\'re more of a...',
+    question: 'You\'re more of a…',
     options: [
       { key: 'morning', label: 'Morning person' },
       { key: 'depends', label: 'Honestly depends on the day' },
@@ -140,7 +143,7 @@ const STEPS = [
   {
     id: 13, group: 'D', key: 'talk_listen', type: 'single-select',
     illustration: './public/Digital-Service-Call-Center--Streamline-Dhaka.png',
-    question: 'With someone new, you\'re more likely to...',
+    question: 'With someone new, you\'re more likely to…',
     options: [
       { key: 'listen',   label: 'Listen mostly' },
       { key: 'talk',     label: 'Talk mostly' },
@@ -150,7 +153,7 @@ const STEPS = [
   {
     id: 14, group: 'D', key: 'recharge', type: 'single-select',
     illustration: './public/Space--Streamline-Seoul.png',
-    question: 'After hanging out, you usually want...',
+    question: 'After hanging out, you usually want…',
     options: [
       { key: 'more',   label: 'To do it again soon' },
       { key: 'alone',  label: 'Some time alone to recharge' },
@@ -217,29 +220,62 @@ const STEPS = [
     ],
     maxSelections: 3, minSelections: 1,
   },
+
+  // ── PROBLEM 6: Steps 20–22 are now single-select. Zero free text. ──
+
   {
-    id: 20, group: 'F', key: 'current_vibe', type: 'text',
+    id: 20, group: 'F', key: 'current_vibe', type: 'single-select',
     illustration: './public/Faq--Streamline-Dhaka.png',
-    question: 'Your current vibe in 3 words',
-    sub: 'No pressure. This shows on your profile.',
-    placeholder: 'e.g. chaotic but thriving',
-    maxLength: 60,
+    question: 'Your current vibe this semester',
+    sub: 'This shows on your anonymous card.',
+    options: [
+      { key: 'Chaotic but thriving',    label: 'Chaotic but thriving' },
+      { key: 'Tired but present',       label: 'Tired but present' },
+      { key: 'Stressed but okay',       label: 'Stressed but okay' },
+      { key: 'Surprisingly good',       label: 'Surprisingly good' },
+      { key: 'Just surviving finals',   label: 'Just surviving finals' },
+      { key: 'Social and energized',    label: 'Social and energized' },
+      { key: 'Quiet and focused',       label: 'Quiet and focused' },
+      { key: 'Figuring things out',     label: 'Figuring things out' },
+      { key: 'Low-key and content',     label: 'Low-key and content' },
+      { key: 'Ready for something new', label: 'Ready for something new' },
+    ],
   },
   {
-    id: 21, group: 'F', key: 'surprised_yourself', type: 'text-long',
+    id: 21, group: 'F', key: 'surprised_self', type: 'single-select',
     illustration: './public/I-Have-A-Question--Streamline-Dhaka.png',
     question: 'Last thing you did that surprised yourself',
     sub: 'Shown only to your match as a conversation starter.',
-    placeholder: 'e.g. stayed in the library until 2am and actually enjoyed it',
-    maxLength: 120,
+    options: [
+      { key: 'Stayed in the library until 2am and loved it',   label: 'Stayed in the library until 2am and loved it' },
+      { key: "Said yes to something I'd normally skip",         label: "Said yes to something I'd normally skip" },
+      { key: 'Made a friend in the most random place',         label: 'Made a friend in the most random place' },
+      { key: 'Discovered I actually like running',             label: 'Discovered I actually like running' },
+      { key: 'Cooked a real meal instead of dining hall',      label: 'Cooked a real meal instead of dining hall' },
+      { key: 'Read a book for fun (not class)',                 label: 'Read a book for fun (not class)' },
+      { key: 'Had a conversation that changed my perspective', label: 'Had a conversation that changed my perspective' },
+      { key: "Explored a part of campus I'd never seen",       label: "Explored a part of campus I'd never seen" },
+      { key: 'Went to an event alone and had a great time',    label: 'Went to an event alone and had a great time' },
+      { key: 'Realized I needed more sleep than I thought',    label: 'Realized I needed more sleep than I thought' },
+    ],
   },
   {
-    id: 22, group: 'F', key: 'semester_goal', type: 'text-long',
+    id: 22, group: 'F', key: 'semester_goal', type: 'single-select',
     illustration: './public/Leadership--Streamline-Dhaka.png',
     question: 'One thing you want to do before this semester ends',
     sub: 'Your match sees this after you connect.',
-    placeholder: 'e.g. eat at that place everyone keeps recommending',
-    maxLength: 120,
+    options: [
+      { key: 'Try that place everyone keeps recommending',   label: 'Try that place everyone keeps recommending' },
+      { key: 'Pull an all-nighter (at least once)',          label: 'Pull an all-nighter (at least once)' },
+      { key: "Go to an event I wouldn't normally attend",    label: "Go to an event I wouldn't normally attend" },
+      { key: 'Make at least one new real friend',            label: 'Make at least one new real friend' },
+      { key: 'Explore somewhere off-campus',                 label: 'Explore somewhere off-campus' },
+      { key: 'Find my favorite study spot',                  label: 'Find my favorite study spot' },
+      { key: "Have a meal that isn't dining hall",           label: "Have a meal that isn't dining hall" },
+      { key: 'Join something new, even for one meeting',     label: 'Join something new, even for one meeting' },
+      { key: "Have a conversation I've been avoiding",       label: "Have a conversation I've been avoiding" },
+      { key: 'Do something completely spontaneous',          label: 'Do something completely spontaneous' },
+    ],
   },
 ];
 
@@ -251,7 +287,6 @@ function renderStep(stepIndex) {
   const wrapper = document.getElementById('ob-wrapper');
   if (!wrapper) return;
 
-  // Progress
   const pct = ((stepIndex + 1) / STEPS.length * 100).toFixed(1);
   const prog = document.getElementById('ob-progress');
   if (prog) prog.style.width = pct + '%';
@@ -262,7 +297,6 @@ function renderStep(stepIndex) {
   const backBtn = document.getElementById('ob-back');
   if (backBtn) backBtn.style.visibility = stepIndex === 0 ? 'hidden' : 'visible';
 
-  // Build HTML
   let html = '<div class="ob-step step-enter">';
 
   if (step.illustration) {
@@ -349,22 +383,6 @@ function renderStep(stepIndex) {
         <span>${step.rightLabel}</span>
       </div>
     </div>`;
-
-  } else if (step.type === 'text' || step.type === 'text-long') {
-    const val = obAnswers[step.key] || '';
-    if (step.type === 'text') {
-      html += `<input type="text" class="ob-input" id="text-${step.key}"
-        value="${val.replace(/"/g, '&quot;')}"
-        placeholder="${step.placeholder}"
-        maxlength="${step.maxLength}"
-        oninput="obUpdateText('${step.key}', this.value)">`;
-    } else {
-      html += `<textarea class="ob-input ob-textarea" id="text-${step.key}"
-        placeholder="${step.placeholder}"
-        maxlength="${step.maxLength}" rows="3"
-        oninput="obUpdateText('${step.key}', this.value)">${val}</textarea>`;
-    }
-    html += `<p class="ob-char-count" id="count-${step.key}">${val.length}/${step.maxLength}</p>`;
   }
 
   html += '</div>';
@@ -432,23 +450,12 @@ function obUpdateSlider(key, value) {
   obUpdateNextButton(STEPS[obStep]);
 }
 
-function obUpdateText(key, value) {
-  obAnswers[key] = value;
-  const counter = document.getElementById('count-' + key);
-  const step = STEPS[obStep];
-  if (counter) counter.textContent = value.length + '/' + step.maxLength;
-  obUpdateNextButton(step);
-}
-
 function obUpdateNextButton(step) {
   const nextBtn = document.getElementById('ob-next');
   if (!nextBtn) return;
   let ready = false;
 
   if (step.type === 'slider') {
-    ready = true; // sliders always have a value
-  } else if (step.type === 'text' || step.type === 'text-long') {
-    // optional text steps — always allow continuing
     ready = true;
   } else if (step.type === 'single-select') {
     ready = !!obAnswers[step.key];
@@ -464,15 +471,71 @@ function obUpdateNextButton(step) {
   }
 }
 
-function obNext() {
+// ── PROBLEM 5: Save to Supabase on final step ─────────────────────────
+
+async function obNext() {
   if (obStep === STEPS.length - 1) {
-    // Save profile
-    const profile = JSON.parse(localStorage.getItem('vovu_profile') || '{}');
-    Object.assign(profile, obAnswers);
-    localStorage.setItem('vovu_profile', JSON.stringify(profile));
-    window.location.href = './feed.html';
+    const btn = document.getElementById('ob-next');
+    btn.disabled = true;
+    btn.innerHTML = 'Saving… <span class="spinner" style="width:18px;height:18px;border-width:2px;border-color:rgba(255,239,179,0.35);border-top-color:var(--butter);"></span>';
+
+    try {
+      if (typeof Auth !== 'undefined' && typeof DB !== 'undefined') {
+        const session = await Auth.getSession();
+        if (!session) { window.location.href = './login.html'; return; }
+
+        // Derive display name from email (e.g. "john.smith@kenyon.edu" → "John")
+        const emailUser  = session.user.email.split('@')[0];
+        const firstName  = emailUser.split('.')[0].charAt(0).toUpperCase() +
+                           emailUser.split('.')[0].slice(1);
+        const initial    = firstName.charAt(0).toUpperCase();
+
+        await DB.updateUser(session.user.id, { first_name: firstName });
+
+        await DB.saveProfile(session.user.id, {
+          activities:     obAnswers.activities     || [],
+          group_size:     obAnswers.group_size,
+          place_vibe:     obAnswers.place_vibe,
+          plan_style:     obAnswers.plan_style,
+          duration:       obAnswers.duration,
+          timing:         obAnswers.timing         || [],
+          time_of_day:    obAnswers.time_of_day,
+          best_days:      obAnswers.best_days       || [],
+          openness:       obAnswers.openness        || 3,
+          follow_through: obAnswers.follow_through  || 3,
+          intent:         obAnswers.intent,
+          energy_level:   obAnswers.energy_level,
+          talk_listen:    obAnswers.talk_listen,
+          recharge:       obAnswers.recharge,
+          silence:        obAnswers.silence,
+          distance:       obAnswers.distance,
+          notice:         obAnswers.notice,
+          group_pref:     obAnswers.group_pref,
+          interests:      obAnswers.interests       || [],
+          current_vibe:   obAnswers.current_vibe,
+          surprised_self: obAnswers.surprised_self,
+          semester_goal:  obAnswers.semester_goal,
+          initial:        initial,
+        });
+
+        localStorage.removeItem('vovu_profile');
+        localStorage.removeItem('vovu_onboarding_answers');
+      } else {
+        // Fallback: localStorage only (dev/demo mode)
+        localStorage.setItem('vovu_profile', JSON.stringify(obAnswers));
+      }
+
+      window.location.href = './feed.html';
+    } catch (err) {
+      console.error('Onboarding save error:', err);
+      btn.disabled = false;
+      btn.innerHTML = 'Try again <i data-lucide="arrow-right"></i>';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      if (window.showToast) showToast('Could not save. Check connection.', 'error');
+    }
     return;
   }
+
   obStep = Math.min(obStep + 1, STEPS.length - 1);
   renderStep(obStep);
   window.scrollTo(0, 0);
@@ -485,10 +548,43 @@ function obBack() {
   window.scrollTo(0, 0);
 }
 
-// Init
-document.addEventListener('DOMContentLoaded', () => {
-  // Restore saved answers if any
-  const saved = JSON.parse(localStorage.getItem('vovu_profile') || '{}');
-  Object.assign(obAnswers, saved);
+// ── PROBLEM 4: Fresh vs ?edit=true detection ──────────────────────────
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const isEdit = new URLSearchParams(window.location.search).has('edit');
+
+  if (!isEdit) {
+    // Fresh onboarding — start completely blank
+    localStorage.removeItem('vovu_profile');
+    localStorage.removeItem('vovu_onboarding_answers');
+    // obAnswers is already {} — nothing pre-selected
+  } else {
+    // Edit mode — restore saved answers from localStorage
+    const saved = JSON.parse(localStorage.getItem('vovu_profile') || '{}');
+    Object.assign(obAnswers, saved);
+
+    // Also try Supabase if available
+    if (typeof Auth !== 'undefined') {
+      try {
+        const session = await Auth.getSession();
+        if (session) {
+          const profile = await DB.getProfile(session.user.id);
+          if (profile) Object.assign(obAnswers, profile);
+        }
+      } catch (e) { /* silent fallback */ }
+    }
+  }
+
+  // Auth check — redirect if not signed in
+  if (typeof Auth !== 'undefined') {
+    const session = await Auth.getSession();
+    if (!session) { window.location.href = './login.html'; return; }
+    window.currentUser = {
+      id:     session.user.id,
+      email:  session.user.email,
+      campus: localStorage.getItem('vovu_campus') || session.user.email.split('@')[1]
+    };
+  }
+
   renderStep(obStep);
 });

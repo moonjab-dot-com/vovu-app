@@ -186,12 +186,11 @@ const DB = {
   },
 
   async applyToPlan(planId, applicantId) {
-    const { data, error } = await sb
+    const { error } = await sb
       .from('applications')
-      .insert({ plan_id: planId, applicant_id: applicantId })
-      .select().single();
-    if (error) throw error;
-    return data;
+      .insert({ plan_id: planId, applicant_id: applicantId });
+    if (error) throw new Error(error.message || error.details || JSON.stringify(error));
+    return true;
   },
 
   async withdrawApplication(planId, applicantId) {

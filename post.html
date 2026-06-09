@@ -22,7 +22,7 @@
   </header>
   <p class="page-sub">Only people whose vibe matches yours will see it.</p>
 
-  <div id="post-form">
+  <div id="post-form" style="padding-bottom: 100px;">
 
     <!-- Activity -->
     <div class="form-section">
@@ -85,7 +85,7 @@
       <input type="text" class="input input-sm"
              id="zone-custom"
              placeholder="Or type your own area…"
-             oninput="if(this.value){postData.zone=this.value;document.querySelectorAll('.suggestion-chip').forEach(c=>c.classList.remove('selected'));}checkPostReady();">
+             oninput="if(this.value.trim()){postData.zone=this.value.trim();document.querySelectorAll('.suggestion-chip').forEach(c=>c.classList.remove('selected'));}else if(!document.querySelector('.suggestion-chip.selected')){postData.zone=null;}">
     </div>
 
     <!-- Time window -->
@@ -110,14 +110,12 @@
     <div class="private-section">
       <div class="private-header">
         <i data-lucide="lock"></i>
-        Private — revealed only after match
+        Private — only your match will see this
       </div>
       <input type="text" class="private-input" id="exact-location"
-             placeholder="Exact location (e.g. Wiggin St Coffee, back corner)"
-             oninput="checkPostReady()">
+             placeholder="Exact location (e.g. Wiggin St Coffee, back corner)">
       <input type="text" class="private-input" id="exact-time"
-             placeholder="Exact time (e.g. 3:15pm)"
-             oninput="checkPostReady()">
+             placeholder="Exact time (e.g. 3:15pm)">
     </div>
 
     <!-- Note -->
@@ -156,41 +154,23 @@
     <a href="./feed.html" class="btn-primary" style="width:200px; margin:0 auto; display:flex;">Back to feed</a>
   </div>
 
-  <!-- Submit bar -->
-  <div class="submit-bar" id="submit-bar">
+  <!-- Submit bar — no bottom-nav on this page so it sits at true bottom -->
+  <div class="submit-bar" id="submit-bar" style="bottom:0; z-index:100;">
     <button id="submit-plan-btn"
             class="btn-primary btn-full"
-            disabled
             onclick="submitPlan()">
       Drop this plan
       <i data-lucide="arrow-right"></i>
     </button>
   </div>
 
-  <nav class="bottom-nav">
-    <a href="./feed.html" class="nav-tab">
-      <i data-lucide="layout-list"></i>
-      <span>Feed</span>
-    </a>
-    <a href="./post.html" class="nav-tab nav-post active">
-      <div class="post-circle">
-        <i data-lucide="plus" style="color:var(--butter);"></i>
-      </div>
-      <span style="margin-top:2px;">Post</span>
-    </a>
-    <a href="./profile.html" class="nav-tab">
-      <i data-lucide="user"></i>
-      <span>Profile</span>
-    </a>
-  </nav>
-
 </div>
 
-<script src="./js/main.js"></script>
+<script src="./js/main.js?v=3"></script>
 <script>
 lucide.createIcons();
 
-// Auth check + set currentUser
+// Auth check
 window.addEventListener('load', async () => {
   const session = await Auth.getSession();
   if (!session) { window.location.href = './login.html'; return; }
@@ -201,36 +181,53 @@ window.addEventListener('load', async () => {
   };
 });
 
-// Override checkPostReady to include private fields (Problem 2)
-function checkPostReady() {
-  const submitBtn = document.getElementById('submit-plan-btn');
-  if (!submitBtn) return;
-  const timeVal  = (document.getElementById('time-select') || {}).value || '';
-  const locVal   = (document.getElementById('exact-location') || {}).value || '';
-  const timeExact = (document.getElementById('exact-time') || {}).value || '';
-  submitBtn.disabled = !(postData.activity && postData.zone && timeVal && locVal.trim() && timeExact.trim());
-}
-
-// Override submitPlan to save to Supabase (Problem 2)
+// Validate on submit — show exactly what's missing instead of silently disabling
 async function submitPlan() {
+  const activity  = postData.activity;
+  const zone      = postData.zone;
+  const timeVal   = document.getElementById('time-select').value;
+  const locVal    = document.getElementById('exact-location').value.trim();
+  const timeExact = document.getElementById('exact-time').value.trim();
+
+  if (!activity) {
+    showToast('Choose an activity first.', 'error');
+    document.querySelector('.post-activity-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  if (!zone) {
+    showToast('Pick or type a general area.', 'error');
+    document.getElementById('zone-custom').focus();
+    return;
+  }
+  if (!timeVal) {
+    showToast('Choose a time window.', 'error');
+    document.getElementById('time-select').focus();
+    return;
+  }
+  if (!locVal) {
+    showToast('Add an exact location (private — only your match sees it).', 'error');
+    document.getElementById('exact-location').focus();
+    return;
+  }
+  if (!timeExact) {
+    showToast('Add an exact time (private — only your match sees it).', 'error');
+    document.getElementById('exact-time').focus();
+    return;
+  }
+
   const btn = document.getElementById('submit-plan-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner spinner-butter" style="width:18px;height:18px;border-width:2px;"></span> Posting…';
 
   try {
-    const timeVal    = document.getElementById('time-select').value;
-    const locVal     = document.getElementById('exact-location').value.trim();
-    const timeExact  = document.getElementById('exact-time').value.trim();
-    const noteVal    = (document.getElementById('plan-note') || {}).value || '';
-
-    // Calculate expiry: 8 hours from now
+    const noteVal   = (document.getElementById('plan-note') || {}).value || '';
     const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString();
 
     await DB.createPlan({
       creator_id:     window.currentUser.id,
       campus:         window.currentUser.campus,
-      activity:       postData.activity,
-      zone:           postData.zone,
+      activity,
+      zone,
       time_window:    timeVal,
       note:           noteVal.trim() || null,
       spots:          postData.spots || 1,
@@ -239,7 +236,6 @@ async function submitPlan() {
       expires_at:     expiresAt,
     });
 
-    // Success — navigate to feed with toast
     localStorage.setItem('vovu_toast', 'Plan posted');
     window.location.href = './feed.html';
   } catch (err) {
@@ -249,14 +245,15 @@ async function submitPlan() {
     lucide.createIcons();
 
     if (err.code === 'MAX_PLANS') {
-      if (window.showToast) showToast(
-        'You already have 2 active plans. Wait for one to expire or get matched.', 'error'
-      );
+      showToast('You already have 2 active plans. Wait for one to expire or get matched.', 'error');
     } else {
-      if (window.showToast) showToast(err.message || 'Could not post plan. Try again.', 'error');
+      showToast(err.message || 'Could not post plan. Try again.', 'error');
     }
   }
 }
+
+// Keep checkPostReady as no-op (button always visible now)
+function checkPostReady() {}
 </script>
 </body>
 </html>

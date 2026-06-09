@@ -116,3 +116,30 @@ create policy "magic_links_service" on magic_links for all using (true);
 alter publication supabase_realtime add table plans;
 alter publication supabase_realtime add table applications;
 alter publication supabase_realtime add table matches;
+
+-- ─── AUTH TRIGGER ──────────────────────────────────────────────────────────────
+-- Auto-creates a public.users row whenever a new Supabase auth user signs up.
+-- Without this, signInWithOtp returns "Database error saving new user".
+
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.users (id, email, campus)
+  values (
+    new.id,
+    new.email,
+    split_part(new.email, '@', 2)   -- e.g. 'kenyon.edu' or 'gmail.com' for test accounts
+  )
+  on conflict do nothing;           -- safe on retries / duplicate events
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();

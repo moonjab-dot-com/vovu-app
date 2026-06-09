@@ -70,19 +70,36 @@
       }
     }, 8000);
 
-    function redirect(session) {
-      const email = session.user.email;
+    async function redirect(session) {
+      const email  = session.user.email;
+      const campus = email.split('@')[1];
       localStorage.setItem('vovu_email',  email);
-      localStorage.setItem('vovu_campus', email.split('@')[1]);
+      localStorage.setItem('vovu_campus', campus);
 
       iconEl.textContent  = '✓';
       titleEl.textContent = 'Signed in!';
       subEl.textContent   = 'Taking you in…';
 
-      // TODO: check profiles table to decide onboarding vs feed
+      // Upsert public.users row — safety net in case the auth trigger
+      // didn't run (e.g. first-run before trigger was created).
+      try {
+        await window._supabase
+          .from('users')
+          .upsert({ id: session.user.id, email, campus }, { onConflict: 'id' });
+      } catch (e) {
+        console.warn('users upsert:', e.message);
+      }
+
+      // Check if profile already completed → go straight to feed
+      const { data: profile } = await window._supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
       setTimeout(() => {
-        window.location.href = './onboarding.html';
-      }, 800);
+        window.location.href = profile ? './feed.html' : './onboarding.html';
+      }, 600);
     }
   })();
 </script>

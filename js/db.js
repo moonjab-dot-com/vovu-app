@@ -140,35 +140,23 @@ const DB = {
         },
         { onConflict: 'email', ignoreDuplicates: false }
       );
-    if (upsertErr) {
-      // Log but do not throw — the row may already exist from verify.html.
-      // We verify existence below before proceeding.
-      console.warn('users upsert warning in createPlan:', upsertErr.message);
-    }
+    if (upsertErr) console.warn('[step1] users upsert:', JSON.stringify(upsertErr));
 
-    // Hard verification: confirm the row is readable before inserting plan.
     const { data: userRow } = await sb
-      .from('users')
-      .select('id')
-      .eq('id', session.user.id)
-      .maybeSingle();
-    if (!userRow) {
-      throw new Error(
-        'Your account is not fully set up. Please sign out and sign in again.'
-      );
-    }
+      .from('users').select('id').eq('id', session.user.id).maybeSingle();
+    console.log('[step2] userRow:', userRow);
+    if (!userRow) throw new Error('Your account is not fully set up. Please sign out and sign in again.');
 
-    // Enforce max 2 active plans per user
     const { count, error: countErr } = await sb
-      .from('plans')
-      .select('id', { count: 'exact', head: true })
-      .eq('creator_id', planData.creator_id)
-      .eq('is_active', true);
-    if (countErr) throw countErr;
+      .from('plans').select('id', { count: 'exact', head: true })
+      .eq('creator_id', planData.creator_id).eq('is_active', true);
+    if (countErr) { console.error('[step3] count error:', JSON.stringify(countErr)); throw countErr; }
+    console.log('[step3] active plan count:', count);
     if (count >= 2) { const e = new Error('MAX_PLANS'); e.code = 'MAX_PLANS'; throw e; }
 
+    console.log('[step4] inserting plan:', JSON.stringify(planData));
     const { data, error } = await sb.from('plans').insert(planData).select().single();
-    if (error) throw error;
+    if (error) { console.error('[step4] insert error:', JSON.stringify(error)); throw error; }
     return data;
   },
 

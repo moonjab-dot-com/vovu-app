@@ -214,7 +214,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // TEST MODE: isValidVovuEmail allows test Gmail addresses — remove before launch
       if (isValidVovuEmail(val)) {
         const domain = val.split('@')[1];
-        if (nameEl) nameEl.textContent = (campusMap[domain] || domain) + ' detected';
+        // TEST MODE: show "Test account" for whitelisted Gmail addresses
+        const displayName = TEST_EMAILS.includes(val)
+          ? 'Test account'
+          : (campusMap[domain] || domain);
+        if (nameEl) nameEl.textContent = displayName + ' detected';
         if (confirmEl) confirmEl.classList.remove('hidden');
         if (sendBtn) sendBtn.removeAttribute('disabled');
       } else {

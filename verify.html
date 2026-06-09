@@ -90,11 +90,12 @@
       subEl.textContent   = 'Taking you in…';
 
       // Force-sync public.users — ensures FK is always satisfied.
+      // Must include first_name + verified — both are NOT NULL without defaults.
       // ignoreDuplicates: false means ON CONFLICT DO UPDATE (not just ignore).
       const { error: upsertError } = await window._supabase
         .from('users')
         .upsert(
-          { id: uid, email, campus, verified: true },
+          { id: uid, email, campus, first_name: firstName, verified: true },
           { onConflict: 'id', ignoreDuplicates: false }
         );
       if (upsertError) console.warn('users upsert warning:', upsertError.message);

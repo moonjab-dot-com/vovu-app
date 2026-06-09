@@ -60,11 +60,12 @@ const DB = {
 
   // Upsert the public.users row — creates it if it doesn't exist yet.
   // Call this instead of updateUser when the row may not exist (e.g. onboarding).
+  // verified MUST be included: it is NOT NULL and has no default without the SQL migration.
   async upsertUser(userId, email, campus, extraFields = {}) {
     const { data, error } = await sb
       .from('users')
       .upsert(
-        { id: userId, email, campus, ...extraFields },
+        { id: userId, email, campus, verified: true, ...extraFields },
         { onConflict: 'id' }
       )
       .select().single();
@@ -114,16 +115,21 @@ const DB = {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) throw new Error('Not authenticated');
 
-    // Include verified:true — the column is NOT NULL; omitting it causes a
-    // silent constraint failure that swallows the error and leaves no row.
+    // Include first_name + verified — both are NOT NULL without the SQL migration.
+    // Omitting either causes a silent INSERT failure that leaves no row.
+    const emailUser  = session.user.email.split('@')[0];
+    const firstName  = emailUser.split('.')[0].charAt(0).toUpperCase()
+                     + emailUser.split('.')[0].slice(1);
+
     const { error: upsertErr } = await sb
       .from('users')
       .upsert(
         {
-          id:       session.user.id,
-          email:    session.user.email,
-          campus:   planData.campus,
-          verified: true,
+          id:         session.user.id,
+          email:      session.user.email,
+          campus:     planData.campus,
+          first_name: firstName,
+          verified:   true,
         },
         { onConflict: 'id', ignoreDuplicates: false }
       );

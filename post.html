@@ -253,24 +253,32 @@ async function submitPlan() {
     const { data: { session }, error: sessionError } = await window._supabase.auth.getSession();
     if (sessionError || !session) { window.location.href = './login.html'; return; }
 
-    const uid    = session.user.id;
-    const email  = session.user.email;
-    const campus = localStorage.getItem('vovu_campus') || email.split('@')[1];
+    const uid      = session.user.id;
+    const email    = session.user.email;
+    const campus   = localStorage.getItem('vovu_campus') || email.split('@')[1];
 
-    // ── Step 2: Upsert user row — MUST succeed before plan INSERT ──────────
-    // verified is NOT NULL; omitting it causes a silent constraint error that
-    // swallows the failure and leaves no row, which then triggers FK violation.
+    // Derive first_name — needed because first_name is NOT NULL in public.users
+    const emailUser = email.split('@')[0];
+    const firstName = emailUser.split('.')[0].charAt(0).toUpperCase()
+                    + emailUser.split('.')[0].slice(1);
+
+    // ── Step 2: Upsert user row — always run before plan INSERT ────────────
+    // Must include first_name AND verified — both are NOT NULL without defaults.
+    // Omitting either causes the INSERT to fail silently.
     const { error: upsertError } = await window._supabase
       .from('users')
       .upsert(
-        { id: uid, email, campus, verified: true },
+        { id: uid, email, campus, first_name: firstName, verified: true },
         { onConflict: 'id', ignoreDuplicates: false }
       );
     if (upsertError) {
       console.warn('User upsert warning (post.html):', upsertError.message);
     }
 
-    // ── Step 3: Hard verify the row exists before inserting plan ───────────
+    // ── Step 3: Verify the row exists — log only, never block ─────────────
+    // If the upsert above failed, the plan INSERT will fail with FK violation,
+    // which gets caught below and shown as a generic error. Never show
+    // "account not fully set up" — it was blocking users with valid sessions.
     const { data: userRow } = await window._supabase
       .from('users')
       .select('id')
@@ -278,7 +286,7 @@ async function submitPlan() {
       .maybeSingle();
 
     if (!userRow) {
-      throw new Error('Your account is not fully set up. Please sign out and sign in again.');
+      console.warn('post.html: user row missing after upsert — plan INSERT may fail with FK error.');
     }
 
     // ── Step 4: Create the plan ────────────────────────────────────────────

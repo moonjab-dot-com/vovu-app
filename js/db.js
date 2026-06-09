@@ -117,47 +117,23 @@ const DB = {
   },
 
   async createPlan(planData) {
-    // ── FK guard: ensure public.users row exists before inserting plan ──
-    // plans.creator_id → users.id; if the row is missing the INSERT fails.
     const { data: { session } } = await sb.auth.getSession();
     if (!session) throw new Error('Not authenticated');
 
-    // Include first_name + verified — both are NOT NULL without the SQL migration.
-    // Omitting either causes a silent INSERT failure that leaves no row.
-    const emailUser  = session.user.email.split('@')[0];
-    const firstName  = emailUser.split('.')[0].charAt(0).toUpperCase()
-                     + emailUser.split('.')[0].slice(1);
+    // Check max 2 active plans
+    const { data: existing, error: countErr } = await sb
+      .from('plans')
+      .select('id')
+      .eq('creator_id', planData.creator_id)
+      .eq('is_active', true);
+    if (countErr) throw new Error('Could not check existing plans: ' + countErr.message);
+    if ((existing || []).length >= 2) {
+      const e = new Error('MAX_PLANS'); e.code = 'MAX_PLANS'; throw e;
+    }
 
-    const { error: upsertErr } = await sb
-      .from('users')
-      .upsert(
-        {
-          id:         session.user.id,
-          email:      session.user.email,
-          campus:     planData.campus,
-          first_name: firstName,
-          verified:   true,
-        },
-        { onConflict: 'email', ignoreDuplicates: false }
-      );
-    if (upsertErr) console.warn('[step1] users upsert:', JSON.stringify(upsertErr));
-
-    const { data: userRow } = await sb
-      .from('users').select('id').eq('id', session.user.id).maybeSingle();
-    console.log('[step2] userRow:', userRow);
-    if (!userRow) throw new Error('Your account is not fully set up. Please sign out and sign in again.');
-
-    const { count, error: countErr } = await sb
-      .from('plans').select('id', { count: 'exact', head: true })
-      .eq('creator_id', planData.creator_id).eq('is_active', true);
-    if (countErr) { console.error('[step3] count error:', JSON.stringify(countErr)); throw countErr; }
-    console.log('[step3] active plan count:', count);
-    if (count >= 2) { const e = new Error('MAX_PLANS'); e.code = 'MAX_PLANS'; throw e; }
-
-    console.log('[step4] inserting plan:', JSON.stringify(planData));
-    const { data, error } = await sb.from('plans').insert(planData).select().single();
-    if (error) { console.error('[step4] insert error:', JSON.stringify(error)); throw error; }
-    return data;
+    const { error } = await sb.from('plans').insert(planData);
+    if (error) throw new Error(error.message || error.details || JSON.stringify(error));
+    return true;
   },
 
   // Public fields only — private fields blocked by REVOKE for non-owner

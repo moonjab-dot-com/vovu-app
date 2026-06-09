@@ -337,7 +337,7 @@ async function submitPlan() {
     if (err.code === 'MAX_PLANS') {
       showToast('You already have 2 active plans. Wait for one to expire or get matched.', 'error');
     } else {
-      showToast('Error: ' + (err.message || err.code || JSON.stringify(err)), 'error');
+      showToast(err.message || 'Could not post plan. Try again.', 'error');
     }
   }
 }

@@ -479,6 +479,9 @@ async function obNext() {
     btn.disabled = true;
     btn.innerHTML = 'Saving… <span class="spinner" style="width:18px;height:18px;border-width:2px;border-color:rgba(255,239,179,0.35);border-top-color:var(--butter);"></span>';
 
+    // Always save to localStorage first — guaranteed fallback
+    localStorage.setItem('vovu_profile', JSON.stringify(obAnswers));
+
     try {
       if (typeof Auth !== 'undefined' && typeof DB !== 'undefined') {
         const session = await Auth.getSession();
@@ -489,8 +492,13 @@ async function obNext() {
         const firstName  = emailUser.split('.')[0].charAt(0).toUpperCase() +
                            emailUser.split('.')[0].slice(1);
         const initial    = firstName.charAt(0).toUpperCase();
+        const campus     = localStorage.getItem('vovu_campus') ||
+                           session.user.email.split('@')[1];
 
-        await DB.updateUser(session.user.id, { first_name: firstName });
+        // upsertUser creates the row if the auth trigger hasn't run yet
+        await DB.upsertUser(session.user.id, session.user.email, campus, {
+          first_name: firstName
+        });
 
         await DB.saveProfile(session.user.id, {
           activities:     obAnswers.activities     || [],
@@ -520,19 +528,14 @@ async function obNext() {
 
         localStorage.removeItem('vovu_profile');
         localStorage.removeItem('vovu_onboarding_answers');
-      } else {
-        // Fallback: localStorage only (dev/demo mode)
-        localStorage.setItem('vovu_profile', JSON.stringify(obAnswers));
       }
-
-      window.location.href = './feed.html';
     } catch (err) {
-      console.error('Onboarding save error:', err);
-      btn.disabled = false;
-      btn.innerHTML = 'Try again <i data-lucide="arrow-right"></i>';
-      if (typeof lucide !== 'undefined') lucide.createIcons();
-      if (window.showToast) showToast('Could not save. Check connection.', 'error');
+      // Log but don't block — localStorage copy was already saved above.
+      // User proceeds to feed; profile will sync on next save.
+      console.error('Onboarding save error (continuing anyway):', err);
     }
+
+    window.location.href = './feed.html';
     return;
   }
 

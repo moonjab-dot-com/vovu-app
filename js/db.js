@@ -58,6 +58,20 @@ const DB = {
     return data;
   },
 
+  // Upsert the public.users row — creates it if it doesn't exist yet.
+  // Call this instead of updateUser when the row may not exist (e.g. onboarding).
+  async upsertUser(userId, email, campus, extraFields = {}) {
+    const { data, error } = await sb
+      .from('users')
+      .upsert(
+        { id: userId, email, campus, ...extraFields },
+        { onConflict: 'id' }
+      )
+      .select().single();
+    if (error) throw error;
+    return data;
+  },
+
   // Returns null (not throw) when profile row doesn't exist yet
   async getProfile(userId) {
     const { data, error } = await sb.from('profiles').select('*').eq('id', userId).single();

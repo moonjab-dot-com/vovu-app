@@ -113,12 +113,37 @@ const DB = {
     // plans.creator_id → users.id; if the row is missing the INSERT fails.
     const { data: { session } } = await sb.auth.getSession();
     if (!session) throw new Error('Not authenticated');
-    await sb
+
+    // Include verified:true — the column is NOT NULL; omitting it causes a
+    // silent constraint failure that swallows the error and leaves no row.
+    const { error: upsertErr } = await sb
       .from('users')
       .upsert(
-        { id: session.user.id, email: session.user.email, campus: planData.campus },
-        { onConflict: 'id' }
+        {
+          id:       session.user.id,
+          email:    session.user.email,
+          campus:   planData.campus,
+          verified: true,
+        },
+        { onConflict: 'id', ignoreDuplicates: false }
       );
+    if (upsertErr) {
+      // Log but do not throw — the row may already exist from verify.html.
+      // We verify existence below before proceeding.
+      console.warn('users upsert warning in createPlan:', upsertErr.message);
+    }
+
+    // Hard verification: confirm the row is readable before inserting plan.
+    const { data: userRow } = await sb
+      .from('users')
+      .select('id')
+      .eq('id', session.user.id)
+      .maybeSingle();
+    if (!userRow) {
+      throw new Error(
+        'Your account is not fully set up. Please sign out and sign in again.'
+      );
+    }
 
     // Enforce max 2 active plans per user
     const { count, error: countErr } = await sb

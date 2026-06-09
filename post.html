@@ -158,22 +158,22 @@
     <div class="footer-inner">
       <div class="footer-grid">
         <div>
-          <div class="footer-col-label">Nosotros</div>
-          <a href="./nosotros.html" class="footer-link">Nosotros</a>
+          <div class="footer-col-label">Company</div>
+          <a href="./nosotros.html" class="footer-link">About</a>
           <a href="./blog.html" class="footer-link">Blog</a>
-          <a href="./prensa.html" class="footer-link">Prensa</a>
+          <a href="./prensa.html" class="footer-link">Press</a>
         </div>
         <div>
           <div class="footer-col-label">Legal</div>
-          <a href="./privacidad.html" class="footer-link">Privacidad</a>
-          <a href="./terminos.html" class="footer-link">Términos</a>
+          <a href="./privacidad.html" class="footer-link">Privacy</a>
+          <a href="./terminos.html" class="footer-link">Terms</a>
           <a href="./privacidad.html" class="footer-link">Cookies</a>
         </div>
         <div>
-          <div class="footer-col-label">Ayuda</div>
-          <a href="./ayuda.html" class="footer-link">Ayuda</a>
-          <a href="mailto:hello@vovu.co" class="footer-link">Contacto</a>
-          <a href="./testimonios.html" class="footer-link">Testimonios</a>
+          <div class="footer-col-label">Support</div>
+          <a href="./ayuda.html" class="footer-link">Help</a>
+          <a href="mailto:hello@vovu.co" class="footer-link">Contact</a>
+          <a href="./testimonios.html" class="footer-link">Testimonials</a>
         </div>
       </div>
       <div class="footer-bottom">
@@ -249,12 +249,45 @@ async function submitPlan() {
   btn.innerHTML = '<span class="spinner spinner-butter" style="width:18px;height:18px;border-width:2px;"></span> Posting…';
 
   try {
+    // ── Step 1: Get fresh session ──────────────────────────────────────────
+    const { data: { session }, error: sessionError } = await window._supabase.auth.getSession();
+    if (sessionError || !session) { window.location.href = './login.html'; return; }
+
+    const uid    = session.user.id;
+    const email  = session.user.email;
+    const campus = localStorage.getItem('vovu_campus') || email.split('@')[1];
+
+    // ── Step 2: Upsert user row — MUST succeed before plan INSERT ──────────
+    // verified is NOT NULL; omitting it causes a silent constraint error that
+    // swallows the failure and leaves no row, which then triggers FK violation.
+    const { error: upsertError } = await window._supabase
+      .from('users')
+      .upsert(
+        { id: uid, email, campus, verified: true },
+        { onConflict: 'id', ignoreDuplicates: false }
+      );
+    if (upsertError) {
+      console.warn('User upsert warning (post.html):', upsertError.message);
+    }
+
+    // ── Step 3: Hard verify the row exists before inserting plan ───────────
+    const { data: userRow } = await window._supabase
+      .from('users')
+      .select('id')
+      .eq('id', uid)
+      .maybeSingle();
+
+    if (!userRow) {
+      throw new Error('Your account is not fully set up. Please sign out and sign in again.');
+    }
+
+    // ── Step 4: Create the plan ────────────────────────────────────────────
     const noteVal   = (document.getElementById('plan-note') || {}).value || '';
     const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString();
 
     await DB.createPlan({
-      creator_id:     window.currentUser.id,
-      campus:         window.currentUser.campus,
+      creator_id:     uid,
+      campus:         campus,
       activity,
       zone,
       time_window:    timeVal,

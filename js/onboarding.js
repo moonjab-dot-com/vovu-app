@@ -503,7 +503,7 @@ async function obNext() {
         .from('users')
         .upsert(
           { id: uid, email, campus, first_name: firstName, verified: true },
-          { onConflict: 'id', ignoreDuplicates: false }
+          { onConflict: 'email', ignoreDuplicates: false }
         );
 
       if (userErr) {

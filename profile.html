@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -86,13 +86,13 @@
         <div class="bar-row">
           <span class="bar-label">Follows through</span>
           <div class="bar-track">
-            <div class="bar-fill" id="bar-follow-through" style="width:60%;"></div>
+            <div class="bar-fill" id="bar-follow-through" style="width:0;"></div>
           </div>
         </div>
         <div class="bar-row">
           <span class="bar-label">Open to new people</span>
           <div class="bar-track">
-            <div class="bar-fill" id="bar-openness" style="width:60%;"></div>
+            <div class="bar-fill" id="bar-openness" style="width:0;"></div>
           </div>
         </div>
       </div>
@@ -155,27 +155,27 @@
       <div class="footer-inner">
         <div class="footer-grid">
           <div>
-            <div class="footer-col-label">Company</div>
-            <a href="#" class="footer-link">About</a>
-            <a href="#" class="footer-link">Blog</a>
-            <a href="#" class="footer-link">Careers</a>
+            <div class="footer-col-label">Nosotros</div>
+            <a href="./nosotros.html" class="footer-link">Nosotros</a>
+            <a href="./blog.html" class="footer-link">Blog</a>
+            <a href="./prensa.html" class="footer-link">Prensa</a>
           </div>
           <div>
             <div class="footer-col-label">Legal</div>
-            <a href="#" class="footer-link">Privacy</a>
-            <a href="#" class="footer-link">Terms</a>
-            <a href="#" class="footer-link">Cookies</a>
+            <a href="./privacidad.html" class="footer-link">Privacidad</a>
+            <a href="./terminos.html" class="footer-link">Términos</a>
+            <a href="./privacidad.html" class="footer-link">Cookies</a>
           </div>
           <div>
-            <div class="footer-col-label">Support</div>
-            <a href="#" class="footer-link">Help center</a>
-            <a href="#" class="footer-link">Contact</a>
-            <a href="#" class="footer-link">Safety</a>
+            <div class="footer-col-label">Ayuda</div>
+            <a href="./ayuda.html" class="footer-link">Ayuda</a>
+            <a href="mailto:hello@vovu.co" class="footer-link">Contacto</a>
+            <a href="./testimonios.html" class="footer-link">Testimonios</a>
           </div>
         </div>
         <div class="footer-bottom">
           <span class="footer-brand-text">Vovu</span>
-          <span class="footer-tagline">© 2025 Vovu · Making campus less lonely</span>
+          <span class="footer-tagline">© 2026 Vovu · Making campus less lonely</span>
         </div>
       </div>
     </footer>
@@ -205,110 +205,156 @@
 <script>
 lucide.createIcons();
 
+// Use raw supabase client — never rely on cached helpers
+const _sb = window._supabase;
+
 const ACTIVITY_LABELS_MAP = {
   cafe: 'Café', food: 'Dining hall', gym: 'Gym', study: 'Study',
   walk: 'Walk', movie: 'Movie', sports: 'Sports', offcampus: 'Off-campus',
   party: 'Party', other: 'Other'
 };
-
 const INTENT_LABELS_MAP = {
   things_together: 'Someone to do things with',
   study_partner:   'A study partner',
   off_phone:       'Just to get off my phone',
   new_friends:     'New friends, honestly'
 };
+const GROUP_SIZE_LABELS = {
+  '1on1': '1-on-1 only', small: 'Small group',
+  either: 'Either works',  large: 'Big groups'
+};
 
-window.addEventListener('load', initProfile);
+// Entry point — DOMContentLoaded fires before window.load
+document.addEventListener('DOMContentLoaded', initProfilePage);
 
-async function initProfile() {
-  const session = await Auth.getSession();
-  if (!session) { window.location.href = './login.html'; return; }
+async function initProfilePage() {
+  // 1. Fresh session — never rely on cached state
+  const { data: { session }, error: sessionError } = await _sb.auth.getSession();
 
-  window.currentUser = {
-    id:     session.user.id,
-    email:  session.user.email,
-    campus: localStorage.getItem('vovu_campus') || session.user.email.split('@')[1]
-  };
-
-  try {
-    const [user, profile] = await Promise.all([
-      DB.getUser(window.currentUser.id).catch(() => null),
-      DB.getProfile(window.currentUser.id)
-    ]);
-
-    document.getElementById('profile-skeleton').classList.add('hidden');
-    populateProfileContent(user, profile);
-  } catch (err) {
-    console.error('Profile load error:', err);
-    document.getElementById('profile-skeleton').classList.add('hidden');
-    populateProfileContent(null, null);
-  }
-}
-
-function populateProfileContent(user, profile) {
-  const email     = (user && user.email) || window.currentUser.email;
-  const campus    = (user && user.campus) || window.currentUser.campus;
-  const emailUser = email.split('@')[0];
-  const firstName = (user && user.first_name)
-    || (emailUser.split('.')[0].charAt(0).toUpperCase() + emailUser.split('.')[0].slice(1));
-  const initial   = firstName.charAt(0).toUpperCase();
-
-  // Identity
-  document.getElementById('avatar-initial').textContent   = initial;
-  document.getElementById('profile-campus').textContent   = campus;
-  document.getElementById('profile-name').textContent     = firstName;
-  document.getElementById('profile-email').textContent    = email;
-  document.getElementById('preview-avatar').textContent   = initial;
-  document.getElementById('preview-anon-label').textContent = initial + '· — Anonymous applicant';
-
-  // Show content
-  document.getElementById('profile-content').classList.remove('hidden');
-
-  // No profile yet → show banner, skip the rest
-  if (!profile || !(profile.activities && profile.activities.length > 0)) {
-    document.getElementById('complete-profile-banner').classList.remove('hidden');
-    lucide.createIcons();
+  if (sessionError || !session) {
+    console.log('No session — redirecting to login');
+    window.location.href = './login.html';
     return;
   }
 
-  // Activity tags
-  const acts = profile.activities || [];
-  const actHtml = acts.map(a =>
-    `<span class="tag">${ACTIVITY_LABELS_MAP[a] || a}</span>`
-  ).join('');
-  document.getElementById('activity-tags').innerHTML = actHtml;
+  const uid   = session.user.id;
+  const email = session.user.email;
+  console.log('Profile init for uid:', uid);
 
-  // Vibe bars
-  const ftPct = Math.round((profile.follow_through || 3) / 5 * 100);
-  const opPct = Math.round((profile.openness       || 3) / 5 * 100);
-  document.getElementById('bar-follow-through').style.width = ftPct + '%';
-  document.getElementById('bar-openness').style.width       = opPct + '%';
+  try {
+    // 2. Fetch user + profile in parallel using maybeSingle (never throws on 0 rows)
+    const [{ data: user }, { data: profile, error: profileError }] = await Promise.all([
+      _sb.from('users').select('*').eq('id', uid).maybeSingle(),
+      _sb.from('profiles').select('*').eq('id', uid).maybeSingle()
+    ]);
 
-  // Intent
-  if (profile.intent) {
-    document.getElementById('profile-intent').textContent =
-      INTENT_LABELS_MAP[profile.intent] || profile.intent;
+    console.log('Profile result:', profile);
+    if (profileError) console.error('Profile read error:', profileError);
+
+    document.getElementById('profile-skeleton').classList.add('hidden');
+
+    // 3. Resolve display values — check every possible source
+    const campus    = (user && user.campus)
+      || localStorage.getItem('vovu_campus')
+      || email.split('@')[1];
+    const emailUser = email.split('@')[0];
+    const firstName = (user && user.first_name)
+      || localStorage.getItem('vovu_first_name')
+      || (emailUser.split('.')[0].charAt(0).toUpperCase() + emailUser.split('.')[0].slice(1));
+    const initial   = firstName.charAt(0).toUpperCase();
+
+    // 4. Populate identity — always shown regardless of profile state
+    document.getElementById('avatar-initial').textContent     = initial;
+    document.getElementById('profile-campus').textContent     = campus;
+    document.getElementById('profile-name').textContent       = firstName;
+    document.getElementById('profile-email').textContent      = email;
+    document.getElementById('preview-avatar').textContent     = initial;
+    document.getElementById('preview-anon-label').textContent = initial + '· — Anonymous applicant';
+
+    // 5. Show content div
+    document.getElementById('profile-content').classList.remove('hidden');
+
+    // 6. Profile completeness check
+    const hasProfile = profile !== null &&
+      Array.isArray(profile.activities) &&
+      profile.activities.length > 0;
+
+    console.log('Has completed profile:', hasProfile);
+
+    if (hasProfile) {
+      hideBanner();
+      populateProfileContent(profile);
+    } else {
+      showBanner();
+    }
+
+    lucide.createIcons();
+
+  } catch (err) {
+    console.error('Unexpected profile load error:', err);
+    document.getElementById('profile-skeleton').classList.add('hidden');
+    showBanner();
+    lucide.createIcons();
+  }
+}
+
+function hideBanner() {
+  const el = document.getElementById('complete-profile-banner');
+  if (el) { el.style.display = 'none'; el.setAttribute('aria-hidden', 'true'); }
+}
+
+function showBanner() {
+  const el = document.getElementById('complete-profile-banner');
+  if (el) el.style.display = 'block';
+}
+
+function populateProfileContent(profile) {
+  // Activity tags — show ALL activities; highlight the user's selected ones
+  const tagsEl = document.getElementById('activity-tags');
+  if (tagsEl) {
+    tagsEl.innerHTML = Object.entries(ACTIVITY_LABELS_MAP).map(([key, label]) => {
+      const active = profile.activities && profile.activities.includes(key);
+      return `<span class="tag ${active ? '' : 'tag-inactive'}">${label}</span>`;
+    }).join('');
   }
 
-  // Current vibe
-  if (profile.current_vibe) {
-    document.getElementById('profile-current-vibe').textContent = profile.current_vibe;
+  // Bars — CSS variable + loaded class for smooth entrance animation
+  const ftBar = document.getElementById('bar-follow-through');
+  if (ftBar) {
+    ftBar.style.setProperty('--bar-width', ((profile.follow_through || 3) / 5 * 100) + '%');
+    setTimeout(() => ftBar.classList.add('loaded'), 300);
+  }
+  const opBar = document.getElementById('bar-openness');
+  if (opBar) {
+    opBar.style.setProperty('--bar-width', ((profile.openness || 3) / 5 * 100) + '%');
+    setTimeout(() => opBar.classList.add('loaded'), 450);
+  }
+
+  // Intent
+  const intentEl = document.getElementById('profile-intent');
+  if (intentEl) {
+    intentEl.textContent = INTENT_LABELS_MAP[profile.intent] || profile.intent || '—';
+  }
+
+  // Current vibe — quoted
+  const vibeEl = document.getElementById('profile-current-vibe');
+  if (vibeEl && profile.current_vibe) {
+    vibeEl.textContent = '“' + profile.current_vibe + '”';
   }
 
   // Semester goal
-  if (profile.semester_goal) {
-    document.getElementById('profile-semester-goal').textContent = profile.semester_goal;
+  const goalEl = document.getElementById('profile-semester-goal');
+  if (goalEl && profile.semester_goal) {
+    goalEl.textContent = profile.semester_goal;
   }
 
   // Interests
-  if (profile.interests && profile.interests.length > 0) {
-    document.getElementById('profile-interests').innerHTML =
-      profile.interests.map(i =>
-        `<span class="tag">${i.charAt(0).toUpperCase() + i.slice(1)}</span>`
-      ).join('');
+  const interestsEl = document.getElementById('profile-interests');
+  if (interestsEl && profile.interests && profile.interests.length > 0) {
+    interestsEl.innerHTML = profile.interests
+      .map(i => `<span class="tag">${i.charAt(0).toUpperCase() + i.slice(1)}</span>`)
+      .join('');
   }
-
-  lucide.createIcons();
 }
 </script>
 </body>

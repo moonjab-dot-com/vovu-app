@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -71,34 +71,48 @@
     }, 8000);
 
     async function redirect(session) {
+      const uid    = session.user.id;
       const email  = session.user.email;
       const campus = email.split('@')[1];
-      localStorage.setItem('vovu_email',  email);
-      localStorage.setItem('vovu_campus', campus);
+
+      // Derive first name for localStorage cache
+      const emailUser  = email.split('@')[0];
+      const firstName  = emailUser.split('.')[0].charAt(0).toUpperCase()
+                       + emailUser.split('.')[0].slice(1);
+
+      localStorage.setItem('vovu_uid',        uid);
+      localStorage.setItem('vovu_email',      email);
+      localStorage.setItem('vovu_campus',     campus);
+      localStorage.setItem('vovu_first_name', firstName);
 
       iconEl.textContent  = '✓';
       titleEl.textContent = 'Signed in!';
       subEl.textContent   = 'Taking you in…';
 
-      // Upsert public.users row — safety net in case the auth trigger
-      // didn't run (e.g. first-run before trigger was created).
-      try {
-        await window._supabase
-          .from('users')
-          .upsert({ id: session.user.id, email, campus }, { onConflict: 'id' });
-      } catch (e) {
-        console.warn('users upsert:', e.message);
-      }
+      // Force-sync public.users — ensures FK is always satisfied.
+      // ignoreDuplicates: false means ON CONFLICT DO UPDATE (not just ignore).
+      const { error: upsertError } = await window._supabase
+        .from('users')
+        .upsert(
+          { id: uid, email, campus, verified: true },
+          { onConflict: 'id', ignoreDuplicates: false }
+        );
+      if (upsertError) console.warn('users upsert warning:', upsertError.message);
 
-      // Check if profile already completed → go straight to feed
+      // Check if profile is FULLY completed (activities array is non-empty).
+      // A profile row may exist but be empty if onboarding was abandoned mid-way.
       const { data: profile } = await window._supabase
         .from('profiles')
-        .select('id')
-        .eq('id', session.user.id)
+        .select('id, activities')
+        .eq('id', uid)
         .maybeSingle();
 
+      const hasFullProfile = profile !== null &&
+        Array.isArray(profile.activities) &&
+        profile.activities.length > 0;
+
       setTimeout(() => {
-        window.location.href = profile ? './feed.html' : './onboarding.html';
+        window.location.href = hasFullProfile ? './feed.html' : './onboarding.html';
       }, 600);
     }
   })();
@@ -108,27 +122,27 @@
   <div class="footer-inner">
     <div class="footer-grid">
       <div>
-        <div class="footer-col-label">Company</div>
-        <a href="#" class="footer-link">About</a>
-        <a href="#" class="footer-link">Blog</a>
-        <a href="#" class="footer-link">Careers</a>
+        <div class="footer-col-label">Nosotros</div>
+        <a href="./nosotros.html" class="footer-link">Nosotros</a>
+        <a href="./blog.html" class="footer-link">Blog</a>
+        <a href="./prensa.html" class="footer-link">Prensa</a>
       </div>
       <div>
         <div class="footer-col-label">Legal</div>
-        <a href="#" class="footer-link">Privacy</a>
-        <a href="#" class="footer-link">Terms</a>
-        <a href="#" class="footer-link">Cookies</a>
+        <a href="./privacidad.html" class="footer-link">Privacidad</a>
+        <a href="./terminos.html" class="footer-link">Términos</a>
+        <a href="./privacidad.html" class="footer-link">Cookies</a>
       </div>
       <div>
-        <div class="footer-col-label">Support</div>
-        <a href="#" class="footer-link">Help center</a>
-        <a href="#" class="footer-link">Contact</a>
-        <a href="#" class="footer-link">Safety</a>
+        <div class="footer-col-label">Ayuda</div>
+        <a href="./ayuda.html" class="footer-link">Ayuda</a>
+        <a href="mailto:hello@vovu.co" class="footer-link">Contacto</a>
+        <a href="./testimonios.html" class="footer-link">Testimonios</a>
       </div>
     </div>
     <div class="footer-bottom">
       <span class="footer-brand-text">Vovu</span>
-      <span class="footer-tagline">© 2025 Vovu · Making campus less lonely</span>
+      <span class="footer-tagline">© 2026 Vovu · Making campus less lonely</span>
     </div>
   </div>
 </footer>

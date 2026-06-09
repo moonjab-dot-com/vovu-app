@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vovu — Privacidad</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="./index.html" class="nav-logo">
+    <img src="./VOVU LOGO OFICIAL.png" alt="Vovu" width="36" height="36"
+         style="object-fit:contain" onerror="this.style.display='none'">
+    <span>Vovu</span>
+  </a>
+  <a href="./login.html" class="btn-primary btn-sm">Get early access</a>
+</nav>
+
+<div style="max-width:680px; margin:0 auto; padding:60px 24px 0;">
+
+  <h1 style="font-size:40px; margin-bottom:8px;">Privacidad</h1>
+  <p style="font-size:16px; color:var(--sage); margin-bottom:48px;">
+    Last updated: January 2026
+  </p>
+
+  <div style="display:flex; flex-direction:column; gap:36px; margin-bottom:16px;">
+
+    <section>
+      <h2 style="font-size:20px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+        <i data-lucide="database" style="width:20px;height:20px;color:var(--success);"></i>
+        What we collect
+      </h2>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:8px;">
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--success);">·</span>
+          Your campus email address (.edu only)
+        </li>
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--success);">·</span>
+          Your campus (derived from email domain)
+        </li>
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--success);">·</span>
+          Profile answers from onboarding (activities, vibe, preferences)
+        </li>
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--success);">·</span>
+          Plans you post (general area, time window, note)
+        </li>
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--success);">·</span>
+          Plans you apply to (never disclosed to the poster before a match)
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 style="font-size:20px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+        <i data-lucide="shield-off" style="width:20px;height:20px;color:var(--error);"></i>
+        What we never collect
+      </h2>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:8px;">
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--error);">·</span>
+          Your full name (first name only, from your email)
+        </li>
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--error);">·</span>
+          Your phone number
+        </li>
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--error);">·</span>
+          Your GPS or precise location data
+        </li>
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--error);">·</span>
+          Photos or profile pictures
+        </li>
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--error);">·</span>
+          Payment or financial information
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 style="font-size:20px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+        <i data-lucide="lock" style="width:20px;height:20px;color:var(--success);"></i>
+        What we never share
+      </h2>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:8px;">
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--success);">·</span>
+          Your last name — ever, to anyone
+        </li>
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--success);">·</span>
+          Your exact location before a match is confirmed
+        </li>
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--success);">·</span>
+          Your identity as an applicant before a mutual yes
+        </li>
+        <li style="font-size:14px; color:var(--forest); padding-left:16px; position:relative;">
+          <span style="position:absolute;left:0;color:var(--success);">·</span>
+          Your data to third-party advertisers
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 style="font-size:20px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+        <i data-lucide="server" style="width:20px;height:20px;color:var(--sage);"></i>
+        How data is stored
+      </h2>
+      <p style="font-size:14px; color:var(--forest); line-height:1.6;">
+        Vovu uses Supabase (built on PostgreSQL) hosted on AWS. All data is encrypted at rest
+        and in transit. Authentication uses magic links — no passwords are stored. Plans expire
+        automatically and are not kept as historical records.
+      </p>
+    </section>
+
+    <section>
+      <h2 style="font-size:20px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+        <i data-lucide="user-check" style="width:20px;height:20px;color:var(--sage);"></i>
+        Your rights
+      </h2>
+      <p style="font-size:14px; color:var(--forest); line-height:1.6; margin-bottom:12px;">
+        You can request full deletion of your account and all associated data at any time.
+        Email us at
+        <a href="mailto:hello@vovu.co"
+           style="color:var(--forest); text-decoration:underline;">hello@vovu.co</a>
+        — we'll handle it within 48 hours, no questions asked.
+      </p>
+    </section>
+
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-col-label">Nosotros</div>
+        <a href="./nosotros.html" class="footer-link">Nosotros</a>
+        <a href="./blog.html" class="footer-link">Blog</a>
+        <a href="./prensa.html" class="footer-link">Prensa</a>
+      </div>
+      <div>
+        <div class="footer-col-label">Legal</div>
+        <a href="./privacidad.html" class="footer-link">Privacidad</a>
+        <a href="./terminos.html" class="footer-link">Términos</a>
+        <a href="./privacidad.html" class="footer-link">Cookies</a>
+      </div>
+      <div>
+        <div class="footer-col-label">Ayuda</div>
+        <a href="./ayuda.html" class="footer-link">Ayuda</a>
+        <a href="./testimonios.html" class="footer-link">Testimonios</a>
+        <a href="mailto:hello@vovu.co" class="footer-link">Contacto</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-brand-text">Vovu</span>
+      <span class="footer-tagline">© 2026 Vovu · Making campus less lonely</span>
+    </div>
+  </div>
+</footer>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

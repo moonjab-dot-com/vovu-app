@@ -138,7 +138,7 @@ const DB = {
           first_name: firstName,
           verified:   true,
         },
-        { onConflict: 'id', ignoreDuplicates: false }
+        { onConflict: 'email', ignoreDuplicates: false }
       );
     if (upsertErr) {
       // Log but do not throw — the row may already exist from verify.html.

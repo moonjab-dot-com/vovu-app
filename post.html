@@ -288,7 +288,7 @@ async function submitPlan() {
       .from('users')
       .upsert(
         { id: uid, email, campus, first_name: firstName, verified: true },
-        { onConflict: 'id', ignoreDuplicates: false }
+        { onConflict: 'email', ignoreDuplicates: false }
       );
     if (upsertError) {
       console.warn('User upsert warning (post.html):', upsertError.message);

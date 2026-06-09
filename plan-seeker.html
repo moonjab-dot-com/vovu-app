@@ -355,7 +355,7 @@ async function applyNow() {
     // 3. Ensure user row exists (first_name + verified required)
     await sb.from('users').upsert(
       { id: applicantId, email, campus, first_name: firstName, verified: true },
-      { onConflict: 'id', ignoreDuplicates: false }
+      { onConflict: 'email', ignoreDuplicates: false }
     );
 
     // 4. Verify the plan still exists and is active

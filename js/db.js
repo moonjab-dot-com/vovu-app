@@ -165,12 +165,8 @@ const DB = {
   },
 
   async getApplications(planId) {
-    const { data, error } = await sb
-      .from('applications')
-      .select('id, applicant_id, status, created_at')
-      .eq('plan_id', planId)
-      .in('status', ['pending', 'yes_creator'])
-      .order('created_at', { ascending: true });
+    // Uses SECURITY DEFINER RPC — creator-only, no RLS recursion
+    const { data, error } = await sb.rpc('get_plan_applications', { p_plan_id: planId });
     if (error) throw error;
     return data || [];
   },

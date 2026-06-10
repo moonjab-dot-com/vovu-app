@@ -7,11 +7,11 @@ const sb = window._supabase;
 
 const ACTIVITY_ICONS = {
   cafe: 'coffee', food: 'utensils', gym: 'dumbbell', study: 'book-open',
-  walk: 'footprints', movie: 'film', sports: 'trophy', offcampus: 'map-pin', other: 'plus'
+  walk: 'footprints', movie: 'film', sports: 'trophy', offcampus: 'map-pin', other: 'music'
 };
 const ACTIVITY_LABELS = {
   cafe: 'Café', food: 'Dining hall', gym: 'Gym', study: 'Study',
-  walk: 'Walk', movie: 'Movie', sports: 'Sports', offcampus: 'Off-campus', other: 'Other'
+  walk: 'Walk', movie: 'Movie', sports: 'Sports', offcampus: 'Off-campus', other: 'Party'
 };
 const TIME_LABELS = {
   morning: 'Morning (8–11am)', midday: 'Midday (11am–1pm)',
@@ -34,9 +34,8 @@ const Auth = {
   },
   async signOut() {
     await sb.auth.signOut();
-    localStorage.removeItem('vovu_email');
-    localStorage.removeItem('vovu_campus');
-    localStorage.removeItem('vovu_profile');
+    ['vovu_uid','vovu_email','vovu_campus','vovu_first_name','vovu_profile','vovu_toast']
+      .forEach(k => localStorage.removeItem(k));
     window.location.href = './login.html';
   }
 };
@@ -108,12 +107,17 @@ const DB = {
 
   async getProfilesBulk(userIds) {
     if (!userIds || !userIds.length) return [];
-    const { data, error } = await sb
-      .from('profiles')
-      .select('id, initial, activities, follow_through, openness, intent, timing, group_size, place_vibe, current_vibe, talk_listen, plan_style, duration, time_of_day')
-      .in('id', userIds);
-    if (error) throw error;
-    return data || [];
+    // Batch into 100 at a time — 200+ UUIDs in a single .in() exceeds PostgREST URL limit
+    const results = [];
+    for (let i = 0; i < userIds.length; i += 100) {
+      const { data, error } = await sb
+        .from('profiles')
+        .select('id, initial, activities, follow_through, openness, intent, timing, group_size, place_vibe, current_vibe, talk_listen, plan_style, duration, time_of_day')
+        .in('id', userIds.slice(i, i + 100));
+      if (error) throw error;
+      if (data) results.push(...data);
+    }
+    return results;
   },
 
   async createPlan(planData) {

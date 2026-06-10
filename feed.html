@@ -9,7 +9,7 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./js/supabase-config.js"></script>
-  <script src="./js/db.js?v=12"></script>
+  <script src="./js/db.js?v=13"></script>
   <script src="./js/matching.js"></script>
 </head>
 <body>
@@ -63,6 +63,9 @@
     </button>
     <button class="filter-pill" onclick="filterPlans('food', this)">
       <i data-lucide="utensils" style="width:13px;height:13px;"></i> Dining
+    </button>
+    <button class="filter-pill" onclick="filterPlans('other', this)">
+      <i data-lucide="music" style="width:13px;height:13px;"></i> Party
     </button>
   </div>
 
@@ -200,11 +203,17 @@ function renderPlanCard(plan, cp, compatScore) {
   const noteHtml = plan.note
     ? `<div class="plan-note" style="margin-bottom:12px;">"${plan.note}"</div>` : '';
 
+  // MEDIUM 4: show loading skeleton badge when score hasn't loaded yet (null means loading, undefined means no profile)
+  // HIGH 2: add info icon with tooltip explaining what the % means
   const matchBadge = (typeof compatScore === 'number')
-    ? `<span class="match-badge">
+    ? `<span class="match-badge" title="Based on shared activities, timing, vibe, and personality — higher means more in common.">
          <i data-lucide="zap" style="width:11px;height:11px;"></i>
          ${compatScore}% match
-       </span>` : '';
+         <button onclick="event.stopPropagation();showCompatInfo()" aria-label="What is this score?" style="background:none;border:none;padding:0 0 0 3px;cursor:pointer;display:inline-flex;align-items:center;color:inherit;opacity:0.7;">
+           <i data-lucide="info" style="width:10px;height:10px;"></i>
+         </button>
+       </span>`
+    : `<span class="match-badge match-badge-loading" style="opacity:0.4;min-width:64px;">&nbsp;</span>`;
 
   return `
     <div class="plan-card card-enter" data-activity="${plan.activity}" style="margin-bottom:12px;">
@@ -312,6 +321,10 @@ window.addEventListener('load', async () => {
     switchFeedTab('your-plans', document.getElementById('tab-your-plans'));
   }
 
+  // Consume pending toast from other pages (e.g. "Plan posted" from post.html)
+  const pendingToast = localStorage.getItem('vovu_toast');
+  if (pendingToast) { localStorage.removeItem('vovu_toast'); showToast(pendingToast); }
+
   await Promise.all([loadDiscover(), loadYourPlans()]);
 });
 
@@ -363,23 +376,56 @@ async function loadDiscover() {
   }
 }
 
+// HIGH 2: explain what the match % means
+window.showCompatInfo = function() {
+  let modal = document.getElementById('compat-info-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'compat-info-modal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.35);padding:0 0 0 0;';
+    modal.innerHTML = `
+      <div style="background:var(--butter,#fffbe8);border-radius:var(--r-lg) var(--r-lg) 0 0;padding:24px 20px 36px;max-width:420px;width:100%;box-shadow:0 -4px 32px rgba(0,0,0,0.10);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:16px;font-weight:600;font-family:var(--font-serif);">What is the match score?</div>
+          <button onclick="document.getElementById('compat-info-modal').remove()" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--forest);">
+            <i data-lucide="x" style="width:18px;height:18px;"></i>
+          </button>
+        </div>
+        <p style="font-size:14px;color:var(--sage,#4a5568);margin-bottom:12px;line-height:1.6;">It's how much you and the plan creator have in common — scored 0–100.</p>
+        <div style="font-size:13px;line-height:1.8;color:var(--text,#1a1a1a);">
+          <div>⚡ <strong>Activities</strong> — shared interests</div>
+          <div>🕐 <strong>Timing</strong> — when you're usually free</div>
+          <div>🎭 <strong>Vibe</strong> — group size, energy, plan style</div>
+          <div>🧠 <strong>Personality</strong> — openness, follow-through</div>
+        </div>
+        <p style="font-size:12px;color:var(--sage,#4a5568);margin-top:12px;">A high score means more in common — but you decide if you want to apply.</p>
+      </div>`;
+    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    document.body.appendChild(modal);
+    lucide.createIcons();
+  }
+};
+
 async function loadYourPlans() {
   try {
     const myPlans    = await DB.getMyPlans(window.currentUser.id);
     const active     = myPlans.filter(p => p.is_active);
 
-    // Badge
+    // Badge: show count of active plans that have at least one pending applicant
     const badge = document.getElementById('my-plans-badge');
-    if (active.length > 0) { badge.textContent = active.length; badge.style.display = ''; }
+    // appCountMap is populated in the loop below — compute badge after
+    let plansWithApplicants = 0;
 
-    // Application counts
+    // Application counts — also tally plans with pending applicants for badge
     const appCountMap = {};
     for (const p of active) {
       try {
         const apps = await DB.getApplications(p.id);
-        appCountMap[p.id] = apps.length;
+        appCountMap[p.id] = apps.filter(a => a.status === 'pending').length;
+        if (appCountMap[p.id] > 0) plansWithApplicants++;
       } catch { appCountMap[p.id] = 0; }
     }
+    if (plansWithApplicants > 0) { badge.textContent = plansWithApplicants; badge.style.display = ''; }
 
     document.getElementById('your-plans-loading').classList.add('hidden');
     const contentEl = document.getElementById('your-plans-content');

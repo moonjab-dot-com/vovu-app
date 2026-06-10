@@ -9,7 +9,7 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./js/supabase-config.js"></script>
-  <script src="./js/db.js?v=12"></script>
+  <script src="./js/db.js?v=13"></script>
   <script src="./js/matching.js"></script>
 </head>
 <body>
@@ -82,8 +82,14 @@
           <div class="compat-score-circle">
             <span class="compat-number" id="compat-number">—</span><span class="compat-pct">%</span>
           </div>
+          <!-- HIGH 2: info icon explaining the score -->
           <div class="compat-label">
-            <div class="compat-title">Match</div>
+            <div class="compat-title" style="display:flex;align-items:center;gap:4px;">
+              Match
+              <button onclick="showCompatInfo()" aria-label="What is this score?" style="background:none;border:none;padding:0;cursor:pointer;display:inline-flex;align-items:center;color:var(--sage);opacity:0.8;">
+                <i data-lucide="info" style="width:12px;height:12px;"></i>
+              </button>
+            </div>
             <div class="compat-sub">score</div>
           </div>
         </div>
@@ -166,7 +172,8 @@
         <i data-lucide="check-circle" class="applied-icon" style="width:20px;height:20px;"></i>
         <div>
           <div class="applied-title">Application sent</div>
-          <div class="applied-sub">You'll be notified if it's a match.</div>
+          <!-- MEDIUM 2: add expected timeline so users don't feel ignored -->
+          <div class="applied-sub">Plans usually close within 24 hours. You'll be notified if it's a match.</div>
         </div>
       </div>
       <button class="btn-withdraw" onclick="withdrawNow()">Withdraw application</button>
@@ -367,8 +374,6 @@ async function applyNow() {
       .eq('id', planId)
       .maybeSingle();
 
-    console.log('Plan check:', plan, planErr);
-
     if (planErr) throw planErr;
 
     if (!plan) {
@@ -464,6 +469,36 @@ async function applicantConfirmsYes() {
     if (window.showToast) showToast(err.message || 'Something went wrong. Try again.', 'error');
   }
 }
+
+// HIGH 2: shared compat info sheet (same content as feed.html)
+window.showCompatInfo = function() {
+  let modal = document.getElementById('compat-info-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'compat-info-modal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.35);';
+    modal.innerHTML = `
+      <div style="background:var(--butter,#fffbe8);border-radius:var(--r-lg) var(--r-lg) 0 0;padding:24px 20px 36px;max-width:420px;width:100%;box-shadow:0 -4px 32px rgba(0,0,0,0.10);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:16px;font-weight:600;font-family:var(--font-serif);">What is the match score?</div>
+          <button onclick="document.getElementById('compat-info-modal').remove()" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--forest);">
+            <i data-lucide="x" style="width:18px;height:18px;"></i>
+          </button>
+        </div>
+        <p style="font-size:14px;color:var(--sage,#4a5568);margin-bottom:12px;line-height:1.6;">It's how much you and the plan creator have in common — scored 0–100.</p>
+        <div style="font-size:13px;line-height:1.8;color:var(--text,#1a1a1a);">
+          <div>⚡ <strong>Activities</strong> — shared interests</div>
+          <div>🕐 <strong>Timing</strong> — when you're usually free</div>
+          <div>🎭 <strong>Vibe</strong> — group size, energy, plan style</div>
+          <div>🧠 <strong>Personality</strong> — openness, follow-through</div>
+        </div>
+        <p style="font-size:12px;color:var(--sage,#4a5568);margin-top:12px;">A high score means more in common — but you decide if you want to apply.</p>
+      </div>`;
+    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    document.body.appendChild(modal);
+    lucide.createIcons();
+  }
+};
 
 async function applicantDeclines() {
   try {

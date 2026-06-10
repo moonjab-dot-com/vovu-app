@@ -367,8 +367,6 @@ async function applyNow() {
       .eq('id', planId)
       .maybeSingle();
 
-    console.log('Plan check:', plan, planErr);
-
     if (planErr) throw planErr;
 
     if (!plan) {

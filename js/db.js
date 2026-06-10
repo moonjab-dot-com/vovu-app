@@ -34,9 +34,8 @@ const Auth = {
   },
   async signOut() {
     await sb.auth.signOut();
-    localStorage.removeItem('vovu_email');
-    localStorage.removeItem('vovu_campus');
-    localStorage.removeItem('vovu_profile');
+    ['vovu_uid','vovu_email','vovu_campus','vovu_first_name','vovu_profile','vovu_toast']
+      .forEach(k => localStorage.removeItem(k));
     window.location.href = './login.html';
   }
 };
@@ -108,12 +107,17 @@ const DB = {
 
   async getProfilesBulk(userIds) {
     if (!userIds || !userIds.length) return [];
-    const { data, error } = await sb
-      .from('profiles')
-      .select('id, initial, activities, follow_through, openness, intent, timing, group_size, place_vibe, current_vibe, talk_listen, plan_style, duration, time_of_day')
-      .in('id', userIds);
-    if (error) throw error;
-    return data || [];
+    // Batch into 100 at a time — 200+ UUIDs in a single .in() exceeds PostgREST URL limit
+    const results = [];
+    for (let i = 0; i < userIds.length; i += 100) {
+      const { data, error } = await sb
+        .from('profiles')
+        .select('id, initial, activities, follow_through, openness, intent, timing, group_size, place_vibe, current_vibe, talk_listen, plan_style, duration, time_of_day')
+        .in('id', userIds.slice(i, i + 100));
+      if (error) throw error;
+      if (data) results.push(...data);
+    }
+    return results;
   },
 
   async createPlan(planData) {

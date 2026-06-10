@@ -312,6 +312,10 @@ window.addEventListener('load', async () => {
     switchFeedTab('your-plans', document.getElementById('tab-your-plans'));
   }
 
+  // Consume pending toast from other pages (e.g. "Plan posted" from post.html)
+  const pendingToast = localStorage.getItem('vovu_toast');
+  if (pendingToast) { localStorage.removeItem('vovu_toast'); showToast(pendingToast); }
+
   await Promise.all([loadDiscover(), loadYourPlans()]);
 });
 

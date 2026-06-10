@@ -152,41 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
     demoObs.observe(demoName);
   }
 
-  // ── Waitlist form ─────────────────────────────
-  const waitlistForm = document.getElementById('waitlist-form');
-  if (waitlistForm) {
-    waitlistForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const emailInput = document.getElementById('waitlist-email');
-      const errorEl = document.getElementById('waitlist-error');
-      if (!emailInput) return;
-
-      const email = emailInput.value.trim();
-      // TEST MODE: isValidVovuEmail allows test Gmail addresses — remove before launch
-      if (!isValidVovuEmail(email)) {
-        emailInput.classList.remove('shake');
-        void emailInput.offsetWidth;
-        emailInput.classList.add('shake');
-        if (errorEl) {
-          errorEl.textContent = 'Use your .edu email — no outsiders.';
-          errorEl.classList.remove('hidden');
-        }
-        return;
-      }
-
-      if (errorEl) errorEl.classList.add('hidden');
-      const list = JSON.parse(localStorage.getItem('vovu_waitlist') || '[]');
-      list.push({ email, campus: email.split('@')[1], ts: Date.now() });
-      localStorage.setItem('vovu_waitlist', JSON.stringify(list));
-
-      const formWrap = document.getElementById('waitlist-form-wrap') || waitlistForm.parentElement;
-      const successEl = document.getElementById('success-state') || document.getElementById('waitlist-success');
-      if (formWrap && formWrap.id !== 'waitlist-form') formWrap.classList.add('hidden');
-      else waitlistForm.classList.add('hidden');
-      if (successEl) successEl.classList.remove('hidden');
-    });
-  }
-
   // ── Login page ────────────────────────────────
   const emailInput = document.getElementById('email-input');
   if (emailInput) {

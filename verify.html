@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vovu — Signing in…</title>
+  <link rel="icon" type="image/png" href="./VOVU LOGO OFICIAL.png">
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./js/supabase-config.js"></script>
@@ -96,7 +97,7 @@
         .from('users')
         .upsert(
           { id: uid, email, campus, first_name: firstName, verified: true },
-          { onConflict: 'id', ignoreDuplicates: false }
+          { onConflict: 'email', ignoreDuplicates: false }
         );
       if (upsertError) console.warn('users upsert warning:', upsertError.message);
 

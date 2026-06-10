@@ -1,13 +1,182 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vovu — Plans that find you.</title>
+  <title>Vovu — Make plans, not moves.</title>
+  <meta name="description" content="Post what you want to do. Match anonymously. Meet in person. Campus plans without the awkward ask.">
+  <link rel="icon" type="image/png" href="./VOVU LOGO OFICIAL.png">
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/supabase-config.js"></script>
+  <style>
+    /* ── Landing-specific styles (flat: no shadows, no gradients) ── */
+    .lp { background: var(--butter); color: var(--forest); overflow-x: hidden; }
+    .lp section { padding: 80px 24px; max-width: 1040px; margin: 0 auto; }
+    .lp h1, .lp h2, .lp h3 { font-family: Georgia, 'Times New Roman', serif; }
+
+    /* Hero */
+    .lp-hero {
+      min-height: calc(100vh - 64px);
+      display: flex; align-items: center; gap: 48px;
+      flex-wrap: wrap;
+    }
+    .lp-hero-text { flex: 1 1 400px; }
+    .lp-hero h1 {
+      font-size: clamp(40px, 7vw, 64px);
+      line-height: 1.05; margin: 0 0 20px;
+      letter-spacing: -0.5px;
+    }
+    .lp-hero-sub { font-size: clamp(16px, 2.4vw, 20px); line-height: 1.5; max-width: 440px; margin-bottom: 28px; opacity: 0.85; }
+    .lp-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--forest); color: var(--butter);
+      padding: 0 28px; height: 56px; border-radius: 12px;
+      font-size: 16px; font-weight: 500; text-decoration: none;
+      border: none; cursor: pointer;
+      transition: transform 120ms ease;
+    }
+    .lp-cta:hover { transform: translateY(-2px); }
+    .lp-hero-visual { flex: 1 1 320px; display: flex; justify-content: center; }
+    .lp-hero-visual img { max-width: 380px; width: 100%; object-fit: contain; transform: rotate(2deg); }
+
+    /* Problem */
+    .lp-problem { text-align: center; max-width: 620px !important; }
+    .lp-problem p {
+      font-size: clamp(20px, 3.4vw, 28px);
+      font-family: Georgia, serif; line-height: 1.45;
+    }
+    .lp-problem .lp-problem-kicker { font-size: 15px; font-family: system-ui, sans-serif; opacity: 0.7; margin-top: 16px; }
+
+    /* Timeline */
+    .lp-steps { position: relative; max-width: 560px !important; }
+    .lp-steps h2 { text-align: center; font-size: clamp(28px, 4.5vw, 40px); margin-bottom: 48px; }
+    .lp-step {
+      display: flex; gap: 20px; align-items: flex-start;
+      padding: 22px 0;
+      border-bottom: 1px dashed #013E3740;
+    }
+    .lp-step:last-of-type { border-bottom: none; }
+    .lp-step-icon {
+      width: 48px; height: 48px; flex-shrink: 0;
+      border: 2px solid var(--forest); border-radius: 50% 45% 52% 48%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--forest);
+    }
+    .lp-step-body h3 { font-size: 18px; margin: 4px 0 6px; }
+    .lp-step-body p { font-size: 15px; line-height: 1.5; opacity: 0.8; margin: 0; }
+    .lp-step-num { font-size: 12px; letter-spacing: 1.5px; opacity: 0.55; }
+    .lp-step-reveal {
+      background: var(--forest); color: var(--butter);
+      border-radius: 12px; padding: 24px 20px;
+      border-bottom: none; margin-top: 8px;
+      transform: rotate(-0.5deg);
+    }
+    .lp-step-reveal .lp-step-icon { border-color: var(--butter); color: var(--butter); }
+    .lp-step-reveal .lp-step-num { opacity: 0.7; }
+    .lp-reveal-names {
+      margin-top: 14px; font-family: Georgia, serif; font-size: 22px;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .lp-reveal-names span { filter: blur(6px); transition: filter 900ms ease; }
+      .lp-reveal-names.lp-in span { filter: blur(0); }
+    }
+
+    /* Score */
+    .lp-score { max-width: 560px !important; }
+    .lp-score h2 { text-align: center; font-size: clamp(28px, 4.5vw, 40px); margin-bottom: 12px; }
+    .lp-score-sub { text-align: center; font-size: 15px; opacity: 0.75; margin-bottom: 40px; }
+    .lp-bar-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .lp-bar-label { width: 130px; flex-shrink: 0; font-size: 14px; }
+    .lp-bar-track { flex: 1; height: 14px; background: #013E3715; border-radius: 7px; overflow: hidden; }
+    .lp-bar-fill { height: 100%; background: var(--forest); border-radius: 7px; width: 0; }
+    @media (prefers-reduced-motion: no-preference) {
+      .lp-in .lp-bar-fill { transition: width 900ms ease; }
+    }
+    .lp-bar-pct { width: 42px; text-align: right; font-size: 13px; font-variant-numeric: tabular-nums; opacity: 0.7; }
+
+    /* Privacy cards */
+    .lp-privacy h2 { text-align: center; font-size: clamp(28px, 4.5vw, 40px); margin-bottom: 40px; }
+    .lp-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .lp-card {
+      background: #FFFDF5; border: 1px solid #013E3720; border-radius: 12px;
+      padding: 28px 22px; text-align: center;
+    }
+    .lp-card:nth-child(1) { transform: rotate(-0.6deg); }
+    .lp-card:nth-child(3) { transform: rotate(0.6deg); }
+    .lp-card i { width: 28px; height: 28px; }
+    .lp-card h3 { font-size: 17px; margin: 14px 0 8px; }
+    .lp-card p { font-size: 14px; line-height: 1.5; opacity: 0.8; margin: 0; }
+
+    /* Plan chips */
+    .lp-chips-wrap { text-align: center; }
+    .lp-chips-wrap h2 { font-size: clamp(28px, 4.5vw, 40px); margin-bottom: 36px; }
+    .lp-chips { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; max-width: 560px; margin: 0 auto; }
+    .lp-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1.5px solid var(--forest); color: var(--forest);
+      padding: 10px 18px; border-radius: 12px; font-size: 15px;
+    }
+    .lp-chip:nth-child(odd) { transform: rotate(-1deg); }
+    .lp-chip:nth-child(even) { transform: rotate(1deg); }
+    .lp-chip i { width: 15px; height: 15px; }
+
+    /* Where it starts */
+    .lp-where { text-align: center; }
+    .lp-where h2 { font-size: clamp(28px, 5vw, 44px); margin-bottom: 10px; }
+    .lp-where p { font-size: 17px; opacity: 0.75; }
+
+    /* Waitlist */
+    .lp-waitlist {
+      background: var(--forest); color: var(--butter);
+      border-radius: 16px; text-align: center;
+      padding: 64px 24px !important; max-width: 880px !important;
+      margin-bottom: 60px !important;
+    }
+    .lp-waitlist h2 { font-size: clamp(28px, 4.5vw, 40px); margin: 0 0 10px; }
+    .lp-waitlist > p { opacity: 0.8; margin-bottom: 28px; }
+    .lp-wl-form { display: flex; gap: 10px; max-width: 440px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+    .lp-wl-form input {
+      flex: 1 1 240px; height: 54px; border-radius: 12px;
+      border: none; padding: 0 18px; font-size: 15px;
+      background: var(--butter); color: var(--forest);
+      font-family: system-ui, sans-serif;
+    }
+    .lp-wl-form input:focus { outline: 2px solid #FFFDF5; }
+    .lp-wl-form button {
+      height: 54px; padding: 0 24px; border-radius: 12px;
+      background: var(--butter); color: var(--forest);
+      border: none; font-size: 15px; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: transform 120ms ease;
+    }
+    .lp-wl-form button:hover { transform: translateY(-2px); }
+    .lp-wl-msg { font-size: 13px; margin-top: 12px; min-height: 18px; }
+    .lp-wl-success img { max-width: 160px; margin: 0 auto 12px; display: block; }
+    .lp-wl-success p:first-of-type { font-family: Georgia, serif; font-size: 24px; margin: 0 0 6px; }
+
+    /* Scroll animations */
+    @media (prefers-reduced-motion: no-preference) {
+      .lp-fade { opacity: 0; transform: translateY(18px); transition: opacity 400ms ease, transform 400ms ease; }
+      .lp-fade.lp-in { opacity: 1; transform: translateY(0); }
+      .lp-hero-text, .lp-hero-visual { opacity: 0; transform: translateY(18px); animation: lpUp 400ms ease forwards; }
+      .lp-hero-visual { animation-delay: 120ms; }
+      @keyframes lpUp { to { opacity: 1; transform: translateY(0); } }
+    }
+
+    @media (max-width: 640px) {
+      .lp section { padding: 56px 20px; }
+      .lp-hero { min-height: auto; padding-top: 48px; }
+      .lp-bar-label { width: 104px; font-size: 13px; }
+      .lp .navbar { padding: 0 16px; }
+    }
+    @media (max-width: 380px) {
+      .lp .nav-logo span { display: none; }
+    }
+  </style>
 </head>
-<body>
+<body class="lp">
 
 <!-- NAVBAR -->
 <nav class="navbar">
@@ -21,245 +190,193 @@
   <a href="./login.html" class="btn-primary btn-sm">Get early access</a>
 </nav>
 
-<!-- SECTION 1: HERO -->
-<section class="hero">
-  <div class="hero-text fade-up">
-    <span class="chip">
-      <i data-lucide="shield-check"></i>
-      .edu verified only
-    </span>
-    <h1>Plans that find you.</h1>
-    <p class="hero-sub">Post what you want to do. Someone on campus applies — anonymously. You both say yes.</p>
-    <p class="rotating-line"><span id="rotating-word">Going to the gym.</span></p>
-    <div class="hero-btns">
-      <a href="./login.html" class="btn-primary">
-        I want in
-        <i data-lucide="arrow-right"></i>
-      </a>
-      <a href="#how-it-works" class="btn-ghost">See how it works</a>
-    </div>
-    <p class="trust-line">
-      <i data-lucide="shield-check"></i>
-      .edu only · last names never shared
-    </p>
+<!-- 1 · HERO -->
+<section class="lp-hero">
+  <div class="lp-hero-text">
+    <h1>Make plans, not moves.</h1>
+    <p class="lp-hero-sub">Post what you want to do. Match anonymously. Meet in person.</p>
+    <a href="#waitlist" class="lp-cta">
+      Join the waitlist
+      <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
+    </a>
   </div>
-  <div class="hero-visual fade-up-d2">
+  <div class="lp-hero-visual">
     <img src="./public/Welcome--Streamline-Dhaka.png"
          alt="Two students connecting on campus"
-         class="hero-illus-main"
-         width="480" height="480"
-         loading="eager"
+         width="380" height="380" loading="eager"
          onerror="this.style.display='none'">
   </div>
 </section>
 
-<!-- SECTION 2: THE PROBLEM -->
-<section class="section-problem" id="the-problem">
-  <h2 class="will-animate">You know the feeling.</h2>
-
-  <div class="confession-lines">
-    <p class="confession will-animate">"I ate alone in the dining hall for the third time this week."</p>
-    <p class="confession will-animate" style="transition-delay:100ms">"I texted six people. Nobody was free."</p>
-    <p class="confession will-animate" style="transition-delay:200ms">"There's someone I'd love to get coffee with. I've never said anything."</p>
-  </div>
-
-  <p class="confession-response">Sound familiar? We built something for that.</p>
-
-  <div class="problem-cards">
-    <div class="problem-card will-animate">
-      <img src="./public/Digital-Nomad-Working-Near-Beach--Streamline-Seoul.png"
-           alt="Eating alone"
-           class="problem-card-img"
-           loading="lazy"
-           onerror="this.style.display='none'">
-      <div class="problem-card-content">
-        <h3>Eating alone again</h3>
-        <p>The dining hall is full of people. None of them are waiting for you. Yet.</p>
-      </div>
-    </div>
-    <div class="problem-card will-animate" style="transition-delay:80ms">
-      <img src="./public/Space--Streamline-Seoul.png"
-           alt="Plans that never happen"
-           class="problem-card-img"
-           loading="lazy"
-           onerror="this.style.display='none'">
-      <div class="problem-card-content">
-        <h3>Plans that never happen</h3>
-        <p>The group chat goes quiet. Everyone's busy. The plan dies in the thread.</p>
-      </div>
-    </div>
-    <div class="problem-card will-animate" style="transition-delay:160ms">
-      <img src="./public/I-Have-A-Question--Streamline-Dhaka.png"
-           alt="Too awkward to ask"
-           class="problem-card-img"
-           loading="lazy"
-           onerror="this.style.display='none'">
-      <div class="problem-card-content">
-        <h3>Too awkward to ask</h3>
-        <p>What if they say no? Vovu removes that question entirely.</p>
-      </div>
-    </div>
-  </div>
+<!-- 2 · THE PROBLEM -->
+<section class="lp-problem lp-fade">
+  <p>College is full of people you'd actually vibe with. But nobody wants to be the one to ask.</p>
+  <p class="lp-problem-kicker">So nobody does. And everyone eats alone.</p>
 </section>
 
-<!-- SECTION 3: HOW IT WORKS -->
-<section class="section-how" id="how-it-works">
-  <span class="section-label" style="text-align:center;display:block;margin-bottom:12px;">HOW IT WORKS</span>
-  <h2 class="will-animate" style="text-align:center">No rejection. Ever.</h2>
+<!-- 3 · HOW IT WORKS (7 steps) -->
+<section class="lp-steps">
+  <h2 class="lp-fade">How it works</h2>
 
-  <div class="steps-row">
-    <div class="step will-animate">
-      <img src="./public/Post-It-To-Do-Notes--Streamline-Dhaka.png"
-           alt="" class="step-illus" loading="lazy"
-           onerror="this.style.display='none'">
-      <div class="step-number">1</div>
+  <div class="lp-step lp-fade">
+    <div class="lp-step-icon"><i data-lucide="pen-line"></i></div>
+    <div class="lp-step-body">
+      <span class="lp-step-num">STEP 1</span>
       <h3>Post a plan</h3>
-      <p>What do you want to do, and when? Your exact location stays hidden until there's a match.</p>
-    </div>
-
-    <div class="steps-connector">
-      <div class="step-dot-line">
-        <span class="step-pretzel">🥨</span>
-      </div>
-    </div>
-
-    <div class="step will-animate" style="transition-delay:80ms">
-      <img src="./public/Searching-1--Streamline-Dhaka.png"
-           alt="" class="step-illus" loading="lazy"
-           onerror="this.style.display='none'">
-      <div class="step-number">2</div>
-      <h3>Apply anonymously</h3>
-      <p>Someone sees your plan and applies. You see their vibe — tags and bars. No name. No photo.</p>
-    </div>
-
-    <div class="steps-connector">
-      <div class="step-dot-line">
-        <span class="step-pretzel">🥨</span>
-      </div>
-    </div>
-
-    <div class="step will-animate" style="transition-delay:160ms">
-      <img src="./public/Business-Dealsuccess--Streamline-Dhaka.png"
-           alt="" class="step-illus" loading="lazy"
-           onerror="this.style.display='none'">
-      <div class="step-number">3</div>
-      <h3>Names revealed</h3>
-      <p>You both say yes. First name, campus email, exact spot. Last name never shared. Ever.</p>
+      <p>Coffee tomorrow afternoon. Gym after class. Whatever you actually want to do.</p>
     </div>
   </div>
-</section>
 
-<!-- SECTION 4: THE REVEAL -->
-<section class="section-reveal">
-  <div class="reveal-inner">
-    <div class="reveal-left will-animate">
-      <img src="./public/About-Our-Team-1--Streamline-Barcelona.png"
-           alt="Students connecting"
-           class="reveal-illus"
-           width="420" height="420"
-           loading="lazy"
-           onerror="this.style.display='none'">
-      <img src="./public/Business-Dealsuccess--Streamline-Dhaka.png"
-           alt="Successful match"
-           class="reveal-illus"
-           width="300" height="200"
-           loading="lazy"
-           onerror="this.style.display='none'">
+  <div class="lp-step lp-fade">
+    <div class="lp-step-icon"><i data-lucide="eye-off"></i></div>
+    <div class="lp-step-body">
+      <span class="lp-step-num">STEP 2</span>
+      <h3>Stay vague in public</h3>
+      <p>Only the general area and time window are visible. The exact spot stays private.</p>
     </div>
-    <div class="reveal-right will-animate" style="transition-delay:80ms">
-      <span class="reveal-label">THE MOMENT</span>
-      <h2>It's a match.</h2>
-      <p>The only animation in the entire app. A name appearing from blur to focus. Because something real just happened.</p>
+  </div>
 
-      <div class="reveal-demo-card">
-        <p class="reveal-demo-label">IT'S A MATCH</p>
+  <div class="lp-step lp-fade">
+    <div class="lp-step-icon"><i data-lucide="users"></i></div>
+    <div class="lp-step-body">
+      <span class="lp-step-num">STEP 3</span>
+      <h3>People apply anonymously</h3>
+      <p>You see their vibe — activities, energy, compatibility score. No name, no photo.</p>
+    </div>
+  </div>
 
-        <div class="avatars-row">
-          <div class="avatar-col">
-            <div class="avatar avatar-you" style="width:56px;height:56px;font-size:20px;">Y</div>
-            <span class="avatar-label">You</span>
-          </div>
-          <div style="align-self:center;color:var(--success);">
-            <i data-lucide="heart-handshake" style="width:28px;height:28px;"></i>
-          </div>
-          <div class="avatar-col">
-            <div class="avatar avatar-them" style="width:56px;height:56px;font-size:20px;">?</div>
-            <span id="demo-name">Alex</span>
-          </div>
-        </div>
+  <div class="lp-step lp-fade">
+    <div class="lp-step-icon"><i data-lucide="zap"></i></div>
+    <div class="lp-step-body">
+      <span class="lp-step-num">STEP 4</span>
+      <h3>Check the match score</h3>
+      <p>Four categories scored before you ever say a word to each other.</p>
+    </div>
+  </div>
 
-        <div class="reveal-divider"></div>
+  <div class="lp-step lp-fade">
+    <div class="lp-step-icon"><i data-lucide="heart-handshake"></i></div>
+    <div class="lp-step-body">
+      <span class="lp-step-num">STEP 5</span>
+      <h3>You pick someone</h3>
+      <p>Send a yes to whoever feels right. No pressure, no awkward dm.</p>
+    </div>
+  </div>
 
-        <div class="reveal-details">
-          <p>
-            <i data-lucide="map-pin"></i>
-            Wiggin Street Coffee, back corner
-          </p>
-          <p>
-            <i data-lucide="clock"></i>
-            3:15pm today
-          </p>
-          <p>
-            <i data-lucide="mail"></i>
-            alex@university.edu
-          </p>
-        </div>
+  <div class="lp-step lp-fade">
+    <div class="lp-step-icon"><i data-lucide="check-check"></i></div>
+    <div class="lp-step-body">
+      <span class="lp-step-num">STEP 6</span>
+      <h3>They confirm</h3>
+      <p>Both sides have to say yes. Nothing happens until you both mean it.</p>
+    </div>
+  </div>
 
-        <p class="reveal-footer-note">Last name never shared by Vovu.</p>
+  <div class="lp-step lp-step-reveal lp-fade" id="reveal-step">
+    <div class="lp-step-icon"><i data-lucide="unlock"></i></div>
+    <div class="lp-step-body">
+      <span class="lp-step-num">STEP 7</span>
+      <h3>The reveal</h3>
+      <p>First names, campus emails, the exact spot and time. Last names — never.</p>
+      <div class="lp-reveal-names" aria-hidden="true">
+        <span>M·</span> &nbsp;meets&nbsp; <span>E·</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SECTION 5: STATS -->
-<section class="section-stats">
-  <img src="./public/Evaluate-Performance-Employee-Team--Streamline-Seoul.png"
-       alt="" class="stats-illus" loading="lazy"
-       onerror="this.style.display='none'">
-  <div class="stats-inner">
-    <div class="stat-item will-animate">
-      <span class="stat-num count-up" data-target="65" data-suffix="%">65%</span>
-      <p class="stat-label">of college students feel lonely</p>
+<!-- 4 · COMPATIBILITY SCORE -->
+<section class="lp-score lp-fade" id="score-section">
+  <h2>One score, four signals</h2>
+  <p class="lp-score-sub">Computed before names are ever shown.</p>
+
+  <div class="lp-bar-row">
+    <span class="lp-bar-label">Activities</span>
+    <div class="lp-bar-track"><div class="lp-bar-fill" data-w="85"></div></div>
+    <span class="lp-bar-pct">40%</span>
+  </div>
+  <div class="lp-bar-row">
+    <span class="lp-bar-label">Social energy</span>
+    <div class="lp-bar-track"><div class="lp-bar-fill" data-w="70"></div></div>
+    <span class="lp-bar-pct">25%</span>
+  </div>
+  <div class="lp-bar-row">
+    <span class="lp-bar-label">Timing</span>
+    <div class="lp-bar-track"><div class="lp-bar-fill" data-w="60"></div></div>
+    <span class="lp-bar-pct">20%</span>
+  </div>
+  <div class="lp-bar-row">
+    <span class="lp-bar-label">Personality</span>
+    <div class="lp-bar-track"><div class="lp-bar-fill" data-w="50"></div></div>
+    <span class="lp-bar-pct">15%</span>
+  </div>
+</section>
+
+<!-- 5 · PRIVACY -->
+<section class="lp-privacy">
+  <h2 class="lp-fade">Privacy by design</h2>
+  <div class="lp-cards">
+    <div class="lp-card lp-fade">
+      <i data-lucide="venetian-mask"></i>
+      <h3>Anonymous until yes</h3>
+      <p>Nobody sees who you are until you both choose each other.</p>
     </div>
-    <div class="stat-item will-animate" style="transition-delay:100ms">
-      <span class="stat-num count-up" data-target="40" data-suffix="%">40%</span>
-      <p class="stat-label">drop in dining hall time since 2019</p>
+    <div class="lp-card lp-fade">
+      <i data-lucide="user-x"></i>
+      <h3>No last names ever</h3>
+      <p>First name and campus email. That's all Vovu ever reveals.</p>
     </div>
-    <div class="stat-item will-animate" style="transition-delay:200ms">
-      <span class="stat-num">0</span>
-      <p class="stat-label">rejections on Vovu. Ever.</p>
+    <div class="lp-card lp-fade">
+      <i data-lucide="graduation-cap"></i>
+      <h3>.edu verified only</h3>
+      <p>Real students only. Verified through your campus email.</p>
     </div>
   </div>
 </section>
 
-<!-- SECTION 6: WAITLIST -->
-<section class="section-waitlist">
-  <div class="waitlist-inner">
-    <h2 class="will-animate">Your campus is next.</h2>
-    <p class="will-animate">Starting campus by campus. .edu verified. Word of mouth only.</p>
+<!-- 6 · PLAN TYPES -->
+<section class="lp-chips-wrap lp-fade">
+  <h2>Whatever the plan is</h2>
+  <div class="lp-chips">
+    <span class="lp-chip"><i data-lucide="coffee"></i> Café</span>
+    <span class="lp-chip"><i data-lucide="utensils"></i> Dining hall</span>
+    <span class="lp-chip"><i data-lucide="dumbbell"></i> Gym</span>
+    <span class="lp-chip"><i data-lucide="book-open"></i> Study</span>
+    <span class="lp-chip"><i data-lucide="footprints"></i> Walk</span>
+    <span class="lp-chip"><i data-lucide="film"></i> Movie</span>
+    <span class="lp-chip"><i data-lucide="trophy"></i> Sports</span>
+    <span class="lp-chip"><i data-lucide="map-pin"></i> Off-campus</span>
+    <span class="lp-chip"><i data-lucide="plus"></i> Other</span>
+  </div>
+</section>
 
-    <form id="waitlist-form" class="will-animate" style="transition-delay:80ms">
-      <input type="email" id="waitlist-email"
-             placeholder="you@university.edu"
-             autocomplete="email">
-      <button type="submit" class="waitlist-submit">
-        I want in
-        <i data-lucide="arrow-right"></i>
-      </button>
-    </form>
-    <p id="waitlist-error" class="hidden" style="text-align:center;color:#ffcdd2;font-size:13px;margin-top:8px;"></p>
+<!-- 7 · WHERE IT STARTS -->
+<section class="lp-where lp-fade">
+  <h2>Where it starts</h2>
+  <p>Kenyon College. One campus. Real students.</p>
+</section>
 
-    <div id="success-state" class="hidden" style="text-align:center;">
-      <img src="./public/Success--Streamline-Dhaka.png"
-           width="120" height="120"
-           loading="lazy"
-           style="margin:0 auto 16px; object-fit:contain;"
-           onerror="this.style.display='none'">
-      <p>You're on the list.</p>
-      <p>We'll reach out when Vovu comes to your campus.</p>
-    </div>
+<!-- 8 · WAITLIST -->
+<section class="lp-waitlist lp-fade" id="waitlist">
+  <h2>Get on the list</h2>
+  <p>We open campus by campus. Your .edu email holds your spot.</p>
 
-    <p class="waitlist-note">.edu only · no spam · campus by campus</p>
+  <form class="lp-wl-form" id="waitlist-form">
+    <input type="email" id="waitlist-email" required
+           placeholder="you@university.edu" autocomplete="email">
+    <button type="submit" id="waitlist-btn">
+      Join waitlist
+      <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+    </button>
+  </form>
+  <p class="lp-wl-msg" id="waitlist-msg"></p>
+
+  <div class="lp-wl-success hidden" id="waitlist-success">
+    <img src="./public/Sharing-1--Streamline-Dhaka.png"
+         width="160" height="160" loading="lazy"
+         style="object-fit:contain;" onerror="this.style.display='none'">
+    <p>You're in.</p>
+    <p style="opacity:0.8;">We'll email you when Vovu reaches your campus.</p>
   </div>
 </section>
 
@@ -292,7 +409,60 @@
   </div>
 </footer>
 
-<script src="./js/main.js"></script>
-<script>lucide.createIcons();</script>
+<script>
+lucide.createIcons();
+
+// ── Scroll-in animations ─────────────────────────────────────────────
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('lp-in');
+
+    // Animate score bars when their section enters
+    if (e.target.id === 'score-section') {
+      e.target.querySelectorAll('.lp-bar-fill').forEach(b => {
+        b.style.width = b.dataset.w + '%';
+      });
+    }
+    io.unobserve(e.target);
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.lp-fade').forEach(el => io.observe(el));
+
+// If reduced motion: show bars immediately
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.querySelectorAll('.lp-bar-fill').forEach(b => { b.style.width = b.dataset.w + '%'; });
+}
+
+// ── Waitlist form → Supabase ─────────────────────────────────────────
+document.getElementById('waitlist-form').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const input = document.getElementById('waitlist-email');
+  const btn   = document.getElementById('waitlist-btn');
+  const msg   = document.getElementById('waitlist-msg');
+  const email = input.value.trim().toLowerCase();
+
+  if (!email || !email.includes('@')) {
+    msg.textContent = 'Enter a valid email.';
+    return;
+  }
+
+  btn.disabled = true;
+  msg.textContent = '';
+
+  try {
+    const { error } = await window._supabase.from('waitlist').insert({ email });
+    if (error && !String(error.message).includes('duplicate')) throw error;
+
+    document.getElementById('waitlist-form').classList.add('hidden');
+    document.getElementById('waitlist-success').classList.remove('hidden');
+  } catch (err) {
+    console.error('Waitlist error:', err);
+    msg.textContent = 'Could not save. Try again.';
+    btn.disabled = false;
+  }
+});
+</script>
 </body>
 </html>

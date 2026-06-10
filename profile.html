@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vovu — Profile</title>
+  <link rel="icon" type="image/png" href="./VOVU LOGO OFICIAL.png">
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./js/supabase-config.js"></script>
-  <script src="./js/db.js?v=11"></script>
+  <script src="./js/db.js?v=12"></script>
 </head>
 <body>
 <div class="profile-screen">
@@ -184,8 +185,12 @@
 
   <nav class="bottom-nav">
     <a href="./feed.html" class="nav-tab">
-      <i data-lucide="layout-list"></i>
+      <i data-lucide="compass"></i>
       <span>Feed</span>
+    </a>
+    <a href="./my-matches.html" class="nav-tab">
+      <i data-lucide="heart"></i>
+      <span>Matches</span>
     </a>
     <a href="./post.html" class="nav-tab nav-post">
       <div class="post-circle">
@@ -193,9 +198,9 @@
       </div>
       <span style="margin-top:2px;">Post</span>
     </a>
-    <a href="./my-matches.html" class="nav-tab">
-      <i data-lucide="heart"></i>
-      <span>Matches</span>
+    <a href="./feed.html?tab=your-plans" class="nav-tab">
+      <i data-lucide="bookmark"></i>
+      <span>Your plans</span>
     </a>
     <a href="./profile.html" class="nav-tab active">
       <i data-lucide="user"></i>

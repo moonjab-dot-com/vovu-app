@@ -66,7 +66,7 @@ const DB = {
       .from('users')
       .upsert(
         { id: userId, email, campus, verified: true, ...extraFields },
-        { onConflict: 'id' }
+        { onConflict: 'email' }
       )
       .select().single();
     if (error) throw error;

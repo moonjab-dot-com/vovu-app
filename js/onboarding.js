@@ -19,7 +19,7 @@ const STEPS = [
       { key: 'movie',     icon: 'film',      label: 'Movie' },
       { key: 'sports',    icon: 'trophy',    label: 'Sports' },
       { key: 'offcampus', icon: 'map-pin',   label: 'Off-campus' },
-      { key: 'party',     icon: 'music',     label: 'Party' },
+      { key: 'other',     icon: 'music',     label: 'Party' },
     ],
     required: true, minSelections: 1,
   },

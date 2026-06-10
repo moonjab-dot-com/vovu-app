@@ -9,7 +9,7 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./js/supabase-config.js"></script>
-  <script src="./js/db.js?v=12"></script>
+  <script src="./js/db.js?v=13"></script>
   <script src="./js/matching.js"></script>
 </head>
 <body>
@@ -63,6 +63,9 @@
     </button>
     <button class="filter-pill" onclick="filterPlans('food', this)">
       <i data-lucide="utensils" style="width:13px;height:13px;"></i> Dining
+    </button>
+    <button class="filter-pill" onclick="filterPlans('other', this)">
+      <i data-lucide="music" style="width:13px;height:13px;"></i> Party
     </button>
   </div>
 
@@ -408,18 +411,21 @@ async function loadYourPlans() {
     const myPlans    = await DB.getMyPlans(window.currentUser.id);
     const active     = myPlans.filter(p => p.is_active);
 
-    // Badge
+    // Badge: show count of active plans that have at least one pending applicant
     const badge = document.getElementById('my-plans-badge');
-    if (active.length > 0) { badge.textContent = active.length; badge.style.display = ''; }
+    // appCountMap is populated in the loop below — compute badge after
+    let plansWithApplicants = 0;
 
-    // Application counts
+    // Application counts — also tally plans with pending applicants for badge
     const appCountMap = {};
     for (const p of active) {
       try {
         const apps = await DB.getApplications(p.id);
-        appCountMap[p.id] = apps.length;
+        appCountMap[p.id] = apps.filter(a => a.status === 'pending').length;
+        if (appCountMap[p.id] > 0) plansWithApplicants++;
       } catch { appCountMap[p.id] = 0; }
     }
+    if (plansWithApplicants > 0) { badge.textContent = plansWithApplicants; badge.style.display = ''; }
 
     document.getElementById('your-plans-loading').classList.add('hidden');
     const contentEl = document.getElementById('your-plans-content');

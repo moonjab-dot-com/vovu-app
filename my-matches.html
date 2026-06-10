@@ -9,7 +9,7 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./js/supabase-config.js"></script>
-  <script src="./js/db.js?v=12"></script>
+  <script src="./js/db.js?v=13"></script>
 </head>
 <body>
 <div class="feed-screen">
@@ -41,6 +41,18 @@
       <a href="./feed.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:0 24px;height:48px;border-radius:var(--r-md);text-decoration:none;font-size:15px;">
         <i data-lucide="compass" style="width:16px;height:16px;"></i> Explore plans
       </a>
+    </div>
+
+    <!-- Error — LOW fix: distinct from empty state -->
+    <div id="matches-error" class="hidden" style="text-align:center;padding:48px 0;">
+      <img src="./public/Something-Went-Wrong--Streamline-Dhaka.png" width="160" height="160"
+           loading="lazy" style="object-fit:contain;margin:0 auto;"
+           onerror="this.style.display='none'">
+      <h3 style="margin:20px 0 8px;font-family:var(--font-serif);">Couldn't load matches</h3>
+      <p style="color:var(--sage);margin-bottom:24px;">Something went wrong. Your matches are safe.</p>
+      <button onclick="location.reload()" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:0 24px;height:48px;border-radius:var(--r-md);border:none;cursor:pointer;font-size:15px;">
+        <i data-lucide="rotate-cw" style="width:16px;height:16px;"></i> Try again
+      </button>
     </div>
   </div>
 
@@ -106,7 +118,7 @@ async function loadMatches() {
   } catch (err) {
     console.error('loadMatches error:', err);
     document.getElementById('matches-skeleton').classList.add('hidden');
-    document.getElementById('matches-empty').classList.remove('hidden');
+    document.getElementById('matches-error').classList.remove('hidden');
   }
 }
 

@@ -7,11 +7,11 @@ const sb = window._supabase;
 
 const ACTIVITY_ICONS = {
   cafe: 'coffee', food: 'utensils', gym: 'dumbbell', study: 'book-open',
-  walk: 'footprints', movie: 'film', sports: 'trophy', offcampus: 'map-pin', other: 'plus'
+  walk: 'footprints', movie: 'film', sports: 'trophy', offcampus: 'map-pin', other: 'music'
 };
 const ACTIVITY_LABELS = {
   cafe: 'Café', food: 'Dining hall', gym: 'Gym', study: 'Study',
-  walk: 'Walk', movie: 'Movie', sports: 'Sports', offcampus: 'Off-campus', other: 'Other'
+  walk: 'Walk', movie: 'Movie', sports: 'Sports', offcampus: 'Off-campus', other: 'Party'
 };
 const TIME_LABELS = {
   morning: 'Morning (8–11am)', midday: 'Midday (11am–1pm)',

@@ -165,8 +165,12 @@ const DB = {
   },
 
   async getApplications(planId) {
-    // Uses SECURITY DEFINER RPC — creator-only, no RLS recursion
-    const { data, error } = await sb.rpc('get_plan_applications', { p_plan_id: planId });
+    // Direct SELECT — allowed by "applications: creator read" policy
+    const { data, error } = await sb
+      .from('applications')
+      .select('id, plan_id, applicant_id, status, created_at')
+      .eq('plan_id', planId)
+      .in('status', ['pending', 'yes_creator']);
     if (error) throw error;
     return data || [];
   },

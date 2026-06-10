@@ -1732,6 +1732,48 @@ input[type="range"]::-webkit-slider-thumb {
   border-color: var(--forest);
 }
 
+/* ── Onboarding section label ───────────────────────────── */
+.ob-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin: 0 0 6px;
+}
+
+/* ── Day segmented control ──────────────────────────────── */
+.day-seg {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1.5px solid var(--forest);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+@media (max-width: 400px) {
+  .day-seg { grid-template-columns: 1fr 1fr; }
+}
+.day-seg-btn {
+  padding: 10px 4px;
+  border: none;
+  border-right: 1px solid var(--forest);
+  background: var(--white);
+  color: var(--forest);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+  text-align: center;
+  line-height: 1.3;
+}
+.day-seg-btn:last-child { border-right: none; }
+.day-seg-btn.selected {
+  background: var(--forest);
+  color: var(--butter);
+}
+.day-seg-btn:hover:not(.selected) { background: var(--mist); }
+
 /* ── Creator-yes screen (plan-seeker.html) ──────────────── */
 .creator-yes-screen {
   background: var(--white);
@@ -1775,4 +1817,100 @@ input[type="range"]::-webkit-slider-thumb {
   color: var(--sage);
   margin-top: 16px;
   line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════
+   MICRO-INTERACTIONS (unicorn-level)
+   ═══════════════════════════════════════════════ */
+
+/* Button press: scale down on active */
+.btn-primary:active,
+.btn-outline:active,
+.btn-ghost:active,
+.btn-apply-now:active,
+.btn-yes-applicant:active,
+.lp-cta:active {
+  transform: scale(0.97) !important;
+  transition-duration: 80ms !important;
+}
+
+/* Card hover: lift border to forest */
+.card {
+  transition: border-color 150ms ease, transform 150ms ease;
+}
+.card:hover {
+  border-color: rgba(1,62,55,0.3);
+}
+
+/* Feed plan card clickable feel */
+.plan-card-wrap {
+  transition: transform 150ms ease;
+}
+.plan-card-wrap:active { transform: scale(0.985); }
+
+/* Filter pill active press */
+.filter-pill:active,
+.ob-option:active,
+.ob-grid-item:active,
+.day-seg-btn:active,
+.suggestion-chip:active,
+.spot-btn:active,
+.post-activity-btn:active {
+  transform: scale(0.94);
+  transition-duration: 80ms;
+}
+
+/* Chip select pop */
+.ob-option.selected,
+.ob-grid-item.selected,
+.suggestion-chip.selected,
+.filter-pill.active {
+  transition: background 150ms ease, color 150ms ease, transform 120ms ease;
+}
+
+/* Input focus ring — forest glow */
+.input:focus,
+.textarea:focus,
+.select:focus,
+.private-input:focus {
+  outline: none;
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px rgba(1,62,55,0.12);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+/* Nav tab press */
+.nav-tab:active { opacity: 0.6; transform: scale(0.9); }
+.nav-tab { transition: opacity 120ms, transform 120ms; }
+
+/* Post activity button pop on select */
+.post-activity-btn {
+  transition: background 150ms ease, color 150ms ease, transform 120ms ease, border-color 150ms ease;
+}
+.post-activity-btn.selected { transform: scale(1.04); }
+
+/* Skeleton shimmer: smoother */
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
+}
+
+/* Match reveal: reduce motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  #my-avatar, #their-avatar {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+  #reveal-name, #reveal-email {
+    filter: none !important;
+    transition: none !important;
+  }
+  #match-headline, #match-sub, #match-illustration,
+  #reveal-card, #match-plan-title, #match-location-row,
+  #match-time-row, #match-privacy-note, #match-actions {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }

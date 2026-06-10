@@ -282,6 +282,26 @@ const STEPS = [
 let obStep = 0;
 const obAnswers = {};
 
+// Canonical illustration per section group — spec-mandated mapping
+const GROUP_ILLUSTRATIONS = {
+  A: './public/Welcome--Streamline-Dhaka.png',
+  B: './public/Post-It-To-Do-Notes--Streamline-Dhaka.png',
+  C: './public/I-Have-A-Question--Streamline-Dhaka.png',
+  D: './public/Patience--Streamline-Dhaka.png',
+  E: './public/Searching--Streamline-Dhaka.png',
+  F: './public/Leadership--Streamline-Dhaka.png',
+};
+
+// Section human headlines shown when entering a new group
+const GROUP_HEADLINES = {
+  A: 'What are you into?',
+  B: 'How do you hang?',
+  C: 'When are you free?',
+  D: 'What\'s your vibe?',
+  E: 'How practical are you?',
+  F: 'A little more about you',
+};
+
 function renderStep(stepIndex) {
   const step = STEPS[stepIndex];
   const wrapper = document.getElementById('ob-wrapper');
@@ -297,13 +317,24 @@ function renderStep(stepIndex) {
   const backBtn = document.getElementById('ob-back');
   if (backBtn) backBtn.style.visibility = stepIndex === 0 ? 'hidden' : 'visible';
 
+  // Show section headline when entering a new group
+  const prevGroup = stepIndex > 0 ? STEPS[stepIndex - 1].group : null;
+  const isNewGroup = step.group !== prevGroup;
+
   let html = '<div class="ob-step step-enter">';
 
-  if (step.illustration) {
-    html += `<img src="${step.illustration}" width="120" height="120"
+  // Always use group illustration (canonical mapping overrides per-step)
+  const illus = GROUP_ILLUSTRATIONS[step.group];
+  if (illus) {
+    html += `<img src="${illus}" width="120" height="120"
       class="ob-illustration fade-up" loading="lazy"
       style="object-fit:contain;display:block;margin:0 auto 24px"
       onerror="this.style.display='none'">`;
+  }
+
+  // Section headline (only when group changes)
+  if (isNewGroup && GROUP_HEADLINES[step.group]) {
+    html += `<p class="ob-section-label fade-up">${GROUP_HEADLINES[step.group]}</p>`;
   }
 
   if (step.callout) {

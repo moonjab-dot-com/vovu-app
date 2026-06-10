@@ -74,13 +74,22 @@
       <p>You've reviewed everyone who applied.</p>
     </div>
 
-    <!-- No applicants state -->
+    <!-- No applicants state — HIGH FIX: add contextual guidance -->
     <div id="no-applicants-state" class="hidden" style="text-align:center; padding:32px 0;">
       <img src="./public/Empty-Inbox--Streamline-Dhaka.png" width="140" height="140"
            loading="lazy" style="object-fit:contain; margin:0 auto;"
            onerror="this.style.display='none'">
       <h3 style="margin:16px 0 8px; font-family:var(--font-serif);">No applicants yet</h3>
-      <p style="color:var(--sage);">Check back soon.</p>
+      <p style="color:var(--sage); margin-bottom:20px;">Most plans get their first applicant within a few hours.</p>
+      <div style="background:var(--bg-card,#fff); border:1px solid var(--border); border-radius:var(--r-lg); padding:16px; text-align:left; max-width:320px; margin:0 auto 16px;">
+        <div style="font-size:13px; font-weight:600; margin-bottom:10px; color:var(--forest);">Tips to get noticed faster</div>
+        <div style="font-size:13px; color:var(--sage); line-height:1.6;">
+          <div style="margin-bottom:6px;">📝 Add a note — plans with notes get 2× more views</div>
+          <div style="margin-bottom:6px;">⏰ Early morning and evening get the most activity</div>
+          <div style="margin-bottom:6px;">☕ Café and gym plans fill fastest on campus</div>
+          <div>✨ Your plan reaches everyone with matching activities</div>
+        </div>
+      </div>
     </div>
 
   </div><!-- /poster-content -->
@@ -372,7 +381,14 @@ async function pickApplicant(appId, initial) {
     const spinnerEl = overlay.querySelector('.spinner');
     if (spinnerEl) spinnerEl.style.display = 'none';
 
-    setTimeout(() => { window.location.href = './feed.html'; }, 3000);
+    // MEDIUM FIX: manual CTA instead of blind 3s redirect
+    const ctaEl = document.createElement('a');
+    ctaEl.href = './feed.html';
+    ctaEl.className = 'btn-primary';
+    ctaEl.style.cssText = 'margin-top:20px; display:inline-flex; align-items:center; gap:8px; padding:0 24px; height:48px; border-radius:var(--r-md); font-size:15px; font-weight:500; text-decoration:none;';
+    ctaEl.innerHTML = 'Back to feed <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>';
+    overlay.querySelector('.waiting-content').appendChild(ctaEl);
+    lucide.createIcons();
 
   } catch (err) {
     console.error('pickApplicant error:', err);

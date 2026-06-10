@@ -8,7 +8,7 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./js/supabase-config.js"></script>
-  <script src="./js/db.js?v=10"></script>
+  <script src="./js/db.js?v=11"></script>
 </head>
 <body>
 <div class="match-screen">
@@ -61,7 +61,7 @@
     <div class="match-plan-card card fade-up" style="animation-delay:120ms; margin:0 16px 12px;">
       <div class="match-plan-header">
         <i data-lucide="map-pin" style="width:14px;height:14px;color:var(--success);"></i>
-        <span class="match-plan-label">Where to meet</span>
+        <span class="match-plan-label">Where &amp; when to meet</span>
       </div>
 
       <div class="match-plan-row">
@@ -69,26 +69,30 @@
           <i data-lucide="calendar"></i>
         </div>
         <div class="match-plan-info">
-          <div class="match-plan-title" id="match-plan-title">—</div>
-          <div class="match-plan-private" id="match-plan-private">
-            <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
-            <span id="match-location">—</span>
+          <div class="match-plan-title" id="match-plan-title" style="font-size:16px;font-weight:600;margin-bottom:8px;">—</div>
+          <div class="match-plan-private" id="match-plan-private" style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink);margin-bottom:4px;">
+            <i data-lucide="map-pin" style="width:13px;height:13px;color:var(--forest);flex-shrink:0;"></i>
+            <span id="match-location" style="font-weight:500;">—</span>
           </div>
-          <div class="match-plan-private" id="match-plan-time-row">
-            <i data-lucide="clock" style="width:12px;height:12px;"></i>
-            <span id="match-time">—</span>
+          <div class="match-plan-private" id="match-plan-time-row" style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink);">
+            <i data-lucide="clock" style="width:13px;height:13px;color:var(--forest);flex-shrink:0;"></i>
+            <span id="match-time" style="font-weight:500;">—</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Actions -->
-    <div class="match-actions fade-up" style="animation-delay:160ms; padding:0 16px 120px;">
-      <p class="match-actions-note">
-        <i data-lucide="shield-check" style="width:14px;height:14px; vertical-align:middle; color:var(--success);"></i>
+    <div class="match-actions fade-up" style="animation-delay:160ms; padding:0 16px 32px;">
+      <p class="match-actions-note" style="font-size:13px;color:var(--sage);margin-bottom:16px;">
+        <i data-lucide="shield-check" style="width:13px;height:13px; vertical-align:middle; color:var(--success);"></i>
         Their campus email is shown above. Reach out however feels natural.
       </p>
-      <a href="./feed.html" class="btn-outline match-feed-btn">
+      <a href="./my-matches.html" class="btn-primary match-feed-btn" style="margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <i data-lucide="heart" style="width:16px;height:16px;"></i>
+        My matches
+      </a>
+      <a href="./feed.html" class="btn-outline match-feed-btn" style="display:flex;align-items:center;justify-content:center;gap:8px;">
         <i data-lucide="layout-list" style="width:16px;height:16px;"></i>
         Back to feed
       </a>
@@ -142,87 +146,55 @@ async function loadMatch() {
     const match = await DB.getMatch(matchId);
     if (!match) { showError(); return; }
 
-    // Determine who is the "other" person
     const amICreator   = match.creator_id  === window.currentUser.id;
     const amIApplicant = match.applicant_id === window.currentUser.id;
     if (!amICreator && !amIApplicant) { showError(); return; }
 
-    const otherId    = amICreator ? match.applicant_id : match.creator_id;
-    const myInitial  = window.currentUser.email.split('@')[0].split('.')[0].charAt(0).toUpperCase();
+    // All data is stored directly in the match row — no extra fetches needed
+    const myInitial     = window.currentUser.email.split('@')[0].split('.')[0].charAt(0).toUpperCase();
+    const partnerName   = amICreator ? match.applicant_first_name : match.creator_first_name;
+    const partnerEmail  = amICreator ? match.applicant_email      : match.creator_email;
+    const partnerInitial = (partnerName || '?').charAt(0).toUpperCase();
 
-    // Fetch partner user row (need their first_name + email)
-    const partner = await DB.getUser(otherId);
-    const partnerName  = (partner && partner.first_name)
-      ? partner.first_name
-      : (partner && partner.email ? partner.email.split('@')[0].split('.')[0] : 'Your match');
-    const partnerEmail = (partner && partner.email) ? partner.email : '—';
-    const partnerInitial = partnerName.charAt(0).toUpperCase();
-
-    // Get plan details — private RPC works for the creator;
-    // for the matched applicant, fall back to public plan fields.
-    let plan = null;
-    if (match.plan_id) {
-      try {
-        plan = await DB.getPlanPrivate(match.plan_id);
-      } catch (_) { /* not creator — fall through */ }
-      if (!plan) {
-        try {
-          plan = await DB.getPlan(match.plan_id);
-        } catch (_) { /* plan gone */ }
-      }
-    }
-
-    populateMatch({
-      match,
-      myInitial,
-      partnerName,
-      partnerEmail,
-      partnerInitial,
-      plan
-    });
+    populateMatch({ match, myInitial, partnerName: partnerName || 'Your match', partnerEmail: partnerEmail || '—', partnerInitial });
   } catch (err) {
     console.error('Match load error:', err);
     showError();
   }
 }
 
-function populateMatch({ match, myInitial, partnerName, partnerEmail, partnerInitial, plan }) {
-  // Avatars
-  document.getElementById('my-avatar').textContent    = myInitial;
-  document.getElementById('their-avatar').textContent = partnerInitial;
+function populateMatch({ match, myInitial, partnerName, partnerEmail, partnerInitial }) {
+  document.getElementById('my-avatar').textContent     = myInitial;
+  document.getElementById('their-avatar').textContent  = partnerInitial;
   document.getElementById('reveal-avatar').textContent = partnerInitial;
 
-  // Headline
   document.getElementById('match-headline').textContent = 'It\'s a match with ' + partnerName + '!';
-  document.getElementById('match-sub').textContent =
-    'You two share the same vibe. Reach out!';
+  document.getElementById('match-sub').textContent = 'You two share the same vibe. Reach out!';
 
-  // Reveal card
   document.getElementById('reveal-name').textContent  = partnerName;
   document.getElementById('reveal-email').textContent = partnerEmail;
 
-  // Plan card
-  if (plan && match.plan_id) {
-    const icon  = ACTIVITY_ICONS[plan.activity]  || 'calendar';
-    const label = ACTIVITY_LABELS[plan.activity] || 'Plan';
-    const time  = TIME_LABELS[plan.time_window]  || plan.time_window || '—';
+  // Plan details — all stored in the match row itself
+  const icon     = ACTIVITY_ICONS[match.activity]  || 'calendar';
+  const label    = ACTIVITY_LABELS[match.activity] || 'Plan';
+  const location = match.exact_location || '—';
+  const time     = match.exact_time     || '—';
 
-    document.getElementById('match-activity-icon').innerHTML = `<i data-lucide="${icon}"></i>`;
-    document.getElementById('match-plan-title').textContent  = label;
-    document.getElementById('match-location').textContent    = plan.exact_location || '—';
-    document.getElementById('match-time').textContent        = plan.exact_time     || time;
-  } else {
-    // No plan data available
-    document.getElementById('match-plan-title').textContent = 'Details not available';
+  document.getElementById('match-activity-icon').innerHTML = `<i data-lucide="${icon}"></i>`;
+  document.getElementById('match-plan-title').textContent  = label;
+  document.getElementById('match-location').textContent    = location;
+  document.getElementById('match-time').textContent        = time;
+
+  // Show "no details" hint only if both are truly missing
+  if (!match.exact_location && !match.exact_time) {
     document.getElementById('match-plan-private').style.display  = 'none';
     document.getElementById('match-plan-time-row').style.display = 'none';
+    document.getElementById('match-plan-title').textContent = label + ' — details pending';
   }
 
   document.getElementById('match-skeleton').classList.add('hidden');
   document.getElementById('match-content').classList.remove('hidden');
   lucide.createIcons();
-
-  // Confetti burst
   spawnConfetti();
 }
 

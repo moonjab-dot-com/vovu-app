@@ -78,10 +78,11 @@ function scoreAdjacentSingle(a, b, weight) {
 
 function areIntentsCompatible(a, b) {
   const compatible = {
-    things_together: ['new_friends', 'off_phone'],
+    things_together: ['new_friends', 'off_phone', 'study_partner'],
     study_partner:   ['study_partner', 'things_together'],
     off_phone:       ['things_together', 'new_friends', 'off_phone'],
     new_friends:     ['things_together', 'off_phone', 'new_friends'],
   };
-  return compatible[a]?.includes(b) ?? false;
+  // Check both directions so score(A,B) === score(B,A)
+  return (compatible[a]?.includes(b) || compatible[b]?.includes(a)) ?? false;
 }

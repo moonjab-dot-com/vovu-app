@@ -110,7 +110,7 @@ const DB = {
     if (!userIds || !userIds.length) return [];
     const { data, error } = await sb
       .from('profiles')
-      .select('id, initial, activities, follow_through, openness, intent, timing, group_size, place_vibe, current_vibe, talk_listen')
+      .select('id, initial, activities, follow_through, openness, intent, timing, group_size, place_vibe, current_vibe, talk_listen, plan_style, duration, time_of_day')
       .in('id', userIds);
     if (error) throw error;
     return data || [];
@@ -223,5 +223,18 @@ const DB = {
     const { data, error } = await sb.from('matches').select('*').eq('id', matchId).single();
     if (error) throw error;
     return data;
+  },
+
+  async getMyMatches() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return [];
+    const uid = session.user.id;
+    const { data, error } = await sb
+      .from('matches')
+      .select('*')
+      .or(`creator_id.eq.${uid},applicant_id.eq.${uid}`)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
   }
 };

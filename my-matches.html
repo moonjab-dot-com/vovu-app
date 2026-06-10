@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vovu — My Matches</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/supabase-config.js"></script>
+  <script src="./js/db.js?v=11"></script>
+</head>
+<body>
+<div class="feed-screen">
+
+  <header class="page-header" style="display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border);">
+    <button onclick="history.back()" style="background:none;border:none;cursor:pointer;padding:6px;display:flex;align-items:center;color:var(--forest);">
+      <i data-lucide="arrow-left" style="width:20px;height:20px;"></i>
+    </button>
+    <h1 style="font-size:17px;margin:0;font-family:var(--font-serif);">My matches</h1>
+  </header>
+
+  <div style="padding:16px 16px 100px;" id="matches-container">
+    <!-- Skeleton -->
+    <div id="matches-skeleton">
+      <div class="skeleton" style="height:110px;border-radius:var(--r-lg);margin-bottom:12px;"></div>
+      <div class="skeleton skeleton-d1" style="height:110px;border-radius:var(--r-lg);margin-bottom:12px;"></div>
+    </div>
+
+    <!-- Content -->
+    <div id="matches-content" class="hidden"></div>
+
+    <!-- Empty -->
+    <div id="matches-empty" class="hidden" style="text-align:center;padding:48px 0;">
+      <img src="./public/Patience--Streamline-Dhaka.png" width="160" height="160"
+           loading="lazy" style="object-fit:contain;margin:0 auto;"
+           onerror="this.style.display='none'">
+      <h3 style="margin:20px 0 8px;font-family:var(--font-serif);">No matches yet</h3>
+      <p style="color:var(--sage);margin-bottom:24px;">Apply to plans and get YES from a creator to see matches here.</p>
+      <a href="./feed.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;padding:0 24px;height:48px;border-radius:var(--r-md);text-decoration:none;font-size:15px;">
+        <i data-lucide="compass" style="width:16px;height:16px;"></i> Explore plans
+      </a>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="./feed.html" class="nav-tab">
+      <i data-lucide="layout-list"></i>
+      <span>Feed</span>
+    </a>
+    <a href="./post.html" class="nav-tab nav-post">
+      <div class="post-circle">
+        <i data-lucide="plus" style="color:var(--butter);"></i>
+      </div>
+      <span style="margin-top:2px;">Post</span>
+    </a>
+    <a href="./my-matches.html" class="nav-tab active">
+      <i data-lucide="heart"></i>
+      <span>Matches</span>
+    </a>
+    <a href="./profile.html" class="nav-tab">
+      <i data-lucide="user"></i>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+</div>
+
+<script src="./js/main.js"></script>
+<script>
+lucide.createIcons();
+
+window.addEventListener('load', async () => {
+  const session = await Auth.getSession();
+  if (!session) { window.location.href = './login.html'; return; }
+  window.currentUser = {
+    id:    session.user.id,
+    email: session.user.email
+  };
+  await loadMatches();
+});
+
+async function loadMatches() {
+  try {
+    const matches = await DB.getMyMatches();
+
+    document.getElementById('matches-skeleton').classList.add('hidden');
+
+    if (!matches.length) {
+      document.getElementById('matches-empty').classList.remove('hidden');
+      return;
+    }
+
+    const uid = window.currentUser.id;
+    const html = matches.map(m => buildMatchCard(m, uid)).join('');
+    const el = document.getElementById('matches-content');
+    el.innerHTML = html;
+    el.classList.remove('hidden');
+    lucide.createIcons();
+  } catch (err) {
+    console.error('loadMatches error:', err);
+    document.getElementById('matches-skeleton').classList.add('hidden');
+    document.getElementById('matches-empty').classList.remove('hidden');
+  }
+}
+
+function buildMatchCard(m, uid) {
+  const amCreator    = m.creator_id === uid;
+  const partnerName  = amCreator ? (m.applicant_first_name || 'Match') : (m.creator_first_name || 'Match');
+  const partnerEmail = amCreator ? (m.applicant_email || '') : (m.creator_email || '');
+  const initial      = partnerName.charAt(0).toUpperCase();
+  const icon         = ACTIVITY_ICONS[m.activity]  || 'calendar';
+  const label        = ACTIVITY_LABELS[m.activity] || 'Plan';
+  const location     = m.exact_location || null;
+  const time         = m.exact_time     || null;
+  const dateStr      = m.created_at
+    ? new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    : '';
+
+  return `
+    <a href="./match.html?id=${m.id}" style="text-decoration:none;display:block;">
+      <div class="card fade-up" style="margin-bottom:12px;padding:16px;cursor:pointer;border:1.5px solid var(--border);transition:border-color 150ms;" onmouseenter="this.style.borderColor='var(--forest)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="match-avatar match-avatar-them" style="width:44px;height:44px;font-size:18px;border-radius:50%;background:var(--forest-soft);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--forest);flex-shrink:0;">${initial}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:600;font-size:15px;color:var(--ink);margin-bottom:2px;">${partnerName}</div>
+            <div style="font-size:12px;color:var(--sage);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${partnerEmail}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+            <span class="plan-status-badge status-matched" style="font-size:11px;">Matched</span>
+            ${dateStr ? `<span style="font-size:11px;color:var(--sage);">${dateStr}</span>` : ''}
+          </div>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink);">
+            <i data-lucide="${icon}" style="width:14px;height:14px;color:var(--forest);flex-shrink:0;"></i>
+            <span style="font-weight:500;">${label}</span>
+          </div>
+          ${location ? `
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink);">
+            <i data-lucide="map-pin" style="width:14px;height:14px;color:var(--forest);flex-shrink:0;"></i>
+            <span>${location}</span>
+          </div>` : ''}
+          ${time ? `
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink);">
+            <i data-lucide="clock" style="width:14px;height:14px;color:var(--forest);flex-shrink:0;"></i>
+            <span>${time}</span>
+          </div>` : ''}
+        </div>
+      </div>
+    </a>`;
+}
+</script>
+</body>
+</html>

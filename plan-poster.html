@@ -8,7 +8,7 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./js/supabase-config.js"></script>
-  <script src="./js/db.js?v=10"></script>
+  <script src="./js/db.js?v=11"></script>
   <script src="./js/matching.js"></script>
 </head>
 <body>
@@ -112,6 +112,8 @@ lucide.createIcons();
 const planId   = new URLSearchParams(location.search).get('id');
 let passedCount = 0;
 let totalVisible = 0;
+let planData = null;
+let confirmedMatchCount = 0;
 
 window.addEventListener('load', async () => {
   const session = await Auth.getSession();
@@ -147,6 +149,13 @@ async function loadPosterView() {
         return;
       }
     }
+
+    planData = plan;
+
+    // Count confirmed matches for spots calculation
+    const { data: planMatches } = await window._supabase
+      .from('matches').select('id').eq('plan_id', planId);
+    confirmedMatchCount = planMatches?.length || 0;
 
     // Get private details (creator only, via security definer function)
     const priv = await DB.getPlanPrivate(planId);
@@ -300,9 +309,11 @@ function buildApplicantCard(app, cp, score, num, total) {
     </div>`;
 }
 
-function passApplicant(appId) {
+async function passApplicant(appId) {
   const card = document.getElementById('applicant-' + appId);
   if (!card) return;
+
+  // Animate out immediately for snappy UX
   card.style.transition = 'opacity 300ms ease, transform 300ms ease';
   card.style.opacity = '0';
   card.style.transform = 'translateX(-20px)';
@@ -313,9 +324,31 @@ function passApplicant(appId) {
       document.getElementById('all-passed-state').classList.remove('hidden');
     }
   }, 310);
+
+  // Persist to DB (fire-and-forget — UI already updated)
+  try {
+    await DB.updateApplication(appId, 'declined');
+  } catch (err) {
+    console.error('passApplicant DB error:', err);
+  }
 }
 
 async function pickApplicant(appId, initial) {
+  // Check spots limit before showing overlay
+  const spots = planData?.spots || 1;
+  const { data: activeYes } = await window._supabase
+    .from('applications').select('id').eq('plan_id', planId).eq('status', 'yes_creator');
+  const activeYesCount = activeYes?.length || 0;
+  const totalActive = activeYesCount + confirmedMatchCount;
+
+  if (totalActive >= spots) {
+    const word = spots === 1 ? 'person' : 'people';
+    if (window.showToast) showToast(
+      `You've already sent YES to ${spots} ${word}. Wait for them to confirm or decline first.`, 'error'
+    );
+    return;
+  }
+
   const overlay = document.getElementById('waiting-overlay');
   const titleEl = document.getElementById('waiting-name');
   const subEl   = overlay.querySelector('.waiting-sub');
@@ -323,16 +356,8 @@ async function pickApplicant(appId, initial) {
   overlay.classList.remove('hidden');
 
   try {
-    // Step 1: Decline all other pending applications for this plan
-    await window._supabase
-      .from('applications')
-      .update({ status: 'declined' })
-      .eq('plan_id', planId)
-      .neq('id', appId)
-      .in('status', ['pending', 'yes_creator']);
-
-    // Step 2: Update chosen application to 'yes_creator'
-    //         Do NOT create the match yet — applicant must confirm
+    // Set chosen application to 'yes_creator' — do NOT decline others here.
+    // Others stay pending; if this applicant declines the slot re-opens.
     const { error } = await window._supabase
       .from('applications')
       .update({ status: 'yes_creator' })
@@ -340,15 +365,12 @@ async function pickApplicant(appId, initial) {
 
     if (error) throw error;
 
-    // Step 3: Show waiting state
     titleEl.textContent = 'YES sent to ' + initial + '·';
     if (subEl) subEl.textContent = 'Waiting for them to confirm. You\'ll see the reveal in Your Plans.';
 
-    // Hide spinner — nothing more to wait for right now
     const spinnerEl = overlay.querySelector('.spinner');
     if (spinnerEl) spinnerEl.style.display = 'none';
 
-    // Return to feed after 3 seconds
     setTimeout(() => { window.location.href = './feed.html'; }, 3000);
 
   } catch (err) {

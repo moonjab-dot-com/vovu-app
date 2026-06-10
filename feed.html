@@ -98,6 +98,20 @@
       </a>
     </div>
 
+    <!-- Error state -->
+    <div id="feed-error" class="hidden" style="text-align:center; padding:40px 0 20px;">
+      <img id="feed-error-img" src="./public/Something-Went-Wrong--Streamline-Dhaka.png" width="180" height="180"
+           loading="lazy" style="object-fit:contain; margin:0 auto; max-width:180px;"
+           onerror="this.style.display='none'">
+      <h3 id="feed-error-title" style="margin:16px 0 8px; font-family:var(--font-serif);">Something went wrong.</h3>
+      <p id="feed-error-msg" style="color:var(--sage); margin-bottom:20px;">Couldn't load plans. Try again.</p>
+      <button class="btn-primary" onclick="location.reload()"
+              style="display:inline-flex; align-items:center; gap:8px; padding:0 24px; height:48px;
+                     border-radius:var(--r-md); font-size:15px; font-weight:500; cursor:pointer;">
+        Retry <i data-lucide="rotate-cw" style="width:16px;height:16px;"></i>
+      </button>
+    </div>
+
   </div><!-- /discover-section -->
 
   <!-- ══ YOUR PLANS SECTION ════════════════════════════════════════════ -->
@@ -337,8 +351,15 @@ async function loadDiscover() {
   } catch (err) {
     console.error('Discover load error:', err);
     document.getElementById('feed-skeleton').classList.add('hidden');
-    document.getElementById('feed-empty').classList.remove('hidden');
     document.getElementById('plan-count').textContent = '0';
+    // Offline → connectivity illustration; otherwise generic error
+    if (!navigator.onLine) {
+      document.getElementById('feed-error-img').src = './public/Connectivity-No-Internet--Streamline-Dhaka.png';
+      document.getElementById('feed-error-title').textContent = 'No internet connection.';
+      document.getElementById('feed-error-msg').textContent = 'Check your connection and try again.';
+    }
+    document.getElementById('feed-error').classList.remove('hidden');
+    lucide.createIcons();
   }
 }
 

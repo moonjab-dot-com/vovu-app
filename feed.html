@@ -110,8 +110,12 @@
   <!-- Bottom Nav -->
   <nav class="bottom-nav">
     <a href="./feed.html" class="nav-tab active">
-      <i data-lucide="layout-list"></i>
+      <i data-lucide="compass"></i>
       <span>Feed</span>
+    </a>
+    <a href="./my-matches.html" class="nav-tab">
+      <i data-lucide="heart"></i>
+      <span>Matches</span>
     </a>
     <a href="./post.html" class="nav-tab nav-post">
       <div class="post-circle">
@@ -119,9 +123,9 @@
       </div>
       <span style="margin-top:2px;">Post</span>
     </a>
-    <a href="./my-matches.html" class="nav-tab">
-      <i data-lucide="heart"></i>
-      <span>Matches</span>
+    <a href="./feed.html?tab=your-plans" class="nav-tab">
+      <i data-lucide="bookmark"></i>
+      <span>Your plans</span>
     </a>
     <a href="./profile.html" class="nav-tab">
       <i data-lucide="user"></i>
@@ -287,6 +291,11 @@ window.addEventListener('load', async () => {
     campus: localStorage.getItem('vovu_campus') || session.user.email.split('@')[1]
   };
   document.getElementById('campus-label').textContent = window.currentUser.campus;
+
+  // Open directly on "Your plans" when arriving via nav tab
+  if (new URLSearchParams(location.search).get('tab') === 'your-plans') {
+    switchFeedTab('your-plans', document.getElementById('tab-your-plans'));
+  }
 
   await Promise.all([loadDiscover(), loadYourPlans()]);
 });

@@ -274,9 +274,22 @@ function renderMyPlanCard(plan, appCount) {
       </div>`;
   }
 
-  const txt = appCount > 0
-    ? `${appCount} ${appCount === 1 ? 'person' : 'people'} applied — waiting for you`
+  const hasApps = appCount > 0;
+  const txt = hasApps
+    ? `${appCount} ${appCount === 1 ? 'person' : 'people'} want to go`
     : 'Waiting for applicants…';
+
+  const appBadge = hasApps
+    ? `<span style="display:inline-flex;align-items:center;justify-content:center;
+                    background:var(--forest);color:var(--butter);
+                    font-size:13px;font-weight:700;
+                    padding:4px 12px;border-radius:var(--r-full);
+                    white-space:nowrap;">
+         ${appCount} waiting
+       </span>`
+    : `<span class="plan-status-badge status-active">
+         <i data-lucide="circle" style="width:8px;height:8px;fill:currentColor;"></i> Active
+       </span>`;
 
   return `
     <div class="your-plan-card" style="cursor:pointer;margin-bottom:12px;" onclick="openPlan('poster','${plan.id}')">
@@ -290,9 +303,7 @@ function renderMyPlanCard(plan, appCount) {
             </div>
           </div>
         </div>
-        <span class="plan-status-badge status-active">
-          <i data-lucide="circle" style="width:8px;height:8px;fill:currentColor;"></i> Active
-        </span>
+        ${appBadge}
       </div>
       <div class="applicants-preview-row">
         <span class="applicants-waiting-text">${txt}</span>

@@ -589,8 +589,44 @@ async function obNext() {
       localStorage.setItem('vovu_profile',    JSON.stringify(profileData));
       localStorage.removeItem('vovu_onboarding_answers');
 
-      // 5. Done
-      window.location.href = './feed.html';
+      // 5. Celebration state before feed redirect
+      const celebEl = document.createElement('div');
+      celebEl.style.cssText = [
+        'position:fixed;inset:0;background:var(--butter);z-index:9999;',
+        'display:flex;flex-direction:column;align-items:center;justify-content:center;',
+        'padding:40px 24px;text-align:center;',
+        'animation:fadeSlideUp 350ms ease-out both;'
+      ].join('');
+      celebEl.innerHTML = `
+        <img src="./public/Sharing-1--Streamline-Dhaka.png"
+             width="160" height="160"
+             style="object-fit:contain;margin:0 auto 24px;display:block;"
+             onerror="this.style.display='none'">
+        <h2 style="font-family:Georgia,serif;font-size:28px;color:var(--forest);margin:0 0 8px;">
+          You're all set.
+        </h2>
+        <p style="color:var(--sage);font-size:15px;max-width:260px;line-height:1.6;margin:0;">
+          Your vibe profile is saved. Plans that match your energy are waiting.
+        </p>
+      `;
+      // Confetti dots
+      const confColors = ['var(--forest)', 'var(--sage)', '#c8f5b4', 'var(--mist)'];
+      const styleEl = document.createElement('style');
+      styleEl.textContent = '@keyframes confettiPop{0%{opacity:0;transform:translateY(0) scale(.4)}50%{opacity:1;transform:translateY(-28px) scale(1)}100%{opacity:0;transform:translateY(14px) scale(.7)}}';
+      document.head.appendChild(styleEl);
+      for (let i = 0; i < 18; i++) {
+        const dot = document.createElement('span');
+        dot.style.cssText = [
+          'position:absolute;border-radius:50%;',
+          `width:${5 + Math.random() * 7}px;height:${5 + Math.random() * 7}px;`,
+          `background:${confColors[Math.floor(Math.random() * confColors.length)]};`,
+          `left:${5 + Math.random() * 90}%;top:${10 + Math.random() * 55}%;`,
+          `opacity:0;animation:confettiPop .9s ease forwards;animation-delay:${i * 55}ms;`
+        ].join('');
+        celebEl.appendChild(dot);
+      }
+      document.body.appendChild(celebEl);
+      setTimeout(() => { window.location.href = './feed.html'; }, 1900);
 
     } catch (err) {
       console.error('Onboarding save error:', err);

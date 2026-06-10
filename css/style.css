@@ -196,13 +196,13 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
 }
 .vibe-bar-fill.loaded { width: var(--bar-width, 80%); }
 
-/* 10 — BUTTON hover lift */
+/* 10 — BUTTON interactions */
 .btn-primary, .btn-ghost, .btn-outline {
-  transition: transform 150ms ease, background 150ms ease,
+  transition: filter 150ms ease, transform 150ms ease, background 150ms ease,
               border-color 150ms ease, color 150ms ease;
 }
-.btn-primary:hover:not(:disabled) { transform: translateY(-2px); }
-.btn-ghost:hover:not(:disabled)   { transform: translateY(-1px); }
+.btn-primary:hover:not(:disabled) { filter: brightness(0.9); }
+.btn-ghost:hover:not(:disabled)   { filter: brightness(0.96); }
 
 /* 11 — CARD hover border */
 .plan-card { transition: border-color 200ms ease; }

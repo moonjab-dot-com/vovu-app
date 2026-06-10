@@ -54,8 +54,7 @@
 
     <!-- Applicants header -->
     <div class="applicants-header-row fade-up" style="animation-delay:40ms;" id="applicants-header">
-      <h2 style="font-size:17px; margin:0;">Who applied</h2>
-      <span class="applicant-count-badge" id="app-count-badge">0 applicants</span>
+      <h2 style="font-size:20px; margin:0; font-family:Georgia,serif;" id="app-count-badge">0 people want to go</h2>
     </div>
 
     <div class="compare-hint fade-up" style="animation-delay:60ms; margin-top:8px;" id="compare-hint">
@@ -204,7 +203,7 @@ function populatePosterPage(plan, priv, apps, profileMap, myProfile) {
 
   const count = apps.length;
   document.getElementById('app-count-badge').textContent =
-    count + ' ' + (count === 1 ? 'applicant' : 'applicants');
+    count + ' ' + (count === 1 ? 'person wants' : 'people want') + ' to go';
 
   const stackEl = document.getElementById('applicants-stack');
 

@@ -95,16 +95,16 @@
         Day
         <span class="label-note" style="color:var(--sage);">(shown publicly)</span>
       </div>
-      <div class="day-selector" id="day-selector">
-        <button class="day-btn" onclick="selectDay('today', this)">Today</button>
-        <button class="day-btn" onclick="selectDay('tomorrow', this)">Tomorrow</button>
-        <button class="day-btn" onclick="selectDay('monday', this)">Monday</button>
-        <button class="day-btn" onclick="selectDay('tuesday', this)">Tuesday</button>
-        <button class="day-btn" onclick="selectDay('wednesday', this)">Wednesday</button>
-        <button class="day-btn" onclick="selectDay('thursday', this)">Thursday</button>
-        <button class="day-btn" onclick="selectDay('friday', this)">Friday</button>
-        <button class="day-btn" onclick="selectDay('saturday', this)">Saturday</button>
-        <button class="day-btn" onclick="selectDay('sunday', this)">Sunday</button>
+      <div class="day-seg" id="day-seg">
+        <button class="day-seg-btn" onclick="selectDaySeg(this, 'today')">Today</button>
+        <button class="day-seg-btn" onclick="selectDaySeg(this, 'tomorrow')">Tomorrow</button>
+        <button class="day-seg-btn" onclick="selectDaySeg(this, 'this-weekend')">This weekend</button>
+        <button class="day-seg-btn" onclick="selectDaySeg(this, '__pick')">Pick a day</button>
+      </div>
+      <div id="day-picker-row" style="display:none; margin-top:10px;">
+        <input type="date" class="input input-sm" id="day-date-input"
+               oninput="onDatePicked(this.value)"
+               style="width:100%; max-width:220px;">
       </div>
     </div>
 
@@ -162,16 +162,27 @@
 
   </div>
 
-  <!-- Success state -->
-  <div id="post-success" class="post-success hidden">
+  <!-- Success state (full-screen) -->
+  <div id="post-success" class="hidden"
+       style="position:fixed;inset:0;background:var(--butter);z-index:200;
+              display:flex;flex-direction:column;align-items:center;justify-content:center;
+              padding:40px 32px;text-align:center;">
     <img src="./public/Sharing-1--Streamline-Dhaka.png"
          width="200" height="200"
          loading="lazy"
-         style="object-fit:contain; margin:0 auto;"
+         style="object-fit:contain; margin:0 auto 28px;"
          onerror="this.style.display='none'">
-    <h2>Plan posted.</h2>
-    <p>It's live for your campus vibe.</p>
-    <a href="./feed.html" class="btn-primary" style="width:200px; margin:0 auto; display:flex;">Back to feed</a>
+    <h2 style="font-family:Georgia,serif;font-size:28px;margin:0 0 10px;color:var(--forest);">
+      Your plan is live
+    </h2>
+    <p style="color:var(--sage);font-size:15px;margin:0 0 32px;max-width:260px;line-height:1.5;">
+      People whose vibe matches yours will see it. You'll be notified if it's a match.
+    </p>
+    <a href="./feed.html" class="btn-primary"
+       style="width:100%;max-width:320px;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <i data-lucide="compass" style="width:16px;height:16px;"></i>
+      Back to feed
+    </a>
   </div>
 
   <footer class="site-footer footer-with-nav">
@@ -327,8 +338,13 @@ async function submitPlan() {
       expires_at:     expiresAt,
     });
 
-    localStorage.setItem('vovu_toast', 'Plan posted');
-    window.location.href = './feed.html';
+    // Show full-screen success state instead of immediate redirect
+    document.getElementById('post-form').style.display = 'none';
+    document.getElementById('submit-bar').style.display = 'none';
+    const successEl = document.getElementById('post-success');
+    successEl.classList.remove('hidden');
+    successEl.style.display = 'flex';
+    lucide.createIcons();
   } catch (err) {
     console.error('Create plan error:', err);
     btn.disabled = false;
@@ -342,6 +358,27 @@ async function submitPlan() {
     }
   }
 }
+
+// Day segmented control
+function selectDaySeg(btn, value) {
+  document.querySelectorAll('.day-seg-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const picker = document.getElementById('day-picker-row');
+  if (value === '__pick') {
+    picker.style.display = 'block';
+    postData.day = null; // wait for date input
+  } else {
+    picker.style.display = 'none';
+    postData.day = value;
+  }
+}
+function onDatePicked(val) {
+  if (!val) return;
+  const d = new Date(val + 'T12:00:00');
+  const days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+  postData.day = days[d.getDay()];
+}
+function getSelectedDay() { return postData.day || null; }
 
 // Keep checkPostReady as no-op (button always visible now)
 function checkPostReady() {}

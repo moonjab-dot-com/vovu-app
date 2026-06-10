@@ -97,7 +97,7 @@
         .from('users')
         .upsert(
           { id: uid, email, campus, first_name: firstName, verified: true },
-          { onConflict: 'id', ignoreDuplicates: false }
+          { onConflict: 'email', ignoreDuplicates: false }
         );
       if (upsertError) console.warn('users upsert warning:', upsertError.message);
 

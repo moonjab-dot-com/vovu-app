@@ -260,7 +260,8 @@ function renderMyPlanCard(plan, appCount) {
             <div>
               <div class="plan-title" style="font-size:15px;">${label}</div>
               <div class="plan-meta" style="margin-top:2px;">
-                <i data-lucide="clock" style="width:12px;height:12px;"></i> ${time}
+                <i data-lucide="clock" style="width:12px;height:12px;"></i>
+                ${plan.day ? plan.day.charAt(0).toUpperCase() + plan.day.slice(1) + ' · ' : ''}${time}
               </div>
             </div>
           </div>
@@ -299,7 +300,8 @@ function renderMyPlanCard(plan, appCount) {
           <div>
             <div class="plan-title" style="font-size:15px;">${label}</div>
             <div class="plan-meta" style="margin-top:2px;">
-              <i data-lucide="clock" style="width:12px;height:12px;"></i> ${time}
+              <i data-lucide="clock" style="width:12px;height:12px;"></i>
+              ${plan.day ? plan.day.charAt(0).toUpperCase() + plan.day.slice(1) + ' · ' : ''}${time}
             </div>
           </div>
         </div>

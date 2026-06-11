@@ -161,7 +161,7 @@ const DB = {
   async getMyPlans(userId) {
     const { data, error } = await sb
       .from('plans')
-      .select('id, activity, zone, time_window, spots, is_active, is_matched, expires_at, created_at')
+      .select('id, activity, zone, time_window, day, spots, is_active, is_matched, expires_at, created_at')
       .eq('creator_id', userId)
       .order('created_at', { ascending: false });
     if (error) throw error;

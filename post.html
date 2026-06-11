@@ -105,6 +105,7 @@
         <input type="date" class="input input-sm" id="day-date-input"
                oninput="onDatePicked(this.value)"
                style="width:100%; max-width:220px;">
+        <div id="day-picked-label" style="display:none;margin-top:6px;font-size:14px;color:var(--forest);font-weight:600;"></div>
       </div>
     </div>
 
@@ -230,6 +231,16 @@
 <script src="./js/main.js?v=3"></script>
 <script>
 lucide.createIcons();
+
+// Set date picker min to today
+(function() {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const input = document.getElementById('day-date-input');
+  if (input) input.min = yyyy + '-' + mm + '-' + dd;
+})();
 
 // Auth check
 window.addEventListener('load', async () => {
@@ -376,8 +387,13 @@ function selectDaySeg(btn, value) {
 function onDatePicked(val) {
   if (!val) return;
   const d = new Date(val + 'T12:00:00');
-  const days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
-  postData.day = days[d.getDay()];
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const label = dayNames[d.getDay()] + ', ' + monthNames[d.getMonth()] + ' ' + d.getDate();
+  postData.day = label;
+  const lbl = document.getElementById('day-picked-label');
+  lbl.textContent = label;
+  lbl.style.display = 'block';
 }
 function getSelectedDay() { return postData.day || null; }
 

@@ -144,7 +144,7 @@ const DB = {
   async getPlan(planId) {
     const { data, error } = await sb
       .from('plans')
-      .select('id, creator_id, campus, activity, zone, time_window, note, spots, is_active, is_matched, expires_at, created_at')
+      .select('id, creator_id, campus, activity, zone, time_window, day, note, spots, is_active, is_matched, expires_at, created_at')
       .eq('id', planId)
       .single();
     if (error) throw error;

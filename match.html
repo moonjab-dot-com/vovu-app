@@ -108,6 +108,13 @@
         <span id="match-location" style="font-size:14px;color:rgba(255,253,245,0.85);">—</span>
       </div>
 
+      <div id="match-day-row"
+           style="display:flex;align-items:center;gap:10px;margin-bottom:10px;
+                  opacity:0;transform:translateY(8px);transition:opacity 350ms ease,transform 350ms ease;">
+        <i data-lucide="calendar" style="width:14px;height:14px;color:rgba(255,239,179,0.6);flex-shrink:0;"></i>
+        <span id="match-day" style="font-size:14px;color:rgba(255,253,245,0.85);">—</span>
+      </div>
+
       <div id="match-time-row"
            style="display:flex;align-items:center;gap:10px;
                   opacity:0;transform:translateY(8px);transition:opacity 350ms ease,transform 350ms ease;">
@@ -193,20 +200,27 @@ async function loadMatch() {
     const amIApplicant = match.applicant_id === window.currentUser.id;
     if (!amICreator && !amIApplicant) { showError(); return; }
 
-    // All data is stored directly in the match row — no extra fetches needed
+    // Fetch plan day (not stored on match row)
+    let planDay = null;
+    if (match.plan_id) {
+      const { data: planRow } = await window._supabase
+        .from('plans').select('day').eq('id', match.plan_id).maybeSingle();
+      planDay = planRow?.day || null;
+    }
+
     const myInitial     = window.currentUser.email.split('@')[0].split('.')[0].charAt(0).toUpperCase();
     const partnerName   = amICreator ? match.applicant_first_name : match.creator_first_name;
     const partnerEmail  = amICreator ? match.applicant_email      : match.creator_email;
     const partnerInitial = (partnerName || '?').charAt(0).toUpperCase();
 
-    populateMatch({ match, myInitial, partnerName: partnerName || 'Your match', partnerEmail: partnerEmail || '—', partnerInitial });
+    populateMatch({ match, planDay, myInitial, partnerName: partnerName || 'Your match', partnerEmail: partnerEmail || '—', partnerInitial });
   } catch (err) {
     console.error('Match load error:', err);
     showError();
   }
 }
 
-function populateMatch({ match, myInitial, partnerName, partnerEmail, partnerInitial }) {
+function populateMatch({ match, planDay, myInitial, partnerName, partnerEmail, partnerInitial }) {
   // Populate all values before any animation
   document.getElementById('my-avatar').textContent     = myInitial;
   document.getElementById('their-avatar').textContent  = partnerInitial;
@@ -223,6 +237,14 @@ function populateMatch({ match, myInitial, partnerName, partnerEmail, partnerIni
   document.getElementById('match-plan-title').textContent  = label;
   document.getElementById('match-location').textContent    = location || '—';
   document.getElementById('match-time').textContent        = time     || '—';
+
+  const dayEl = document.getElementById('match-day');
+  if (planDay && dayEl) {
+    dayEl.textContent = planDay.charAt(0).toUpperCase() + planDay.slice(1);
+  } else {
+    const dayRow = document.getElementById('match-day-row');
+    if (dayRow) dayRow.style.display = 'none';
+  }
 
   if (!location) document.getElementById('match-location-row').style.display = 'none';
   if (!time)     document.getElementById('match-time-row').style.display     = 'none';
@@ -278,6 +300,9 @@ function populateMatch({ match, myInitial, partnerName, partnerEmail, partnerIni
 
   // T=1800: location
   t(() => show('match-location-row'), 1800);
+
+  // T=1950: day
+  t(() => show('match-day-row'), 1950);
 
   // T=2100: time
   t(() => show('match-time-row'), 2100);

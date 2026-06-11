@@ -246,7 +246,8 @@ function populatePage(plan, cp, myProfile) {
   document.getElementById('page-title').textContent      = label + ' — ' + plan.zone;
   document.getElementById('plan-act-icon').innerHTML     = `<i data-lucide="${icon}"></i>`;
   document.getElementById('plan-summary-title').textContent = label + ' — ' + plan.zone;
-  document.getElementById('plan-time').textContent       = time;
+  const dayLabel = plan.day ? plan.day.charAt(0).toUpperCase() + plan.day.slice(1) + ' · ' : '';
+  document.getElementById('plan-time').textContent       = dayLabel + time;
   document.getElementById('plan-zone').textContent       = plan.zone;
   document.getElementById('plan-spots').textContent      = plan.spots + ' spot' + (plan.spots !== 1 ? 's' : '');
 

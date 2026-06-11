@@ -378,6 +378,14 @@ function selectDaySeg(btn, value) {
   btn.classList.add('selected');
   const picker = document.getElementById('day-picker-row');
   if (value === '__pick') {
+    // Re-set min every time picker becomes visible — iOS Safari ignores min on hidden inputs
+    const dateInput = document.getElementById('day-date-input');
+    if (dateInput) {
+      const t = new Date();
+      dateInput.min = t.getFullYear() + '-'
+        + String(t.getMonth() + 1).padStart(2,'0') + '-'
+        + String(t.getDate()).padStart(2,'0');
+    }
     picker.style.display = 'block';
     postData.day = null; // wait for date input
   } else {

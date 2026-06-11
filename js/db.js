@@ -208,12 +208,20 @@ const DB = {
   },
 
   // Update a single application's status (used by poster and applicant for YES mechanic)
+  // Uses .select() so RLS silent-blocks (0 rows updated) are detectable.
   async updateApplication(appId, status) {
-    const { error } = await sb
+    const { data, error } = await sb
       .from('applications')
       .update({ status })
-      .eq('id', appId);
+      .eq('id', appId)
+      .select('id');
     if (error) throw error;
+    // RLS can silently block updates — if 0 rows came back, the policy rejected it
+    if (!data || data.length === 0) {
+      const e = new Error('RLS_SILENT_BLOCK');
+      e.code = 'RLS_SILENT_BLOCK';
+      throw e;
+    }
   },
 
   // Calls the SQL function that atomically creates match + declines others

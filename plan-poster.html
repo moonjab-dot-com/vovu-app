@@ -343,7 +343,6 @@ async function passApplicant(appId) {
 }
 
 async function pickApplicant(appId, initial) {
-  // Check spots limit before showing overlay
   const spots = planData?.spots || 1;
   const { data: activeYes } = await window._supabase
     .from('applications').select('id').eq('plan_id', planId).eq('status', 'yes_creator');
@@ -351,11 +350,20 @@ async function pickApplicant(appId, initial) {
   const totalActive = activeYesCount + confirmedMatchCount;
 
   if (totalActive >= spots) {
-    const word = spots === 1 ? 'person' : 'people';
-    if (window.showToast) showToast(
-      `You've already sent YES to ${spots} ${word}. Wait for them to confirm or decline first.`, 'error'
-    );
-    return;
+    // If all slots are already confirmed matches, hard-block.
+    if (confirmedMatchCount >= spots) {
+      if (window.showToast) showToast('All spots are already matched.', 'error');
+      return;
+    }
+    // There are pending yes_creator slots — auto-retract them so the poster
+    // can change their mind (creator has UPDATE rights on all apps for their plan).
+    const retractIds = (activeYes || []).map(a => a.id);
+    if (retractIds.length > 0) {
+      await window._supabase
+        .from('applications')
+        .update({ status: 'pending' })
+        .in('id', retractIds);
+    }
   }
 
   const overlay = document.getElementById('waiting-overlay');

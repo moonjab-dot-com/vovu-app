@@ -506,7 +506,22 @@ window.showCompatInfo = function() {
 
 async function applicantDeclines() {
   try {
-    await DB.updateApplication(currentAppId, 'declined');
+    try {
+      await DB.updateApplication(currentAppId, 'declined');
+    } catch (updateErr) {
+      // RLS silently blocked the update (yes_creator → declined) — delete the row instead.
+      // Applicant deleting their own application achieves the same result.
+      if (updateErr.code === 'RLS_SILENT_BLOCK') {
+        const { error: delErr } = await window._supabase
+          .from('applications')
+          .delete()
+          .eq('id', currentAppId);
+        if (delErr) throw delErr;
+      } else {
+        throw updateErr;
+      }
+    }
+
     // Hide YES screen, show normal apply button
     const screen = document.getElementById('creator-said-yes');
     if (screen) { screen.classList.add('hidden'); screen.style.display = 'none'; }
@@ -515,11 +530,12 @@ async function applicantDeclines() {
     const btn = document.getElementById('apply-btn');
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = '<i data-lucide="send" style="width:16px;height:16px;"></i> Apply anonymously';
+      btn.innerHTML = 'Apply anonymously →';
       lucide.createIcons();
     }
     if (window.showToast) showToast('Maybe next time.');
   } catch (err) {
+    console.error('applicantDeclines error:', err);
     if (window.showToast) showToast('Could not decline. Try again.', 'error');
   }
 }

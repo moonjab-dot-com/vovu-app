@@ -284,7 +284,7 @@ function populatePage(plan, cp, myProfile) {
 
   if (cp && cp.activities && cp.activities.length) {
     document.getElementById('poster-activities').innerHTML =
-      cp.activities.map(a => `<span class="tag">${ACTIVITY_LABELS[a] || a}</span>`).join('');
+      cp.activities.map(a => `<span class="tag">${esc(ACTIVITY_LABELS[a] || a)}</span>`).join('');
   } else {
     document.getElementById('poster-acts-section').style.display = 'none';
   }

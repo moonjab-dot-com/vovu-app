@@ -100,7 +100,7 @@ const DB = {
       query = query.neq('creator_id', excludeUserId);
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query.limit(30);
     if (error) throw error;
     return data || [];
   },

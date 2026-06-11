@@ -397,7 +397,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
   background: var(--butter);
   color: var(--forest);
 }
-.btn-butter:hover { transform: translateY(-1px); }
+.btn-butter:hover { filter: brightness(0.95); }
 .btn-butter-outline {
   background: transparent;
   color: var(--butter);
@@ -777,7 +777,7 @@ input, textarea, select { font-family: inherit; font-size: 16px; }
   padding: 0 24px; cursor: pointer; border: none; white-space: nowrap;
   transition: transform 150ms; display: inline-flex; align-items: center; gap: 8px;
 }
-.waitlist-submit:hover { transform: translateY(-1px); }
+.waitlist-submit:hover { filter: brightness(0.9); }
 .waitlist-note { font-size: 12px; color: var(--sage); text-align: center; margin-top: 16px; }
 #success-state { text-align: center; }
 #success-state p { color: var(--butter); font-size: 18px; font-family: var(--font-serif); margin-top: 8px; }
@@ -1240,7 +1240,7 @@ input[type="range"]::-webkit-slider-thumb {
   transition: transform 150ms, opacity 150ms;
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.yes-btn:hover  { transform: translateY(-1px); }
+.yes-btn:hover  { filter: brightness(0.9); }
 .yes-btn:active { opacity: 0.8; transform: none; }
 .applicant-empty, .applicant-waiting { padding: 40px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 
@@ -1383,7 +1383,7 @@ input[type="range"]::-webkit-slider-thumb {
   border: none; border-radius: var(--r-md); font-size: 13px; font-weight: 500;
   cursor: pointer; transition: transform 150ms; white-space: nowrap;
 }
-.btn-view-plan:hover { transform: translateY(-1px); }
+.btn-view-plan:hover { filter: brightness(0.9); }
 
 /* Your Plans tab */
 .your-plan-card {
@@ -1425,7 +1425,7 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
   transition: transform 150ms;
 }
-.btn-review-applicants:hover { transform: translateY(-1px); }
+.btn-review-applicants:hover { filter: brightness(0.9); }
 .expired-note { font-size: 13px; color: var(--sage); margin-top: 8px; }
 .post-cta-section { margin: 24px 0; text-align: center; }
 .post-cta-text { font-size: 14px; color: var(--sage); margin-bottom: 12px; }
@@ -1434,7 +1434,7 @@ input[type="range"]::-webkit-slider-thumb {
   background: var(--forest); color: var(--butter); border-radius: var(--r-md);
   font-size: 14px; font-weight: 500; text-decoration: none; transition: transform 150ms;
 }
-.btn-post-new:hover { transform: translateY(-1px); }
+.btn-post-new:hover { filter: brightness(0.9); }
 
 /* Activity icon modifiers */
 .activity-icon-owned { background: var(--forest) !important; color: var(--butter) !important; }
@@ -1541,7 +1541,7 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
   transition: transform 150ms;
 }
-.btn-apply-now:hover { transform: translateY(-1px); }
+.btn-apply-now:hover { filter: brightness(0.9); }
 .apply-note { font-size: 12px; color: var(--sage); text-align: center; margin-top: 8px; }
 .applied-confirmation {
   display: flex; align-items: center; gap: 12px;
@@ -1630,7 +1630,7 @@ input[type="range"]::-webkit-slider-thumb {
   border: none; border-radius: var(--r-md); font-size: 14px; font-weight: 500;
   cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: transform 150ms;
 }
-.btn-yes-applicant:hover { transform: translateY(-1px); }
+.btn-yes-applicant:hover { filter: brightness(0.9); }
 .all-passed-state { text-align: center; padding: 48px 24px; }
 .all-passed-state h2 { margin: 20px 0 8px; }
 .all-passed-state p { color: var(--sage); font-size: 14px; margin-bottom: 20px; }
@@ -1868,15 +1868,15 @@ input[type="range"]::-webkit-slider-thumb {
   transition: background 150ms ease, color 150ms ease, transform 120ms ease;
 }
 
-/* Input focus ring — forest glow */
+/* Input focus ring — flat, no shadow */
 .input:focus,
 .textarea:focus,
 .select:focus,
 .private-input:focus {
   outline: none;
   border-color: var(--forest);
-  box-shadow: 0 0 0 3px rgba(1,62,55,0.12);
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  border-width: 2px;
+  transition: border-color 150ms ease, border-width 150ms ease;
 }
 
 /* Nav tab press */

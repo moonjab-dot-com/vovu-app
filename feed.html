@@ -201,7 +201,7 @@ function renderPlanCard(plan, cp, compatScore) {
     ? `<span class="tag-mini tag-more">+${acts.length - 2}</span>` : '';
 
   const noteHtml = plan.note
-    ? `<div class="plan-note" style="margin-bottom:12px;">"${plan.note}"</div>` : '';
+    ? `<div class="plan-note" style="margin-bottom:12px;">"${esc(plan.note)}"</div>` : '';
 
   // MEDIUM 4: show loading skeleton badge when score hasn't loaded yet (null means loading, undefined means no profile)
   // HIGH 2: add info icon with tooltip explaining what the % means

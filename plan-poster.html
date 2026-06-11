@@ -238,7 +238,7 @@ function buildApplicantCard(app, cp, score, num, total) {
   const ftPct    = cp ? Math.round((cp.follow_through || 3) / 5 * 100) : 60;
   const opPct    = cp ? Math.round((cp.openness       || 3) / 5 * 100) : 60;
   const acts     = (cp && cp.activities) ? cp.activities : [];
-  const actTags  = acts.map(a => `<span class="tag">${ACTIVITY_LABELS[a] || a}</span>`).join('');
+  const actTags  = acts.map(a => `<span class="tag">${esc(ACTIVITY_LABELS[a] || a)}</span>`).join('');
   const intent   = (cp && cp.intent) ? (INTENT_LABELS[cp.intent] || cp.intent) : null;
   const vibe     = (cp && cp.current_vibe) ? cp.current_vibe : null;
   const scoreHtml = (typeof score === 'number')
@@ -296,7 +296,7 @@ function buildApplicantCard(app, cp, score, num, total) {
           <i data-lucide="heart" style="width:11px;height:11px;"></i> Looking for
         </div>
         <span class="intent-chip">
-          <i data-lucide="users" style="width:12px;height:12px;"></i> ${intent}
+          <i data-lucide="users" style="width:12px;height:12px;"></i> ${esc(intent)}
         </span>
       </div>` : ''}
       ${vibe ? `
@@ -304,7 +304,7 @@ function buildApplicantCard(app, cp, score, num, total) {
         <div class="applicant-section-label">
           <i data-lucide="sun" style="width:11px;height:11px;"></i> Current vibe
         </div>
-        <div class="current-vibe-text">"${vibe}"</div>
+        <div class="current-vibe-text">"${esc(vibe)}"</div>
       </div>` : ''}
       <div class="applicant-decision-row">
         <button class="btn-pass" onclick="passApplicant('${app.id}')">

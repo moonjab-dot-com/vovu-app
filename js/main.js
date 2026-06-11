@@ -254,6 +254,17 @@ async function handleLogin() {
   if (sentState) sentState.classList.remove('hidden');
 }
 
+// ── XSS escape — use for any user-generated content rendered via innerHTML ──
+window.esc = function(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
 // ── Toast ───────────────────────────────────────
 window.showToast = function(message, type) {
   let toast = document.getElementById('toast');

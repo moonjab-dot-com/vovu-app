@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vovu — Make plans, not moves.</title>
-  <meta name="description" content="Post what you want to do. Match anonymously. Meet in person. Campus social built for Kenyon College.">
+  <meta name="description" content="Post what you want to do. Match anonymously. Meet in person. The campus social app that removes the fear of asking.">
   <link rel="icon" type="image/png" href="./VOVU LOGO OFICIAL.png">
   <link rel="stylesheet" href="./css/style.css">
   <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" onload="lucide.createIcons()"></script>
@@ -36,6 +36,18 @@
     transition: border-color 200ms;
   }
   .navbar.scrolled { border-bottom-color: rgba(1,62,55,.1); }
+  .nav-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-login {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 40px; padding: 0 18px; border-radius: 9px;
+    font-size: 14px; font-weight: 500; color: var(--forest);
+    text-decoration: none; background: transparent;
+    border: 1.5px solid rgba(1,62,55,.22);
+    font-family: system-ui, sans-serif;
+    transition: border-color 150ms, background 150ms;
+  }
+  .btn-login:hover { border-color: var(--forest); background: rgba(1,62,55,.04); }
+  @media (max-width: 360px) { .btn-login { display: none; } }
 
   /* ── 01 HERO ──────────────────────────────── */
   .hero {
@@ -470,8 +482,8 @@
   .footer-brand h3 { font-family: Georgia, serif; font-size: 22px; color: var(--butter); margin-bottom: 8px; }
   .footer-brand p { font-size: 14px; color: rgba(255,239,179,.5); line-height: 1.6; font-family: system-ui, sans-serif; max-width: 200px; }
   .footer-col-label { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: rgba(255,239,179,.35); font-weight: 500; margin-bottom: 14px; font-family: system-ui, sans-serif; }
-  .footer-link { display: block; font-size: 14px; color: rgba(255,239,179,.6); text-decoration: none; margin-bottom: 10px; font-family: system-ui, sans-serif; transition: color 150ms; }
-  .footer-link:hover { color: var(--butter); }
+  .footer-link { display: block; font-size: 14px; color: var(--butter); text-decoration: none; margin-bottom: 10px; font-family: system-ui, sans-serif; transition: opacity 150ms; }
+  .footer-link:hover { opacity: .75; }
   .footer-hr { border: none; border-top: 1px solid rgba(255,239,179,.08); margin-bottom: 24px; }
   .footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
   .footer-promise { font-family: Georgia, serif; font-size: 15px; color: rgba(255,239,179,.55); font-style: italic; }
@@ -532,11 +544,17 @@
          style="object-fit:contain;" onerror="this.style.display='none'">
     <span>Vovu</span>
   </a>
-  <a href="#waitlist" class="btn-mag"
-     style="height:40px;font-size:14px;padding:0 18px;border-radius:9px;">
-    Get early access
-    <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
-  </a>
+  <div class="nav-actions">
+    <a href="./login.html" class="btn-login">
+      <i data-lucide="log-in" style="width:14px;height:14px;"></i>
+      Log in
+    </a>
+    <a href="#waitlist" class="btn-mag"
+       style="height:40px;font-size:14px;padding:0 18px;border-radius:9px;">
+      Get early access
+      <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+    </a>
+  </div>
 </nav>
 
 <!-- ════════════════════════════════════════════
@@ -545,8 +563,8 @@
 <section class="hero">
   <div class="hero-text">
     <div class="hero-kicker">
-      <i data-lucide="map-pin" style="width:11px;height:11px;"></i>
-      Kenyon College · Spring 2026
+      <i data-lucide="sparkles" style="width:11px;height:11px;"></i>
+      Early access · Spring 2026
     </div>
     <h1>Make plans,<br>not moves.</h1>
     <p class="hero-sub" id="hero-sub" aria-live="polite"></p>
@@ -571,7 +589,7 @@
         <div class="proof-av">JK</div>
         <div class="proof-av">MR</div>
       </div>
-      <span>1,470 matches · Kenyon only · Spring 2026</span>
+      <span>1,470 matches made · campus only · Spring 2026</span>
     </div>
   </div>
 
@@ -596,7 +614,7 @@
                 </span>
                 <span class="pf-pct">92%</span>
               </div>
-              <div class="pf-title">Morning coffee, Wiggin St</div>
+              <div class="pf-title">Morning coffee run</div>
               <div class="pf-meta">Tomorrow · 9am</div>
               <div class="pf-chips"><span class="pf-chip">Early riser</span><span class="pf-chip">Chill</span></div>
             </div>
@@ -608,7 +626,7 @@
                 </span>
                 <span class="pf-pct">87%</span>
               </div>
-              <div class="pf-title">Sunset walk, middle path</div>
+              <div class="pf-title">Sunset walk around campus</div>
               <div class="pf-meta">Tonight · 6:30pm</div>
               <div class="pf-chips"><span class="pf-chip">Deep convo</span><span class="pf-chip">Active</span></div>
             </div>
@@ -620,7 +638,7 @@
                 </span>
                 <span class="pf-pct">79%</span>
               </div>
-              <div class="pf-title">Olin library, ochem review</div>
+              <div class="pf-title">Library, ochem review</div>
               <div class="pf-meta">Today · 3pm</div>
               <div class="pf-chips"><span class="pf-chip">Focused</span></div>
             </div>
@@ -808,7 +826,7 @@
           <span class="dc-pct">84%</span>
         </div>
         <h3>Ochem midterm prep</h3>
-        <p class="dc-note">Looking for someone to quiz each other. Olin or Gookins, your call.</p>
+        <p class="dc-note">Looking for someone to quiz each other. Library or student center, your call.</p>
         <div class="dc-chips">
           <span class="dc-chip">Focused</span>
           <span class="dc-chip">Sci major</span>
@@ -825,7 +843,7 @@
           <span class="dc-pct">91%</span>
         </div>
         <h3>Morning coffee, good conversation</h3>
-        <p class="dc-note">Want a latte and talk about anything. Wiggin St.</p>
+        <p class="dc-note">Want a latte and talk about anything. Campus coffee shop.</p>
         <div class="dc-chips">
           <span class="dc-chip">Early riser</span>
           <span class="dc-chip">Chill</span>
@@ -850,7 +868,7 @@
         </div>
         <div class="dc-meta">
           <span><i data-lucide="clock"></i> Tonight ~6:30pm</span>
-          <span><i data-lucide="map-pin"></i> Kenyon campus</span>
+          <span><i data-lucide="map-pin"></i> On campus</span>
         </div>
       </div>
     </div>
@@ -897,8 +915,8 @@
             <span class="mp-name">Ethan</span>
           </div>
           <div class="mp-rows">
-            <div class="mp-row"><i data-lucide="mail"></i>maya@kenyon.edu</div>
-            <div class="mp-row"><i data-lucide="map-pin"></i>Wiggin St. Coffee</div>
+            <div class="mp-row"><i data-lucide="mail"></i>maya@school.edu</div>
+            <div class="mp-row"><i data-lucide="map-pin"></i>Campus Coffee Shop</div>
             <div class="mp-row"><i data-lucide="clock"></i>Tomorrow, 9am</div>
           </div>
         </div>
@@ -954,28 +972,28 @@
         <p class="testi-q">"I posted a gym plan thinking no one would apply. Three people did. I now have a workout buddy I see every Tuesday."</p>
         <div class="testi-author">
           <div class="testi-av"><img src="./public/PEOPLE WATCHING TENNIS.jpeg" alt="" width="30" height="30" loading="lazy"></div>
-          <div><div class="testi-name">Jordan R.</div><div class="testi-school">Kenyon '26</div></div>
+          <div><div class="testi-name">Jordan R.</div><div class="testi-school">'26</div></div>
         </div>
       </div>
       <div class="testi-card">
         <p class="testi-q">"Vovu removed the thing I hated most about meeting people — the awkward opener. We just had a plan and showed up."</p>
         <div class="testi-author">
           <div class="testi-av">AL</div>
-          <div><div class="testi-name">Ava L.</div><div class="testi-school">Kenyon '27</div></div>
+          <div><div class="testi-name">Ava L.</div><div class="testi-school">'27</div></div>
         </div>
       </div>
       <div class="testi-card">
         <p class="testi-q">"The compatibility score is weirdly accurate. Matched me with someone I never would've approached. We're close friends now."</p>
         <div class="testi-author">
           <div class="testi-av">MK</div>
-          <div><div class="testi-name">Marcus K.</div><div class="testi-school">Kenyon '25</div></div>
+          <div><div class="testi-name">Marcus K.</div><div class="testi-school">'25</div></div>
         </div>
       </div>
       <div class="testi-card">
         <p class="testi-q">"Nobody knew who I was until we both said yes. I wasn't putting myself out there blindly."</p>
         <div class="testi-author">
           <div class="testi-av">SP</div>
-          <div><div class="testi-name">Sofia P.</div><div class="testi-school">Kenyon '26</div></div>
+          <div><div class="testi-name">Sofia P.</div><div class="testi-school">'26</div></div>
         </div>
       </div>
       <!-- duplicate for seamless loop -->
@@ -983,28 +1001,28 @@
         <p class="testi-q">"I posted a gym plan thinking no one would apply. Three people did. I now have a workout buddy I see every Tuesday."</p>
         <div class="testi-author">
           <div class="testi-av"><img src="./public/PEOPLE WATCHING TENNIS.jpeg" alt="" width="30" height="30" loading="lazy"></div>
-          <div><div class="testi-name">Jordan R.</div><div class="testi-school">Kenyon '26</div></div>
+          <div><div class="testi-name">Jordan R.</div><div class="testi-school">'26</div></div>
         </div>
       </div>
       <div class="testi-card" aria-hidden="true">
         <p class="testi-q">"Vovu removed the thing I hated most about meeting people — the awkward opener. We just had a plan and showed up."</p>
         <div class="testi-author">
           <div class="testi-av">AL</div>
-          <div><div class="testi-name">Ava L.</div><div class="testi-school">Kenyon '27</div></div>
+          <div><div class="testi-name">Ava L.</div><div class="testi-school">'27</div></div>
         </div>
       </div>
       <div class="testi-card" aria-hidden="true">
         <p class="testi-q">"The compatibility score is weirdly accurate. Matched me with someone I never would've approached. We're close friends now."</p>
         <div class="testi-author">
           <div class="testi-av">MK</div>
-          <div><div class="testi-name">Marcus K.</div><div class="testi-school">Kenyon '25</div></div>
+          <div><div class="testi-name">Marcus K.</div><div class="testi-school">'25</div></div>
         </div>
       </div>
       <div class="testi-card" aria-hidden="true">
         <p class="testi-q">"Nobody knew who I was until we both said yes. I wasn't putting myself out there blindly."</p>
         <div class="testi-author">
           <div class="testi-av">SP</div>
-          <div><div class="testi-name">Sofia P.</div><div class="testi-school">Kenyon '26</div></div>
+          <div><div class="testi-name">Sofia P.</div><div class="testi-school">'26</div></div>
         </div>
       </div>
     </div>
@@ -1015,56 +1033,56 @@
         <p class="testi-q">"First week of freshman year I posted a dining hall plan and matched with three people. Changed how I felt about being here."</p>
         <div class="testi-author">
           <div class="testi-av"><img src="./public/VANISHED PEOPLE WALKING.jpeg" alt="" width="30" height="30" loading="lazy"></div>
-          <div><div class="testi-name">Nadia C.</div><div class="testi-school">Kenyon '28</div></div>
+          <div><div class="testi-name">Nadia C.</div><div class="testi-school">'28</div></div>
         </div>
       </div>
       <div class="testi-card">
         <p class="testi-q">"I'm an introvert and even I used it. The structure made it feel lower stakes than just approaching someone."</p>
         <div class="testi-author">
           <div class="testi-av">BW</div>
-          <div><div class="testi-name">Ben W.</div><div class="testi-school">Kenyon '27</div></div>
+          <div><div class="testi-name">Ben W.</div><div class="testi-school">'27</div></div>
         </div>
       </div>
       <div class="testi-card">
         <p class="testi-q">"The reveal moment when you both match is genuinely exciting. Like the best part of a DM but with actual stakes."</p>
         <div class="testi-author">
           <div class="testi-av">LT</div>
-          <div><div class="testi-name">Lily T.</div><div class="testi-school">Kenyon '26</div></div>
+          <div><div class="testi-name">Lily T.</div><div class="testi-school">'26</div></div>
         </div>
       </div>
       <div class="testi-card">
-        <p class="testi-q">"Matched for a study session and stayed four hours. Best accidental friendship I've made at Kenyon."</p>
+        <p class="testi-q">"Matched for a study session and stayed four hours. Best accidental friendship I've made in college."</p>
         <div class="testi-author">
           <div class="testi-av">DR</div>
-          <div><div class="testi-name">Dev R.</div><div class="testi-school">Kenyon '25</div></div>
+          <div><div class="testi-name">Dev R.</div><div class="testi-school">'25</div></div>
         </div>
       </div>
       <div class="testi-card" aria-hidden="true">
         <p class="testi-q">"First week of freshman year I posted a dining hall plan and matched with three people. Changed how I felt about being here."</p>
         <div class="testi-author">
           <div class="testi-av"><img src="./public/VANISHED PEOPLE WALKING.jpeg" alt="" width="30" height="30" loading="lazy"></div>
-          <div><div class="testi-name">Nadia C.</div><div class="testi-school">Kenyon '28</div></div>
+          <div><div class="testi-name">Nadia C.</div><div class="testi-school">'28</div></div>
         </div>
       </div>
       <div class="testi-card" aria-hidden="true">
         <p class="testi-q">"I'm an introvert and even I used it. The structure made it feel lower stakes than just approaching someone."</p>
         <div class="testi-author">
           <div class="testi-av">BW</div>
-          <div><div class="testi-name">Ben W.</div><div class="testi-school">Kenyon '27</div></div>
+          <div><div class="testi-name">Ben W.</div><div class="testi-school">'27</div></div>
         </div>
       </div>
       <div class="testi-card" aria-hidden="true">
         <p class="testi-q">"The reveal moment when you both match is genuinely exciting. Like the best part of a DM but with actual stakes."</p>
         <div class="testi-author">
           <div class="testi-av">LT</div>
-          <div><div class="testi-name">Lily T.</div><div class="testi-school">Kenyon '26</div></div>
+          <div><div class="testi-name">Lily T.</div><div class="testi-school">'26</div></div>
         </div>
       </div>
       <div class="testi-card" aria-hidden="true">
-        <p class="testi-q">"Matched for a study session and stayed four hours. Best accidental friendship I've made at Kenyon."</p>
+        <p class="testi-q">"Matched for a study session and stayed four hours. Best accidental friendship I've made in college."</p>
         <div class="testi-author">
           <div class="testi-av">DR</div>
-          <div><div class="testi-name">Dev R.</div><div class="testi-school">Kenyon '25</div></div>
+          <div><div class="testi-name">Dev R.</div><div class="testi-school">'25</div></div>
         </div>
       </div>
     </div>
@@ -1075,56 +1093,56 @@
         <p class="testi-q">"No ghosting, no awkward starters. You just show up to something you were already planning to do. Brilliant."</p>
         <div class="testi-author">
           <div class="testi-av"><img src="./public/CAFE SOCIAL.jpeg" alt="" width="30" height="30" loading="lazy"></div>
-          <div><div class="testi-name">Chris M.</div><div class="testi-school">Kenyon '26</div></div>
+          <div><div class="testi-name">Chris M.</div><div class="testi-school">'26</div></div>
         </div>
       </div>
       <div class="testi-card">
         <p class="testi-q">"As a junior I thought I'd missed the window to meet people. Vovu proved me wrong in one week."</p>
         <div class="testi-author">
           <div class="testi-av">IA</div>
-          <div><div class="testi-name">Ines A.</div><div class="testi-school">Kenyon '25</div></div>
+          <div><div class="testi-name">Ines A.</div><div class="testi-school">'25</div></div>
         </div>
       </div>
       <div class="testi-card">
         <p class="testi-q">"The .edu requirement sold me. Real students only. No random people. No creeps. Just campus."</p>
         <div class="testi-author">
           <div class="testi-av">TH</div>
-          <div><div class="testi-name">Tyler H.</div><div class="testi-school">Kenyon '27</div></div>
+          <div><div class="testi-name">Tyler H.</div><div class="testi-school">'27</div></div>
         </div>
       </div>
       <div class="testi-card">
         <p class="testi-q">"I had tried every social app. This is the first one that actually led to a real in-person thing the same day."</p>
         <div class="testi-author">
           <div class="testi-av">ZF</div>
-          <div><div class="testi-name">Zoe F.</div><div class="testi-school">Kenyon '28</div></div>
+          <div><div class="testi-name">Zoe F.</div><div class="testi-school">'28</div></div>
         </div>
       </div>
       <div class="testi-card" aria-hidden="true">
         <p class="testi-q">"No ghosting, no awkward starters. You just show up to something you were already planning to do. Brilliant."</p>
         <div class="testi-author">
           <div class="testi-av"><img src="./public/CAFE SOCIAL.jpeg" alt="" width="30" height="30" loading="lazy"></div>
-          <div><div class="testi-name">Chris M.</div><div class="testi-school">Kenyon '26</div></div>
+          <div><div class="testi-name">Chris M.</div><div class="testi-school">'26</div></div>
         </div>
       </div>
       <div class="testi-card" aria-hidden="true">
         <p class="testi-q">"As a junior I thought I'd missed the window to meet people. Vovu proved me wrong in one week."</p>
         <div class="testi-author">
           <div class="testi-av">IA</div>
-          <div><div class="testi-name">Ines A.</div><div class="testi-school">Kenyon '25</div></div>
+          <div><div class="testi-name">Ines A.</div><div class="testi-school">'25</div></div>
         </div>
       </div>
       <div class="testi-card" aria-hidden="true">
         <p class="testi-q">"The .edu requirement sold me. Real students only. No random people. No creeps. Just campus."</p>
         <div class="testi-author">
           <div class="testi-av">TH</div>
-          <div><div class="testi-name">Tyler H.</div><div class="testi-school">Kenyon '27</div></div>
+          <div><div class="testi-name">Tyler H.</div><div class="testi-school">'27</div></div>
         </div>
       </div>
       <div class="testi-card" aria-hidden="true">
         <p class="testi-q">"I had tried every social app. This is the first one that actually led to a real in-person thing the same day."</p>
         <div class="testi-author">
           <div class="testi-av">ZF</div>
-          <div><div class="testi-name">Zoe F.</div><div class="testi-school">Kenyon '28</div></div>
+          <div><div class="testi-name">Zoe F.</div><div class="testi-school">'28</div></div>
         </div>
       </div>
     </div>
@@ -1189,7 +1207,7 @@
     <div id="wl-form-wrap">
       <form class="wl-form" id="waitlist-form" novalidate>
         <input type="email" id="waitlist-email" required
-               placeholder="you@kenyon.edu"
+               placeholder="you@school.edu"
                autocomplete="email" inputmode="email">
         <button type="submit" id="wl-btn">
           <span id="wl-btn-label">Get early access</span>
@@ -1217,7 +1235,7 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <h3>Vovu</h3>
-        <p>Campus social built for Kenyon College. Making it easier to show up for the people around you.</p>
+        <p>The campus social app that removes the fear of asking. Meet the people already around you.</p>
       </div>
       <div>
         <div class="footer-col-label">Company</div>
@@ -1241,7 +1259,7 @@
     <hr class="footer-hr">
     <div class="footer-bottom">
       <p class="footer-promise">Last name never shared. Ever.</p>
-      <p class="footer-copy">© 2026 Vovu · Built for Kenyon College</p>
+      <p class="footer-copy">© 2026 Vovu</p>
     </div>
   </div>
 </footer>

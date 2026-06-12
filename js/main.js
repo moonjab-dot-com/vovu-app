@@ -409,9 +409,9 @@ window.openPlan = function(role, planId) {
 if (typeof window !== 'undefined' && window.location.search.includes('delete=request')) {
   var delEmail = prompt('Enter your .edu email to request account deletion:');
   if (delEmail && delEmail.trim()) {
-    var sb = window._supabase;
-    if (sb) {
-      sb.from('waitlist').upsert({
+    var _delSb = window._supabase;
+    if (_delSb) {
+      _delSb.from('waitlist').upsert({
         email: delEmail.trim(),
         campus: 'DELETION_REQUEST',
         created_at: new Date().toISOString()

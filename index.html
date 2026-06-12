@@ -4,1203 +4,1126 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vovu — Make plans, not moves.</title>
-  <meta name="description" content="Post what you want to do. Match anonymously. Meet in person. Campus plans without the awkward ask.">
+  <meta name="description" content="Post what you want to do. Match anonymously. Meet in person. Campus social built for Kenyon College.">
   <link rel="icon" type="image/png" href="./VOVU LOGO OFICIAL.png">
   <link rel="stylesheet" href="./css/style.css">
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./js/supabase-config.js"></script>
+  <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" onload="lucide.createIcons()"></script>
 
   <style>
-/* ─────────────────────────────────────────────────────────
-   VOVU LANDING — flat design, zero shadows, zero gradients
-   ───────────────────────────────────────────────────────── */
+  /* =============================================
+     VOVU LANDING PAGE — complete rebuild
+     ============================================= */
 
-/* === BASE === */
-.lp { background: var(--butter); color: var(--forest); overflow-x: hidden; }
-.lp section { padding: 96px 24px; max-width: 1040px; margin: 0 auto; }
-.lp h1, .lp h2, .lp h3 { font-family: Georgia, 'Times New Roman', serif; }
+  /* ── Base ─────────────────────────────────── */
+  body.lp { background: var(--butter); color: var(--forest); overflow-x: hidden; }
+  .lp section { padding: 96px 24px; max-width: 1040px; margin: 0 auto; }
 
-/* === SCROLL REVEAL === */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 600ms cubic-bezier(.25,.46,.45,.94),
-              transform 600ms cubic-bezier(.25,.46,.45,.94);
-}
-[data-reveal].revealed { opacity: 1; transform: translateY(0); }
-@media (prefers-reduced-motion: reduce) {
-  [data-reveal] { opacity: 1; transform: none; transition: none; }
-}
+  /* ── Scroll reveal ────────────────────────── */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 680ms cubic-bezier(.25,.46,.45,.94),
+                  transform 680ms cubic-bezier(.25,.46,.45,.94);
+    }
+    [data-reveal].revealed { opacity: 1; transform: translateY(0); }
+  }
 
-/* ─── 01 HERO ─────────────────────────────────────────── */
-.hero {
-  min-height: calc(100svh - 64px);
-  display: flex;
-  align-items: center;
-  gap: 56px;
-  flex-wrap: wrap;
-  padding-top: 72px;
-  padding-bottom: 72px;
-}
-.hero-text { flex: 1 1 420px; }
-.hero-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1.5px solid var(--forest);
-  border-radius: 9999px;
-  padding: 6px 14px;
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 28px;
-  opacity: 0.75;
-}
-.hero h1 {
-  font-size: clamp(44px, 7.5vw, 72px);
-  line-height: 1.03;
-  letter-spacing: -0.5px;
-  margin-bottom: 22px;
-}
-.hero-sub {
-  font-size: clamp(17px, 2.4vw, 21px);
-  line-height: 1.55;
-  max-width: 430px;
-  margin-bottom: 36px;
-  opacity: 0.82;
-  min-height: 2.4em;
-}
-.hero-cta-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-.btn-mag {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--forest);
-  color: var(--butter);
-  height: 56px;
-  padding: 0 28px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  transition: transform 80ms ease;
-  will-change: transform;
-}
-.btn-mag:hover { filter: brightness(0.9); }
-.btn-mag-ghost {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 56px;
-  padding: 0 20px;
-  border-radius: 12px;
-  font-size: 15px;
-  border: 1.5px solid #013E3740;
-  cursor: pointer;
-  text-decoration: none;
-  transition: border-color 150ms ease;
-}
-.btn-mag-ghost:hover { border-color: var(--forest); }
+  /* ── Navbar ───────────────────────────────── */
+  .navbar {
+    position: sticky; top: 0; z-index: 200;
+    background: var(--butter); border-bottom: 1px solid transparent;
+    transition: border-color 200ms;
+  }
+  .navbar.scrolled { border-bottom-color: rgba(1,62,55,.1); }
 
-.hero-visual {
-  flex: 1 1 320px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.hero-phone {
-  position: relative;
-  width: 260px;
-}
-.hero-phone img {
-  width: 100%;
-  animation: float 4s ease-in-out infinite;
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotate(1.5deg); }
-  50%       { transform: translateY(-14px) rotate(1.5deg); }
-}
+  /* ── 01 HERO ──────────────────────────────── */
+  .hero {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 48px; align-items: center;
+    min-height: calc(100vh - 64px);
+    min-height: calc(100svh - 64px);
+    padding-top: 72px; padding-bottom: 72px;
+  }
+  .hero-kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1.5px solid rgba(1,62,55,.2); border-radius: 9999px;
+    padding: 6px 14px; font-size: 11px; letter-spacing: .14em;
+    text-transform: uppercase; margin-bottom: 28px; opacity: .7;
+    font-family: system-ui, sans-serif;
+  }
+  .hero h1 {
+    font-family: Georgia, serif;
+    font-size: clamp(50px, 7.5vw, 84px);
+    line-height: 1.02; letter-spacing: -1.5px;
+    margin-bottom: 22px;
+  }
+  .hero-sub {
+    font-size: clamp(16px, 1.9vw, 19px); line-height: 1.65;
+    color: var(--sage); max-width: 400px; margin-bottom: 36px;
+    font-family: system-ui, sans-serif; min-height: 3em;
+  }
+  .hero-sub::after {
+    content: ''; display: inline-block;
+    width: 2px; height: 1em; background: var(--sage);
+    margin-left: 2px; vertical-align: text-bottom;
+    animation: blink .8s steps(1) infinite;
+  }
+  @keyframes blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
 
-/* ─── 02 TRUST BAR ───────────────────────────────────── */
-.trust-bar {
-  padding: 0 !important;
-  max-width: none !important;
-  border-top: 1px solid #013E3718;
-  border-bottom: 1px solid #013E3718;
-  overflow: hidden;
-}
-.trust-track {
-  display: flex;
-  width: max-content;
-  animation: marquee 26s linear infinite;
-}
-.trust-track:hover { animation-play-state: paused; }
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.trust-items {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  padding: 18px 0;
-  white-space: nowrap;
-}
-.trust-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 36px;
-  font-size: 14px;
-  font-weight: 500;
-  border-right: 1px solid #013E3718;
-}
-.trust-item i { width: 16px; height: 16px; opacity: 0.6; }
+  .hero-cta-row {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+  .btn-mag {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--forest); color: var(--butter);
+    height: 56px; padding: 0 28px; border-radius: 12px;
+    font-size: 16px; font-weight: 500; border: none; cursor: pointer;
+    text-decoration: none; will-change: transform;
+    transition: filter 80ms ease; font-family: system-ui, sans-serif;
+  }
+  .btn-mag:hover { filter: brightness(.88); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 56px; padding: 0 24px; border-radius: 12px;
+    font-size: 15px; border: 1.5px solid rgba(1,62,55,.25);
+    color: var(--forest); cursor: pointer; text-decoration: none;
+    background: transparent; transition: border-color 150ms;
+    font-family: system-ui, sans-serif;
+  }
+  .btn-ghost:hover { border-color: var(--forest); }
 
-/* ─── 03 PROBLEM ─────────────────────────────────────── */
-.problem {
-  text-align: center;
-}
-.problem-headline {
-  font-size: clamp(26px, 4.5vw, 44px);
-  line-height: 1.25;
-  max-width: 680px;
-  margin: 0 auto 56px;
-}
-.problem-stats {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px 0;
-}
-.stat-card {
-  padding: 40px 48px;
-  border: 1px solid #013E3720;
-  border-radius: 16px;
-  background: var(--cream);
-  flex: 1 1 200px;
-  max-width: 280px;
-}
-.stat-card:nth-child(1) { transform: rotate(-0.7deg); }
-.stat-card:nth-child(2) { transform: rotate(0deg); }
-.stat-card:nth-child(3) { transform: rotate(0.7deg); }
-.stat-num {
-  font-family: Georgia, serif;
-  font-size: clamp(56px, 10vw, 88px);
-  font-weight: 700;
-  color: #013E37;
-  line-height: 1;
-  margin-bottom: 10px;
-}
-.stat-label {
-  font-size: 14px;
-  line-height: 1.4;
-  opacity: 0.7;
-  max-width: 160px;
-  margin: 0 auto;
-}
+  .hero-proof {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px; color: var(--sage);
+    font-family: system-ui, sans-serif;
+  }
+  .proof-avatars { display: flex; }
+  .proof-av {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid var(--butter); overflow: hidden;
+    margin-left: -8px; flex-shrink: 0; background: var(--mist);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600; color: var(--forest);
+    font-family: system-ui, sans-serif;
+  }
+  .proof-av:first-child { margin-left: 0; }
+  .proof-av img { width: 100%; height: 100%; object-fit: cover; }
 
-/* ─── 04 HOW IT WORKS ────────────────────────────────── */
-.how-wrap {
-  max-width: 580px !important;
-}
-.how-wrap > h2 {
-  text-align: center;
-  font-size: clamp(30px, 5vw, 44px);
-  margin-bottom: 56px;
-}
-.step {
-  display: flex;
-  gap: 22px;
-  align-items: flex-start;
-  padding: 24px 0;
-  border-bottom: 1px dashed #013E3730;
-}
-.step:last-of-type { border-bottom: none; }
-.step-icon {
-  width: 48px; height: 48px;
-  flex-shrink: 0;
-  border: 2px solid var(--forest);
-  border-radius: 50% 45% 52% 48%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--forest);
-}
-.step-num {
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  opacity: 0.5;
-  text-transform: uppercase;
-}
-.step h3 { font-size: 19px; margin: 5px 0 7px; }
-.step p { font-size: 15px; line-height: 1.55; opacity: 0.78; margin: 0; }
-.step-reveal {
-  background: var(--forest);
-  color: var(--butter);
-  border-radius: 14px;
-  padding: 28px 24px;
-  border-bottom: none;
-  margin-top: 6px;
-  transform: rotate(-0.4deg);
-}
-.step-reveal .step-icon { border-color: var(--butter); color: var(--butter); }
-.step-reveal .step-num { opacity: 0.6; }
-.step-reveal h3, .step-reveal p { color: var(--butter); }
-.reveal-names {
-  margin-top: 16px;
-  font-family: Georgia, serif;
-  font-size: 24px;
-}
-.reveal-names span {
-  display: inline-block;
-  filter: blur(7px);
-  transition: filter 1100ms cubic-bezier(.25,.46,.45,.94);
-}
-.reveal-names.unblurred span { filter: blur(0); }
+  /* phone mockup */
+  .hero-visual { display: flex; justify-content: center; align-items: center; position: relative; }
+  .hero-illus-bg {
+    position: absolute; top: -32px; right: -24px;
+    width: 180px; opacity: .07; pointer-events: none;
+    animation: float 7s ease-in-out infinite;
+  }
+  .hero-illus-mobile { display: none; max-width: 200px; opacity: .85; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
 
-/* ─── 05 STACKED PLAN CARDS ─────────────────────────── */
-.cards-section {
-  text-align: center;
-}
-.cards-section > h2 {
-  font-size: clamp(30px, 5vw, 44px);
-  margin-bottom: 12px;
-}
-.cards-section > p {
-  font-size: 16px;
-  opacity: 0.7;
-  margin-bottom: 64px;
-}
-.display-cards {
-  position: relative;
-  height: 340px;
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  perspective: 800px;
-}
-.display-card {
-  position: absolute;
-  width: 320px;
-  left: 50%;
-  background: var(--cream);
-  border: 1.5px solid #013E3725;
-  border-radius: 18px;
-  padding: 28px 24px;
-  text-align: left;
-  transition: transform 400ms cubic-bezier(.25,.46,.45,.94), filter 400ms ease, opacity 300ms ease;
-  cursor: pointer;
-  transform-origin: center bottom;
-  will-change: transform;
-}
-.display-card:nth-child(1) {
-  transform: translateX(-50%) translateY(32px) rotateY(-8deg) scale(0.9);
-  filter: grayscale(1) brightness(0.95);
-  z-index: 1;
-  opacity: 0.7;
-}
-.display-card:nth-child(2) {
-  transform: translateX(-50%) translateY(16px) rotateY(-4deg) scale(0.95);
-  filter: grayscale(0.5) brightness(0.97);
-  z-index: 2;
-  opacity: 0.85;
-}
-.display-card:nth-child(3) {
-  transform: translateX(-50%) translateY(0px) rotateY(0deg) scale(1);
-  filter: grayscale(0) brightness(1);
-  z-index: 3;
-}
-.display-cards:hover .display-card:nth-child(1) {
-  transform: translateX(-50%) translateY(48px) rotateY(-10deg) scale(0.88);
-  opacity: 0.5;
-}
-.display-cards:hover .display-card:nth-child(2) {
-  transform: translateX(-50%) translateY(22px) rotateY(-5deg) scale(0.93);
-  opacity: 0.75;
-}
-.display-card .dc-type {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--mist);
-  color: var(--forest);
-  border-radius: 9999px;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  margin-bottom: 16px;
-}
-.display-card .dc-type i { width: 13px; height: 13px; }
-.display-card h3 {
-  font-size: 20px;
-  margin-bottom: 8px;
-}
-.display-card p {
-  font-size: 14px;
-  opacity: 0.68;
-  line-height: 1.5;
-  font-family: system-ui, sans-serif;
-  margin-bottom: 20px;
-}
-.display-card .dc-meta {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  font-size: 13px;
-  opacity: 0.6;
-}
-.display-card .dc-meta i { width: 13px; height: 13px; }
+  .phone-wrap { position: relative; z-index: 1; animation: float 5s ease-in-out infinite; }
+  .phone-frame {
+    width: 228px; background: var(--forest);
+    border-radius: 36px; padding: 10px; position: relative;
+    box-shadow: 0 32px 64px rgba(1,62,55,.25);
+  }
+  .phone-notch {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    width: 68px; height: 20px; background: var(--forest);
+    border-radius: 0 0 10px 10px; z-index: 3;
+  }
+  .phone-screen {
+    background: var(--butter); border-radius: 28px; height: 446px;
+    overflow: hidden; position: relative;
+  }
+  .phone-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 30px 14px 10px; border-bottom: 1px solid rgba(1,62,55,.08);
+  }
+  .phone-appname { font-family: Georgia, serif; font-size: 15px; font-weight: 700; color: var(--forest); }
+  .phone-ct { font-size: 10px; color: var(--sage); font-family: system-ui, sans-serif; }
+  .phone-feed { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .pf-card {
+    background: var(--cream); border-radius: 12px;
+    border: 1px solid rgba(1,62,55,.1); padding: 10px 12px;
+  }
+  .pf-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+  .pf-type {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--mist); border-radius: 9999px;
+    padding: 3px 8px; font-size: 10px; font-weight: 500;
+    color: var(--forest); font-family: system-ui, sans-serif;
+  }
+  .pf-pct { font-family: Georgia, serif; font-size: 13px; font-weight: 700; color: var(--forest); }
+  .pf-title { font-family: Georgia, serif; font-size: 12px; font-weight: 700; color: var(--forest); margin-bottom: 3px; }
+  .pf-meta { font-size: 10px; color: var(--sage); font-family: system-ui, sans-serif; }
+  .pf-chips { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+  .pf-chip { font-size: 9px; background: var(--mist); border-radius: 9999px; padding: 2px 6px; color: var(--forest); font-family: system-ui, sans-serif; }
 
-/* ─── 06 MATCH REVEAL DEMO ───────────────────────────── */
-.match-demo {
-  max-width: 600px !important;
-  text-align: center;
-}
-.match-demo > h2 {
-  font-size: clamp(30px, 5vw, 44px);
-  margin-bottom: 12px;
-}
-.match-demo > p {
-  font-size: 16px;
-  opacity: 0.72;
-  margin-bottom: 56px;
-}
-.match-card {
-  background: var(--forest);
-  color: var(--butter);
-  border-radius: 20px;
-  padding: 48px 40px;
-  position: relative;
-  overflow: hidden;
-}
-.match-label {
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  opacity: 0.6;
-  margin-bottom: 24px;
-}
-.match-names {
-  font-family: Georgia, serif;
-  font-size: clamp(32px, 6vw, 56px);
-  line-height: 1.1;
-  margin-bottom: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-.match-name {
-  filter: blur(10px);
-  transition: filter 1200ms cubic-bezier(.25,.46,.45,.94);
-}
-.match-name.unblurred { filter: blur(0); }
-.match-and {
-  font-size: 20px;
-  opacity: 0.5;
-  filter: none !important;
-}
-.match-details {
-  display: flex;
-  justify-content: center;
-  gap: 28px;
-  font-size: 14px;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 600ms ease 1600ms, transform 600ms ease 1600ms;
-  flex-wrap: wrap;
-}
-.match-details.shown { opacity: 0.75; transform: translateY(0); }
-.match-details span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.match-details i { width: 13px; height: 13px; }
-.match-replay {
-  margin-top: 20px;
-  background: none;
-  border: 1.5px solid #FFEFB360;
-  color: var(--butter);
-  border-radius: 9999px;
-  padding: 8px 20px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: border-color 150ms ease;
-}
-.match-replay:hover { border-color: var(--butter); }
+  /* ── 02 TRUST BAR ─────────────────────────── */
+  .trust-bar {
+    padding: 0 !important; max-width: none !important;
+    border-top: 1px solid rgba(1,62,55,.1);
+    border-bottom: 1px solid rgba(1,62,55,.1);
+    overflow: hidden; background: var(--butter);
+  }
+  .trust-track { display: flex; width: max-content; animation: marquee 30s linear infinite; }
+  .trust-track:hover { animation-play-state: paused; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .trust-items { display: flex; align-items: center; padding: 14px 0; white-space: nowrap; }
+  .trust-item {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 0 32px; font-size: 13px; font-weight: 500;
+    border-right: 1px solid rgba(1,62,55,.08);
+    font-family: system-ui, sans-serif; color: var(--forest);
+  }
+  .trust-item i { width: 14px; height: 14px; opacity: .5; }
 
-/* ─── 07 COMPATIBILITY BARS ──────────────────────────── */
-.compat {
-  max-width: 580px !important;
-}
-.compat > h2 {
-  text-align: center;
-  font-size: clamp(30px, 5vw, 44px);
-  margin-bottom: 10px;
-}
-.compat-sub {
-  text-align: center;
-  font-size: 15px;
-  opacity: 0.7;
-  margin-bottom: 48px;
-}
-.bar-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-.bar-label {
-  width: 130px;
-  flex-shrink: 0;
-  font-size: 14px;
-  font-weight: 500;
-}
-.bar-track {
-  flex: 1;
-  height: 12px;
-  background: #013E3712;
-  border-radius: 6px;
-  overflow: hidden;
-}
-.bar-fill {
-  height: 100%;
-  background: var(--forest);
-  border-radius: 6px;
-  width: 0;
-  transition: width 900ms cubic-bezier(.25,.46,.45,.94);
-}
-.bar-pct {
-  width: 40px;
-  text-align: right;
-  font-size: 13px;
-  opacity: 0.65;
-  font-variant-numeric: tabular-nums;
-}
+  /* ── 03 PROBLEM ───────────────────────────── */
+  .problem { text-align: center; }
+  .problem-hl {
+    font-family: Georgia, serif;
+    font-size: clamp(24px, 4vw, 42px); line-height: 1.3;
+    max-width: 620px; margin: 0 auto 64px;
+  }
+  .stat-row {
+    display: flex; justify-content: center; flex-wrap: wrap;
+    gap: 16px; margin-bottom: 56px;
+  }
+  .stat-card {
+    padding: 40px 36px; border: 1px solid rgba(1,62,55,.12);
+    border-radius: 20px; background: var(--cream);
+    flex: 1 1 200px; max-width: 260px;
+  }
+  .stat-card:nth-child(1) { transform: rotate(-.7deg); }
+  .stat-card:nth-child(3) { transform: rotate(.7deg); }
+  .stat-num {
+    display: block;
+    font-family: Georgia, serif;
+    font-size: clamp(56px, 9vw, 88px);
+    font-weight: 700; color: var(--forest); line-height: 1; margin-bottom: 10px;
+  }
+  .stat-label { font-size: 13px; line-height: 1.55; color: var(--sage); max-width: 150px; margin: 0 auto; font-family: system-ui, sans-serif; }
+  .problem-closer {
+    font-family: Georgia, serif;
+    font-size: clamp(20px, 3vw, 30px); max-width: 480px; margin: 0 auto;
+    line-height: 1.4; font-style: italic;
+  }
 
-/* ─── 08 TESTIMONIALS ────────────────────────────────── */
-.testimonials {
-  overflow: hidden;
-  padding-top: 96px;
-  padding-bottom: 96px;
-}
-.testimonials > h2 {
-  text-align: center;
-  font-size: clamp(30px, 5vw, 44px);
-  margin-bottom: 56px;
-}
-.testi-cols {
-  display: flex;
-  gap: 20px;
-  height: 520px;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%);
-}
-.testi-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  animation: scroll-up var(--dur, 24s) linear infinite;
-}
-.testi-col:nth-child(1) { --dur: 28s; }
-.testi-col:nth-child(2) { --dur: 22s; animation-direction: reverse; }
-.testi-col:nth-child(3) { --dur: 32s; }
-@keyframes scroll-up {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-50%); }
-}
-.testi-col:hover { animation-play-state: paused; }
-.testi-card {
-  background: var(--cream);
-  border: 1px solid #013E3718;
-  border-radius: 14px;
-  padding: 22px 20px;
-  flex-shrink: 0;
-}
-.testi-text {
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 14px;
-  opacity: 0.85;
-}
-.testi-author {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.testi-avatar {
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  background: var(--mist);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--forest);
-  flex-shrink: 0;
-}
-.testi-name {
-  font-size: 13px;
-  font-weight: 500;
-}
-.testi-school {
-  font-size: 12px;
-  opacity: 0.55;
-}
+  /* ── 04 HOW IT WORKS ──────────────────────── */
+  .how-section { max-width: 580px !important; }
+  .how-section > h2 {
+    font-family: Georgia, serif;
+    font-size: clamp(28px, 4.5vw, 44px); text-align: center; margin-bottom: 12px;
+  }
+  .how-sub { text-align: center; font-size: 15px; color: var(--sage); margin-bottom: 60px; font-family: system-ui, sans-serif; }
+  .timeline-wrap { position: relative; }
+  .timeline-line {
+    position: absolute; left: 23px; top: 12px; bottom: 12px;
+    width: 2px; background: rgba(1,62,55,.08); border-radius: 2px;
+  }
+  .timeline-fill {
+    position: absolute; top: 0; left: 0; right: 0; height: 0;
+    background: var(--forest); border-radius: 2px;
+    transition: height 120ms linear;
+  }
+  .step { display: flex; gap: 18px; align-items: flex-start; padding: 16px 0; position: relative; z-index: 1; }
+  .step-icon {
+    width: 48px; height: 48px; flex-shrink: 0;
+    border: 2px solid var(--forest); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--butter); color: var(--forest); position: relative; z-index: 2;
+  }
+  .step-icon i { width: 18px; height: 18px; }
+  .step-body { padding-top: 4px; }
+  .step-num { font-size: 11px; letter-spacing: 1.5px; opacity: .45; text-transform: uppercase; font-family: system-ui, sans-serif; }
+  .step h3 { font-family: Georgia, serif; font-size: 19px; margin: 4px 0 6px; }
+  .step p { font-size: 15px; line-height: 1.6; color: var(--sage); margin: 0; font-family: system-ui, sans-serif; }
+  .step-final {
+    background: var(--forest); color: var(--butter);
+    border-radius: 18px; padding: 22px 18px;
+    margin-left: 8px; position: relative; z-index: 2;
+  }
+  .step-final .step-icon { border-color: rgba(255,239,179,.5); color: var(--butter); background: transparent; }
+  .step-final .step-num { color: rgba(255,239,179,.5); }
+  .step-final h3 { color: var(--butter); }
+  .step-final p { color: rgba(255,239,179,.7); }
+  .reveal-demo { margin-top: 14px; font-family: Georgia, serif; font-size: 22px; color: var(--butter); }
+  .rnd { display: inline-block; filter: blur(7px); transition: filter 1.2s cubic-bezier(.25,.46,.45,.94); }
+  .rnd.clear { filter: blur(0); }
 
-/* ─── 09 PRIVACY ─────────────────────────────────────── */
-.privacy > h2 {
-  text-align: center;
-  font-size: clamp(30px, 5vw, 44px);
-  margin-bottom: 48px;
-}
-.privacy-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-}
-.privacy-card {
-  background: var(--cream);
-  border: 1px solid #013E3720;
-  border-radius: 16px;
-  padding: 32px 26px;
-  text-align: center;
-}
-.privacy-card:nth-child(1) { transform: rotate(-0.5deg); }
-.privacy-card:nth-child(3) { transform: rotate(0.5deg); }
-.privacy-card i { width: 30px; height: 30px; }
-.privacy-card h3 { font-size: 18px; margin: 16px 0 8px; }
-.privacy-card p { font-size: 14px; line-height: 1.55; opacity: 0.75; margin: 0; }
+  /* ── 05 STACKED CARDS ─────────────────────── */
+  .cards-split {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 64px; align-items: center;
+  }
+  .cards-copy h2 { font-family: Georgia, serif; font-size: clamp(26px, 3.8vw, 40px); margin-bottom: 14px; line-height: 1.15; }
+  .cards-copy > p { font-size: 16px; line-height: 1.65; color: var(--sage); margin-bottom: 24px; font-family: system-ui, sans-serif; }
+  .cards-fact {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px; background: var(--cream); border-radius: 12px;
+    border: 1px solid rgba(1,62,55,.1); margin-bottom: 10px;
+  }
+  .cards-fact i { width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px; }
+  .fact-body { font-size: 13.5px; line-height: 1.5; color: var(--sage); font-family: system-ui, sans-serif; }
+  .fact-body strong { display: block; color: var(--forest); font-size: 14px; font-family: system-ui, sans-serif; margin-bottom: 2px; }
 
-/* ─── 10 PLAN TYPES ──────────────────────────────────── */
-.plans {
-  text-align: center;
-}
-.plans > h2 {
-  font-size: clamp(30px, 5vw, 44px);
-  margin-bottom: 44px;
-}
-.plans-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  max-width: 580px;
-  margin: 0 auto;
-}
-.plan-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--mist);
-  border-radius: 12px;
-  padding: 12px 20px;
-  font-size: 15px;
-  font-weight: 500;
-  border: 1.5px solid transparent;
-  transition: border-color 150ms ease, background 150ms ease;
-  cursor: default;
-}
-.plan-chip:hover {
-  background: var(--cream);
-  border-color: #013E3730;
-}
-.plan-chip:nth-child(odd)  { transform: rotate(-0.8deg); }
-.plan-chip:nth-child(even) { transform: rotate(0.8deg); }
-.plan-chip i { width: 16px; height: 16px; }
+  .display-cards { position: relative; height: 380px; perspective: 1000px; }
+  .dc {
+    position: absolute; width: calc(100% - 8px);
+    background: var(--cream); border: 1.5px solid rgba(1,62,55,.12);
+    border-radius: 18px; padding: 22px 20px; left: 4px;
+    transition: transform 450ms cubic-bezier(.25,.46,.45,.94), filter 450ms ease, opacity 350ms ease;
+    cursor: default; will-change: transform;
+  }
+  .dc:nth-child(1) { transform: translateY(36px) rotate(-4deg) scale(.9); filter: grayscale(.9) brightness(.94); z-index: 1; opacity: .55; }
+  .dc:nth-child(2) { transform: translateY(18px) rotate(-2deg) scale(.95); filter: grayscale(.4) brightness(.97); z-index: 2; opacity: .8; }
+  .dc:nth-child(3) { transform: translateY(0) rotate(0deg) scale(1); filter: none; z-index: 3; }
+  .display-cards:hover .dc:nth-child(1) { transform: translateY(52px) rotate(-5deg) scale(.87); opacity: .4; }
+  .display-cards:hover .dc:nth-child(2) { transform: translateY(26px) rotate(-2.5deg) scale(.93); opacity: .7; }
+  .dc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .dc-type {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--mist); border-radius: 9999px;
+    padding: 4px 12px; font-size: 12px; font-weight: 500;
+    color: var(--forest); font-family: system-ui, sans-serif;
+  }
+  .dc-type i { width: 11px; height: 11px; }
+  .dc-pct { font-family: Georgia, serif; font-size: 19px; font-weight: 700; color: var(--forest); }
+  .dc h3 { font-family: Georgia, serif; font-size: 17px; margin-bottom: 5px; }
+  .dc-note { font-size: 13px; color: var(--sage); line-height: 1.5; margin-bottom: 12px; font-family: system-ui, sans-serif; font-style: italic; }
+  .dc-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .dc-chip { font-size: 11px; background: var(--mist); border-radius: 9999px; padding: 3px 10px; color: var(--forest); font-family: system-ui, sans-serif; }
+  .dc-meta { display: flex; gap: 14px; font-size: 12px; color: var(--sage); font-family: system-ui, sans-serif; }
+  .dc-meta span { display: flex; align-items: center; gap: 4px; }
+  .dc-meta i { width: 12px; height: 12px; }
 
-/* ─── 11 WAITLIST CTA ────────────────────────────────── */
-.waitlist-section {
-  background: var(--forest);
-  color: var(--butter);
-  border-radius: 20px;
-  text-align: center;
-  padding: 80px 32px !important;
-  max-width: 900px !important;
-  margin-bottom: 56px !important;
-}
-.waitlist-section > h2 {
-  font-size: clamp(30px, 5vw, 48px);
-  margin-bottom: 12px;
-  color: var(--butter);
-}
-.waitlist-section > p {
-  font-size: 17px;
-  opacity: 0.78;
-  margin-bottom: 40px;
-  line-height: 1.5;
-}
-.wl-form {
-  display: flex;
-  gap: 10px;
-  max-width: 460px;
-  margin: 0 auto;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.wl-form input {
-  flex: 1 1 240px;
-  height: 56px;
-  border-radius: 12px;
-  border: none;
-  padding: 0 20px;
-  font-size: 15px;
-  background: var(--butter);
-  color: var(--forest);
-  font-family: system-ui, sans-serif;
-}
-.wl-form input::placeholder { color: #013E3770; }
-.wl-form input:focus { outline: 2px solid #FFFDF5; }
-.wl-form button {
-  height: 56px;
-  padding: 0 28px;
-  border-radius: 12px;
-  background: var(--butter);
-  color: var(--forest);
-  border: none;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: system-ui, sans-serif;
-  transition: filter 120ms ease;
-  will-change: transform;
-}
-.wl-form button:hover { filter: brightness(0.92); }
-.wl-form button:disabled { opacity: 0.6; cursor: default; }
-.wl-msg {
-  font-size: 13px;
-  margin-top: 14px;
-  min-height: 18px;
-  opacity: 0.7;
-}
-.wl-success { display: none; }
-.wl-success.shown { display: block; }
-.wl-success img {
-  max-width: 140px;
-  margin: 0 auto 16px;
-  object-fit: contain;
-}
-.wl-success .wl-success-headline {
-  font-family: Georgia, serif;
-  font-size: 28px;
-  margin-bottom: 6px;
-  color: var(--butter);
-}
-.wl-success p.wl-sub {
-  font-size: 16px;
-  opacity: 0.78;
-}
-.spinner {
-  width: 18px; height: 18px;
-  border: 2px solid #013E3740;
-  border-top-color: var(--forest);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+  /* ── 06 MATCH REVEAL ──────────────────────── */
+  .match-outer { background: var(--forest); }
+  .match-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 64px; align-items: center;
+    padding: 96px 24px; max-width: 1040px; margin: 0 auto;
+  }
+  .match-copy h2 { font-family: Georgia, serif; font-size: clamp(26px, 3.8vw, 42px); color: var(--butter); margin-bottom: 14px; line-height: 1.2; }
+  .match-copy > p { font-size: 16px; line-height: 1.65; color: rgba(255,239,179,.65); font-family: system-ui, sans-serif; margin-bottom: 28px; }
+  .match-detail { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .match-detail i { color: rgba(255,239,179,.55); flex-shrink: 0; margin-top: 2px; width: 17px; height: 17px; }
+  .match-detail span { font-size: 14px; color: rgba(255,239,179,.7); font-family: system-ui, sans-serif; line-height: 1.5; }
 
-/* ─── FOOTER ─────────────────────────────────────────── */
+  .match-phone-wrap { display: flex; justify-content: center; animation: float 5.5s ease-in-out infinite; }
+  .match-phone-frame {
+    width: 216px; background: rgba(255,239,179,.08);
+    border-radius: 32px; padding: 10px;
+    border: 1.5px solid rgba(255,239,179,.18);
+  }
+  .match-screen {
+    background: #012B26; border-radius: 24px; height: 420px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px 20px; overflow: hidden; position: relative;
+  }
+  .mp-label {
+    font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: rgba(255,239,179,.4); margin-bottom: 28px;
+    font-family: system-ui, sans-serif;
+  }
+  .mp-circles { display: flex; align-items: center; gap: 0; margin-bottom: 24px; position: relative; width: 120px; height: 56px; }
+  .mp-av {
+    width: 54px; height: 54px; border-radius: 50%;
+    background: rgba(255,239,179,.12); border: 2px solid rgba(255,239,179,.35);
+    display: flex; align-items: center; justify-content: center;
+    font-family: Georgia, serif; font-weight: 700; font-size: 20px;
+    color: var(--butter); position: absolute; top: 0;
+  }
+  .mp-av.lft { left: 0; animation: av-left 6s ease-in-out infinite; }
+  .mp-av.rgt { right: 0; animation: av-right 6s ease-in-out infinite; }
+  @keyframes av-left  { 0%,20% { transform: translateX(-18px); } 40%,80% { transform: translateX(0); } 100% { transform: translateX(-18px); } }
+  @keyframes av-right { 0%,20% { transform: translateX(18px);  } 40%,80% { transform: translateX(0); } 100% { transform: translateX(18px);  } }
 
-/* ─── MOBILE ─────────────────────────────────────────── */
-@media (max-width: 720px) {
-  .testi-col:nth-child(3) { display: none; }
-}
-@media (max-width: 640px) {
-  .lp section { padding: 64px 20px; }
-  .hero { padding-top: 40px; min-height: auto; }
-  .hero h1 { font-size: clamp(38px, 11vw, 56px); }
-  .problem-stats { gap: 12px; }
-  .stat-card { flex: 1 1 140px; padding: 28px 20px; }
-  .display-cards { height: 300px; }
-  .display-card { width: 280px; }
-  .match-card { padding: 36px 24px; }
-  .match-names { font-size: clamp(28px, 10vw, 44px); }
-  .bar-label { width: 100px; font-size: 13px; }
-  .testi-cols { height: 420px; }
-  .testi-col:nth-child(2) { display: none; }
-  .plans-grid { gap: 8px; }
-  .plan-chip { font-size: 14px; padding: 10px 16px; }
-  .waitlist-section { padding: 56px 20px !important; }
-  .wl-form { flex-direction: column; align-items: stretch; }
-  .wl-form input, .wl-form button { width: 100%; flex: none; }
-  .hero-phone { width: 200px; }
-}
-@media (max-width: 380px) {
-  .hero-kicker { font-size: 10px; }
-  .stat-card { flex: 1 1 120px; }
-}
+  .mp-names { font-family: Georgia, serif; font-size: 24px; font-weight: 700; color: var(--butter); text-align: center; margin-bottom: 22px; line-height: 1.3; }
+  .mp-name { display: block; animation: name-blur 6s ease-in-out infinite; }
+  .mp-and  { display: block; font-size: 12px; opacity: .4; margin: 2px 0; font-family: system-ui, sans-serif; animation: name-blur 6s ease-in-out infinite; }
+  @keyframes name-blur { 0%,25% { filter: blur(8px); opacity: .2; } 45%,80% { filter: blur(0); opacity: 1; } 100% { filter: blur(8px); opacity: .2; } }
+
+  .mp-rows { display: flex; flex-direction: column; gap: 8px; width: 100%; animation: rows-show 6s ease-in-out infinite; }
+  @keyframes rows-show { 0%,40% { opacity: 0; transform: translateY(6px); } 58%,80% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(6px); } }
+  .mp-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: rgba(255,239,179,.7);
+    font-family: system-ui, sans-serif;
+    background: rgba(255,239,179,.06); border-radius: 8px; padding: 7px 10px;
+  }
+  .mp-row i { width: 13px; height: 13px; opacity: .55; flex-shrink: 0; }
+
+  /* ── 07 COMPATIBILITY ─────────────────────── */
+  .compat { max-width: 580px !important; }
+  .compat h2 { font-family: Georgia, serif; font-size: clamp(28px, 4.5vw, 44px); text-align: center; margin-bottom: 10px; }
+  .compat-sub { text-align: center; font-size: 15px; color: var(--sage); margin-bottom: 52px; font-family: system-ui, sans-serif; }
+  .compat-row { display: grid; grid-template-columns: 130px 1fr 64px; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .compat-lbl { font-size: 14px; font-weight: 500; font-family: system-ui, sans-serif; }
+  .compat-track { height: 10px; background: rgba(1,62,55,.08); border-radius: 5px; overflow: hidden; }
+  .compat-fill { height: 100%; width: 0; background: var(--forest); border-radius: 5px; transition: width 1100ms cubic-bezier(.25,.46,.45,.94); }
+  .compat-pts { font-family: Georgia, serif; font-size: 20px; font-weight: 700; color: var(--forest); text-align: right; }
+  .compat-total { text-align: center; margin-top: 32px; font-size: 14px; color: var(--sage); font-family: system-ui, sans-serif; }
+  .compat-total strong { font-family: Georgia, serif; font-size: 30px; display: block; color: var(--forest); margin-bottom: 4px; }
+
+  /* ── 08 TESTIMONIALS ──────────────────────── */
+  .testimonials { padding-top: 96px; padding-bottom: 96px; }
+  .testimonials h2 { font-family: Georgia, serif; font-size: clamp(28px, 4.5vw, 44px); text-align: center; margin-bottom: 52px; }
+  .testi-cols {
+    display: flex; gap: 14px; height: 520px; overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%);
+    max-width: 900px; margin: 0 auto;
+  }
+  .testi-col { flex: 1; display: flex; flex-direction: column; gap: 12px; animation: tcol var(--spd, 28s) linear infinite; }
+  .testi-col:nth-child(1) { --spd: 32s; }
+  .testi-col:nth-child(2) { --spd: 24s; animation-direction: reverse; }
+  .testi-col:nth-child(3) { --spd: 36s; }
+  .testi-col:hover { animation-play-state: paused; }
+  @keyframes tcol { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+  .testi-card { background: var(--cream); border: 1px solid rgba(1,62,55,.1); border-radius: 14px; padding: 18px; flex-shrink: 0; }
+  .testi-q { font-size: 13.5px; line-height: 1.65; color: var(--forest); margin-bottom: 12px; font-family: system-ui, sans-serif; opacity: .88; }
+  .testi-author { display: flex; align-items: center; gap: 9px; }
+  .testi-av {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--mist); overflow: hidden; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--forest); font-family: system-ui, sans-serif;
+  }
+  .testi-av img { width: 100%; height: 100%; object-fit: cover; }
+  .testi-name { font-size: 13px; font-weight: 500; font-family: system-ui, sans-serif; }
+  .testi-school { font-size: 11px; color: var(--sage); font-family: system-ui, sans-serif; }
+
+  /* ── 09 PRIVACY ───────────────────────────── */
+  .privacy-outer { background: var(--forest); }
+  .privacy-inner { padding: 96px 24px; max-width: 1040px; margin: 0 auto; }
+  .privacy-inner h2 { font-family: Georgia, serif; font-size: clamp(28px, 4.5vw, 44px); color: var(--butter); text-align: center; margin-bottom: 12px; }
+  .privacy-sub { text-align: center; font-size: 15px; color: rgba(255,239,179,.55); margin-bottom: 52px; font-family: system-ui, sans-serif; }
+  .privacy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .priv-card {
+    background: var(--cream); border-radius: 18px; padding: 32px 26px;
+    text-align: center; will-change: transform; cursor: default;
+    transition: transform 120ms ease;
+  }
+  .priv-card i { width: 30px; height: 30px; color: var(--forest); }
+  .priv-card h3 { font-family: Georgia, serif; font-size: 18px; margin: 14px 0 7px; }
+  .priv-card p { font-size: 14px; line-height: 1.55; color: var(--sage); margin: 0; font-family: system-ui, sans-serif; }
+
+  /* ── 10 PLAN TYPES ────────────────────────── */
+  .plans-sec { text-align: center; }
+  .plans-sec h2 { font-family: Georgia, serif; font-size: clamp(28px, 4.5vw, 44px); margin-bottom: 12px; }
+  .plans-sub { font-size: 15px; color: var(--sage); margin-bottom: 40px; font-family: system-ui, sans-serif; }
+  .plans-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 580px; margin: 0 auto; }
+  .plan-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--mist); border-radius: 12px;
+    padding: 12px 20px; font-size: 15px; font-weight: 500;
+    border: 1.5px solid transparent; cursor: pointer;
+    font-family: system-ui, sans-serif;
+    transition: background 150ms, border-color 150ms, color 150ms, transform 150ms;
+  }
+  .plan-chip:nth-child(odd)  { transform: rotate(-.6deg); }
+  .plan-chip:nth-child(even) { transform: rotate(.6deg); }
+  .plan-chip:hover { background: var(--cream); border-color: rgba(1,62,55,.25); }
+  .plan-chip.active { background: var(--forest); color: var(--butter); border-color: var(--forest); transform: rotate(0) scale(1.03); }
+  .plan-chip i { width: 15px; height: 15px; }
+
+  /* ── 11 WAITLIST CTA ──────────────────────── */
+  .wl-outer { padding: 0 24px 80px; }
+  .wl-box {
+    background: var(--forest); color: var(--butter);
+    border-radius: 24px; text-align: center;
+    padding: 88px 40px; max-width: 860px; margin: 0 auto;
+  }
+  .wl-box h2 { font-family: Georgia, serif; font-size: clamp(28px, 5vw, 52px); color: var(--butter); margin-bottom: 12px; }
+  .wl-box > p { font-size: 17px; color: rgba(255,239,179,.7); margin-bottom: 44px; font-family: system-ui, sans-serif; line-height: 1.6; }
+  .wl-form { display: flex; gap: 10px; max-width: 460px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+  .wl-form input {
+    flex: 1 1 240px; height: 56px; border-radius: 12px; border: none;
+    padding: 0 20px; font-size: 15px; background: var(--butter);
+    color: var(--forest); font-family: system-ui, sans-serif; outline: none;
+  }
+  .wl-form input::placeholder { color: rgba(1,62,55,.45); }
+  .wl-form input:focus { outline: 2px solid rgba(255,239,179,.35); }
+  .wl-form button {
+    height: 56px; padding: 0 28px; border-radius: 12px;
+    background: var(--butter); color: var(--forest); border: none;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: system-ui, sans-serif; will-change: transform;
+    transition: filter 100ms ease;
+  }
+  .wl-form button:hover { filter: brightness(.92); }
+  .wl-form button:disabled { opacity: .6; cursor: default; }
+  .wl-msg { font-size: 13px; margin-top: 12px; min-height: 18px; color: rgba(255,239,179,.65); font-family: system-ui, sans-serif; }
+  .wl-success { display: none; }
+  .wl-success.shown { display: block; }
+  .wl-success img { max-width: 110px; margin: 0 auto 16px; display: block; }
+  .wl-success-hl { font-family: Georgia, serif; font-size: 34px; color: var(--butter); margin-bottom: 8px; }
+  .wl-success p { font-size: 16px; color: rgba(255,239,179,.7); font-family: system-ui, sans-serif; }
+
+  /* ── FOOTER ───────────────────────────────── */
+  .site-footer { background: var(--forest); padding: 72px 24px 48px; }
+  .footer-inner { max-width: 1040px; margin: 0 auto; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 56px; }
+  .footer-brand h3 { font-family: Georgia, serif; font-size: 22px; color: var(--butter); margin-bottom: 8px; }
+  .footer-brand p { font-size: 14px; color: rgba(255,239,179,.5); line-height: 1.6; font-family: system-ui, sans-serif; max-width: 200px; }
+  .footer-col-label { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: rgba(255,239,179,.35); font-weight: 500; margin-bottom: 14px; font-family: system-ui, sans-serif; }
+  .footer-link { display: block; font-size: 14px; color: rgba(255,239,179,.6); text-decoration: none; margin-bottom: 10px; font-family: system-ui, sans-serif; transition: color 150ms; }
+  .footer-link:hover { color: var(--butter); }
+  .footer-hr { border: none; border-top: 1px solid rgba(255,239,179,.08); margin-bottom: 24px; }
+  .footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+  .footer-promise { font-family: Georgia, serif; font-size: 15px; color: rgba(255,239,179,.55); font-style: italic; }
+  .footer-copy { font-size: 12px; color: rgba(255,239,179,.3); font-family: system-ui, sans-serif; }
+
+  /* ── Spinner ──────────────────────────────── */
+  .spinner { display: inline-block; width: 17px; height: 17px; border: 2px solid rgba(1,62,55,.2); border-top-color: var(--forest); border-radius: 50%; animation: spin .65s linear infinite; }
+  .spinner-lt { border-color: rgba(255,239,179,.2); border-top-color: var(--butter); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── MOBILE ───────────────────────────────── */
+  @media (max-width: 768px) {
+    .lp section { padding: 72px 20px; }
+    .hero { grid-template-columns: 1fr; gap: 36px; min-height: auto; padding-top: 48px; }
+    .hero-visual { display: none; }
+    .hero-illus-mobile { display: block; }
+    .cards-split { grid-template-columns: 1fr; gap: 40px; }
+    .match-inner { grid-template-columns: 1fr; gap: 40px; padding: 72px 20px; }
+    .match-phone-wrap { order: -1; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+    .testi-col:nth-child(3) { display: none; }
+    .compat-row { grid-template-columns: 100px 1fr 54px; gap: 10px; }
+    .privacy-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .lp section { padding: 56px 18px; }
+    .hero { padding-top: 32px; }
+    .hero h1 { font-size: clamp(42px, 13vw, 58px); }
+    .hero-sub { font-size: 15px; }
+    .btn-mag, .btn-ghost { height: 52px; font-size: 15px; }
+    .stat-row { gap: 10px; }
+    .stat-card { flex: 1 1 130px; padding: 26px 18px; }
+    .testi-col:nth-child(2) { display: none; }
+    .testi-cols { height: 460px; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .wl-box { padding: 52px 22px; }
+    .wl-form { flex-direction: column; align-items: stretch; }
+    .wl-form input, .wl-form button { flex: none; width: 100%; }
+    .plans-grid { gap: 8px; }
+    .plan-chip { font-size: 14px; padding: 10px 16px; }
+    .compat-row { grid-template-columns: 90px 1fr 48px; gap: 8px; }
+    .compat-pts { font-size: 16px; }
+    .display-cards { height: 340px; }
+    .dc { padding: 18px 14px; }
+  }
+  @media (max-width: 360px) {
+    .stat-card { flex: 1 1 100%; }
+  }
   </style>
 </head>
+
 <body class="lp">
 
-<!-- NAVBAR -->
-<nav class="navbar">
+<!-- ─── NAV ──────────────────────────────────── -->
+<nav class="navbar" id="main-nav">
   <a href="./index.html" class="nav-logo">
-    <img src="./VOVU LOGO OFICIAL.png" alt="Vovu" width="36" height="36"
+    <img src="./VOVU LOGO OFICIAL.png" alt="Vovu" width="30" height="30"
          style="object-fit:contain;" onerror="this.style.display='none'">
     <span>Vovu</span>
   </a>
-  <a href="#waitlist" class="btn-primary btn-sm">Get early access</a>
+  <a href="#waitlist" class="btn-mag"
+     style="height:40px;font-size:14px;padding:0 18px;border-radius:9px;">
+    Get early access
+    <i data-lucide="arrow-right" style="width:13px;height:13px;"></i>
+  </a>
 </nav>
 
-<!-- ══════════════════════════════════════════════
+<!-- ════════════════════════════════════════════
      01 · HERO
-══════════════════════════════════════════════ -->
+════════════════════════════════════════════ -->
 <section class="hero">
   <div class="hero-text">
     <div class="hero-kicker">
-      <i data-lucide="map-pin" style="width:13px;height:13px;"></i>
-      Campus only · .edu verified
+      <i data-lucide="map-pin" style="width:11px;height:11px;"></i>
+      Kenyon College · Spring 2026
     </div>
     <h1>Make plans,<br>not moves.</h1>
-    <p class="hero-sub" id="hero-sub"></p>
+    <p class="hero-sub" id="hero-sub" aria-live="polite"></p>
     <div class="hero-cta-row">
-      <a href="#waitlist" class="btn-mag" id="cta-main">
-        Join the waitlist
-        <i data-lucide="arrow-right" style="width:17px;height:17px;"></i>
+      <a href="#waitlist" class="btn-mag" id="cta-mag">
+        Get early access
+        <i data-lucide="arrow-right" style="width:15px;height:15px;"></i>
       </a>
-      <a href="#how" class="btn-mag-ghost">
-        See how it works
-      </a>
+      <a href="#how" class="btn-ghost">See how it works</a>
+    </div>
+    <div class="hero-proof">
+      <div class="proof-avatars">
+        <div class="proof-av">
+          <img src="./public/PEOPLE WATCHING TENNIS.jpeg" alt="" width="28" height="28" loading="eager">
+        </div>
+        <div class="proof-av">
+          <img src="./public/VANISHED PEOPLE WALKING.jpeg" alt="" width="28" height="28" loading="eager">
+        </div>
+        <div class="proof-av">
+          <img src="./public/CAFE SOCIAL.jpeg" alt="" width="28" height="28" loading="eager">
+        </div>
+        <div class="proof-av">JK</div>
+        <div class="proof-av">MR</div>
+      </div>
+      <span>1,470 matches · Kenyon only · Spring 2026</span>
     </div>
   </div>
-  <div class="hero-visual">
-    <div class="hero-phone">
-      <img src="./public/Welcome--Streamline-Dhaka.png"
-           alt="Two students connecting on campus"
-           width="380" height="380" loading="eager"
-           onerror="this.style.display='none'">
+
+  <!-- Desktop: phone mockup -->
+  <div class="hero-visual" aria-hidden="true">
+    <img src="./public/Welcome--Streamline-Dhaka.png" alt=""
+         class="hero-illus-bg" width="180" loading="eager">
+    <div class="phone-wrap">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-topbar">
+            <span class="phone-appname">Vovu</span>
+            <span class="phone-ct">3 plans</span>
+          </div>
+          <div class="phone-feed">
+            <div class="pf-card">
+              <div class="pf-top">
+                <span class="pf-type">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
+                  Coffee
+                </span>
+                <span class="pf-pct">92%</span>
+              </div>
+              <div class="pf-title">Morning coffee, Wiggin St</div>
+              <div class="pf-meta">Tomorrow · 9am</div>
+              <div class="pf-chips"><span class="pf-chip">Early riser</span><span class="pf-chip">Chill</span></div>
+            </div>
+            <div class="pf-card">
+              <div class="pf-top">
+                <span class="pf-type">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                  Walk
+                </span>
+                <span class="pf-pct">87%</span>
+              </div>
+              <div class="pf-title">Sunset walk, middle path</div>
+              <div class="pf-meta">Tonight · 6:30pm</div>
+              <div class="pf-chips"><span class="pf-chip">Deep convo</span><span class="pf-chip">Active</span></div>
+            </div>
+            <div class="pf-card">
+              <div class="pf-top">
+                <span class="pf-type">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                  Study
+                </span>
+                <span class="pf-pct">79%</span>
+              </div>
+              <div class="pf-title">Olin library, ochem review</div>
+              <div class="pf-meta">Today · 3pm</div>
+              <div class="pf-chips"><span class="pf-chip">Focused</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Mobile: illustration instead of phone -->
+  <img src="./public/Welcome--Streamline-Dhaka.png" alt=""
+       class="hero-illus-mobile" width="200" loading="eager">
 </section>
 
-<!-- ══════════════════════════════════════════════
+<!-- ════════════════════════════════════════════
      02 · TRUST BAR
-══════════════════════════════════════════════ -->
-<section class="trust-bar">
-  <div class="trust-track" aria-hidden="true">
-    <!-- first copy -->
+════════════════════════════════════════════ -->
+<section class="trust-bar" aria-hidden="true">
+  <div class="trust-track">
     <div class="trust-items">
-      <span class="trust-item"><i data-lucide="check-circle-2"></i> 1,470 matches made</span>
-      <span class="trust-item"><i data-lucide="zap"></i> 78% apply within 24 hrs</span>
-      <span class="trust-item"><i data-lucide="star"></i> NPS +43 on Kenyon campus</span>
-      <span class="trust-item"><i data-lucide="shield-check"></i> .edu verified only</span>
-      <span class="trust-item"><i data-lucide="lock"></i> Anonymous until mutual yes</span>
-      <span class="trust-item"><i data-lucide="users"></i> Real students only</span>
-      <span class="trust-item"><i data-lucide="heart"></i> No last names ever</span>
-      <span class="trust-item"><i data-lucide="clock"></i> Plans expire after 24 hrs</span>
+      <span class="trust-item"><i data-lucide="check-circle-2"></i>1,470 matches made</span>
+      <span class="trust-item"><i data-lucide="lock"></i>Anonymous until mutual yes</span>
+      <span class="trust-item"><i data-lucide="x-circle"></i>Rejection architecturally impossible</span>
+      <span class="trust-item"><i data-lucide="shield-check"></i>.edu verified only</span>
+      <span class="trust-item"><i data-lucide="user"></i>First names only at reveal</span>
+      <span class="trust-item"><i data-lucide="map-pin"></i>Meet in person, same campus</span>
+      <span class="trust-item"><i data-lucide="zap"></i>78% match within 24 hrs</span>
+      <span class="trust-item"><i data-lucide="heart"></i>No last names. Ever.</span>
     </div>
-    <!-- duplicate for seamless loop -->
     <div class="trust-items" aria-hidden="true">
-      <span class="trust-item"><i data-lucide="check-circle-2"></i> 1,470 matches made</span>
-      <span class="trust-item"><i data-lucide="zap"></i> 78% apply within 24 hrs</span>
-      <span class="trust-item"><i data-lucide="star"></i> NPS +43 on Kenyon campus</span>
-      <span class="trust-item"><i data-lucide="shield-check"></i> .edu verified only</span>
-      <span class="trust-item"><i data-lucide="lock"></i> Anonymous until mutual yes</span>
-      <span class="trust-item"><i data-lucide="users"></i> Real students only</span>
-      <span class="trust-item"><i data-lucide="heart"></i> No last names ever</span>
-      <span class="trust-item"><i data-lucide="clock"></i> Plans expire after 24 hrs</span>
+      <span class="trust-item"><i data-lucide="check-circle-2"></i>1,470 matches made</span>
+      <span class="trust-item"><i data-lucide="lock"></i>Anonymous until mutual yes</span>
+      <span class="trust-item"><i data-lucide="x-circle"></i>Rejection architecturally impossible</span>
+      <span class="trust-item"><i data-lucide="shield-check"></i>.edu verified only</span>
+      <span class="trust-item"><i data-lucide="user"></i>First names only at reveal</span>
+      <span class="trust-item"><i data-lucide="map-pin"></i>Meet in person, same campus</span>
+      <span class="trust-item"><i data-lucide="zap"></i>78% match within 24 hrs</span>
+      <span class="trust-item"><i data-lucide="heart"></i>No last names. Ever.</span>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
+<!-- ════════════════════════════════════════════
      03 · PROBLEM
-══════════════════════════════════════════════ -->
+════════════════════════════════════════════ -->
 <section class="problem">
-  <p class="problem-headline" data-reveal>
+  <p class="problem-hl" data-reveal>
     College is packed with people you'd actually vibe with.<br>
-    But nobody wants to be the one to ask.
+    But nobody wants to be the one who asks first.
   </p>
-
-  <div class="problem-stats">
+  <div class="stat-row">
     <div class="stat-card" data-reveal data-reveal-delay="0">
-      <div class="stat-num" data-count="61">0</div>
-      <p class="stat-label">of students say they eat alone more than they want to</p>
+      <span class="stat-num" data-count="61">0</span>
+      <p class="stat-label">of students eat alone more than they want to</p>
     </div>
     <div class="stat-card" data-reveal data-reveal-delay="100">
-      <div class="stat-num" data-count="40">0</div>
+      <span class="stat-num" data-count="40">0</span>
       <p class="stat-label">feel disconnected from their campus community</p>
     </div>
     <div class="stat-card" data-reveal data-reveal-delay="200">
-      <div class="stat-num" data-count="73">0</div>
-      <p class="stat-label">wish it was easier to make spontaneous plans with people</p>
+      <span class="stat-num" data-count="73">0</span>
+      <p class="stat-label">wish it was easier to make spontaneous plans</p>
     </div>
   </div>
+  <p class="problem-closer" data-reveal>
+    The barrier isn't desire.<br>It's the fear of asking.
+  </p>
 </section>
 
-<!-- ══════════════════════════════════════════════
+<!-- ════════════════════════════════════════════
      04 · HOW IT WORKS
-══════════════════════════════════════════════ -->
-<section class="how-wrap" id="how">
+════════════════════════════════════════════ -->
+<section class="how-section" id="how">
   <h2 data-reveal>How it works</h2>
+  <p class="how-sub" data-reveal>Seven steps. Zero awkward asks.</p>
 
-  <div class="step" data-reveal data-reveal-delay="0">
-    <div class="step-icon"><i data-lucide="pen-line"></i></div>
-    <div>
-      <span class="step-num">Step 1</span>
-      <h3>Post a plan</h3>
-      <p>Coffee tomorrow afternoon. Gym after class. Whatever you actually want to do.</p>
+  <div class="timeline-wrap">
+    <div class="timeline-line">
+      <div class="timeline-fill" id="timeline-fill"></div>
     </div>
-  </div>
 
-  <div class="step" data-reveal data-reveal-delay="60">
-    <div class="step-icon"><i data-lucide="eye-off"></i></div>
-    <div>
-      <span class="step-num">Step 2</span>
-      <h3>Stay vague in public</h3>
-      <p>Only the general area and time window are visible. The exact spot stays private.</p>
+    <div class="step" data-reveal data-reveal-delay="0">
+      <div class="step-icon"><i data-lucide="pen-line"></i></div>
+      <div class="step-body">
+        <span class="step-num">Step 1</span>
+        <h3>Post a plan</h3>
+        <p>Coffee. Gym. Sunset walk. Whatever you actually want to do — just post it.</p>
+      </div>
     </div>
-  </div>
 
-  <div class="step" data-reveal data-reveal-delay="120">
-    <div class="step-icon"><i data-lucide="user-search"></i></div>
-    <div>
-      <span class="step-num">Step 3</span>
-      <h3>People apply anonymously</h3>
-      <p>You see their vibe — activities, energy, compatibility score. No name, no photo.</p>
+    <div class="step" data-reveal data-reveal-delay="60">
+      <div class="step-icon"><i data-lucide="eye-off"></i></div>
+      <div class="step-body">
+        <span class="step-num">Step 2</span>
+        <h3>Your details stay vague</h3>
+        <p>Only the general area and time window show publicly. Exact location stays private until both say yes.</p>
+      </div>
     </div>
-  </div>
 
-  <div class="step" data-reveal data-reveal-delay="180">
-    <div class="step-icon"><i data-lucide="zap"></i></div>
-    <div>
-      <span class="step-num">Step 4</span>
-      <h3>Check the match score</h3>
-      <p>Four categories scored before you ever say a word to each other.</p>
+    <div class="step" data-reveal data-reveal-delay="120">
+      <div class="step-icon"><i data-lucide="user-search"></i></div>
+      <div class="step-body">
+        <span class="step-num">Step 3</span>
+        <h3>People apply anonymously</h3>
+        <p>You see their vibe — activities, energy, compatibility score. No name. No photo. No profile.</p>
+      </div>
     </div>
-  </div>
 
-  <div class="step" data-reveal data-reveal-delay="240">
-    <div class="step-icon"><i data-lucide="hand"></i></div>
-    <div>
-      <span class="step-num">Step 5</span>
-      <h3>You pick someone</h3>
-      <p>Send a yes to whoever feels right. No pressure, no awkward DM.</p>
+    <div class="step" data-reveal data-reveal-delay="180">
+      <div class="step-icon"><i data-lucide="zap"></i></div>
+      <div class="step-body">
+        <span class="step-num">Step 4</span>
+        <h3>Check the match score</h3>
+        <p>Four signals scored before you ever interact. Activities, timing, personality, intent.</p>
+      </div>
     </div>
-  </div>
 
-  <div class="step" data-reveal data-reveal-delay="300">
-    <div class="step-icon"><i data-lucide="check-check"></i></div>
-    <div>
-      <span class="step-num">Step 6</span>
-      <h3>They confirm</h3>
-      <p>Both sides have to say yes. Nothing happens until you both mean it.</p>
+    <div class="step" data-reveal data-reveal-delay="240">
+      <div class="step-icon"><i data-lucide="hand"></i></div>
+      <div class="step-body">
+        <span class="step-num">Step 5</span>
+        <h3>You pick someone</h3>
+        <p>Send a yes to whoever feels right. No message needed. No awkward opener required.</p>
+      </div>
     </div>
-  </div>
 
-  <div class="step step-reveal" data-reveal data-reveal-delay="360" id="reveal-step">
-    <div class="step-icon"><i data-lucide="unlock"></i></div>
-    <div>
-      <span class="step-num">Step 7</span>
-      <h3>The reveal</h3>
-      <p>First names, campus emails, the exact spot and time. Last names — never.</p>
-      <div class="reveal-names" id="reveal-names" aria-hidden="true">
-        <span>Maya</span>&ensp;meets&ensp;<span>Ethan</span>
+    <div class="step" data-reveal data-reveal-delay="300">
+      <div class="step-icon"><i data-lucide="check-check"></i></div>
+      <div class="step-body">
+        <span class="step-num">Step 6</span>
+        <h3>They confirm</h3>
+        <p>Both sides have to say yes. Nothing is revealed until you both mean it.</p>
+      </div>
+    </div>
+
+    <div class="step step-final" data-reveal data-reveal-delay="360" id="reveal-step">
+      <div class="step-icon"><i data-lucide="unlock"></i></div>
+      <div class="step-body">
+        <span class="step-num">Step 7</span>
+        <h3>Names reveal</h3>
+        <p>First names, campus email, exact spot and time. Last names — never.</p>
+        <div class="reveal-demo" aria-hidden="true">
+          <span class="rnd" id="rnd1">Maya</span>&ensp;meets&ensp;<span class="rnd" id="rnd2">Ethan</span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
+<!-- ════════════════════════════════════════════
      05 · STACKED PLAN CARDS
-══════════════════════════════════════════════ -->
-<section class="cards-section" data-reveal>
-  <h2>Real plans, real students</h2>
-  <p>Posted right now on campus.</p>
-
-  <div class="display-cards" id="display-cards">
-
-    <div class="display-card" data-tilt>
-      <div class="dc-type">
-        <i data-lucide="book-open"></i> Study
+════════════════════════════════════════════ -->
+<section>
+  <div class="cards-split">
+    <div class="cards-copy" data-reveal>
+      <h2>This is the feed.<br>Not profiles. Plans.</h2>
+      <p>Every card shows something someone actually wants to do right now. You see their vibe — not their face.</p>
+      <div class="cards-fact">
+        <i data-lucide="percent"></i>
+        <div class="fact-body">
+          <strong>Compatibility score first</strong>
+          Four signals computed before any names appear. You know you'd click before you meet.
+        </div>
       </div>
-      <h3>Study session before midterms</h3>
-      <p>Looking for a study partner for organic chem. Gookins or Olin, you pick.</p>
-      <div class="dc-meta">
-        <span><i data-lucide="clock"></i> This afternoon</span>
-        <span><i data-lucide="map-pin"></i> Library area</span>
+      <div class="cards-fact">
+        <i data-lucide="ghost"></i>
+        <div class="fact-body">
+          <strong>Anonymous until yes</strong>
+          You apply without revealing who you are. The poster picks from vibes, not faces.
+        </div>
       </div>
-    </div>
-
-    <div class="display-card" data-tilt>
-      <div class="dc-type">
-        <i data-lucide="coffee"></i> Coffee
-      </div>
-      <h3>Morning coffee before 10am class</h3>
-      <p>Just want to grab a latte and talk about literally anything. Wiggin St. area.</p>
-      <div class="dc-meta">
-        <span><i data-lucide="clock"></i> Tomorrow morning</span>
-        <span><i data-lucide="map-pin"></i> Gambier, OH</span>
+      <div class="cards-fact">
+        <i data-lucide="clock"></i>
+        <div class="fact-body">
+          <strong>Plans expire in 24 hours</strong>
+          No stale content. Everything on the feed is happening soon.
+        </div>
       </div>
     </div>
 
-    <div class="display-card" data-tilt>
-      <div class="dc-type">
-        <i data-lucide="footprints"></i> Walk
+    <div class="display-cards" data-reveal data-reveal-delay="80">
+      <div class="dc">
+        <div class="dc-header">
+          <span class="dc-type"><i data-lucide="book-open"></i> Study</span>
+          <span class="dc-pct">84%</span>
+        </div>
+        <h3>Ochem midterm prep</h3>
+        <p class="dc-note">Looking for someone to quiz each other. Olin or Gookins, your call.</p>
+        <div class="dc-chips">
+          <span class="dc-chip">Focused</span>
+          <span class="dc-chip">Sci major</span>
+          <span class="dc-chip">Morning person</span>
+        </div>
+        <div class="dc-meta">
+          <span><i data-lucide="clock"></i> This afternoon</span>
+          <span><i data-lucide="map-pin"></i> Library area</span>
+        </div>
       </div>
-      <h3>Sunset walk on the middle path</h3>
-      <p>The weather is too good to be inside. Looking for good company and conversation.</p>
-      <div class="dc-meta">
-        <span><i data-lucide="clock"></i> Tonight ~6:30pm</span>
-        <span><i data-lucide="map-pin"></i> Kenyon campus</span>
+      <div class="dc">
+        <div class="dc-header">
+          <span class="dc-type"><i data-lucide="coffee"></i> Coffee</span>
+          <span class="dc-pct">91%</span>
+        </div>
+        <h3>Morning coffee, good conversation</h3>
+        <p class="dc-note">Want a latte and talk about anything. Wiggin St.</p>
+        <div class="dc-chips">
+          <span class="dc-chip">Early riser</span>
+          <span class="dc-chip">Chill</span>
+          <span class="dc-chip">Talker</span>
+        </div>
+        <div class="dc-meta">
+          <span><i data-lucide="clock"></i> Tomorrow 8:30am</span>
+          <span><i data-lucide="map-pin"></i> Gambier, OH</span>
+        </div>
+      </div>
+      <div class="dc">
+        <div class="dc-header">
+          <span class="dc-type"><i data-lucide="footprints"></i> Walk</span>
+          <span class="dc-pct">88%</span>
+        </div>
+        <h3>Sunset walk on the middle path</h3>
+        <p class="dc-note">Weather is too good. Looking for company and zero agenda.</p>
+        <div class="dc-chips">
+          <span class="dc-chip">Outdoorsy</span>
+          <span class="dc-chip">Deep convo</span>
+          <span class="dc-chip">Spontaneous</span>
+        </div>
+        <div class="dc-meta">
+          <span><i data-lucide="clock"></i> Tonight ~6:30pm</span>
+          <span><i data-lucide="map-pin"></i> Kenyon campus</span>
+        </div>
       </div>
     </div>
-
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     06 · MATCH REVEAL DEMO
-══════════════════════════════════════════════ -->
-<section class="match-demo" data-reveal>
-  <h2>The moment everything clicks</h2>
-  <p>When both of you say yes, the reveal happens automatically.</p>
+<!-- ════════════════════════════════════════════
+     06 · MATCH REVEAL (forest bg)
+════════════════════════════════════════════ -->
+<div class="match-outer">
+  <div class="match-inner">
+    <div class="match-copy" data-reveal>
+      <h2>The moment everything clicks.</h2>
+      <p>When you both say yes, the reveal is instant. First names. Campus email. The exact time and place.</p>
+      <div class="match-detail">
+        <i data-lucide="sparkles"></i>
+        <span>Names blur into focus — only when both sides have chosen each other.</span>
+      </div>
+      <div class="match-detail">
+        <i data-lucide="map-pin"></i>
+        <span>Exact location appears only after the match. Never before.</span>
+      </div>
+      <div class="match-detail">
+        <i data-lucide="mail"></i>
+        <span>Campus email only. No phone numbers. No last names. No follow requests.</span>
+      </div>
+      <div class="match-detail">
+        <i data-lucide="shield-check"></i>
+        <span>If you don't both choose each other, nobody finds out you were interested.</span>
+      </div>
+    </div>
 
-  <div class="match-card" id="match-card">
-    <div class="match-label">It's a match</div>
-    <div class="match-names">
-      <span class="match-name" id="mn1">Maya</span>
-      <span class="match-and">&amp;</span>
-      <span class="match-name" id="mn2">Ethan</span>
+    <div class="match-phone-wrap" data-reveal data-reveal-delay="100" aria-hidden="true">
+      <div class="match-phone-frame">
+        <div class="match-screen">
+          <div class="mp-label">It's a match</div>
+          <div class="mp-circles">
+            <div class="mp-av lft">M</div>
+            <div class="mp-av rgt">E</div>
+          </div>
+          <div class="mp-names">
+            <span class="mp-name">Maya</span>
+            <span class="mp-and">&amp;</span>
+            <span class="mp-name">Ethan</span>
+          </div>
+          <div class="mp-rows">
+            <div class="mp-row"><i data-lucide="mail"></i>maya@kenyon.edu</div>
+            <div class="mp-row"><i data-lucide="map-pin"></i>Wiggin St. Coffee</div>
+            <div class="mp-row"><i data-lucide="clock"></i>Tomorrow, 9am</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="match-details" id="match-details">
-      <span><i data-lucide="mail"></i> maya@kenyon.edu</span>
-      <span><i data-lucide="map-pin"></i> Wiggin St. Coffee</span>
-      <span><i data-lucide="clock"></i> Tomorrow 9am</span>
-    </div>
-    <button class="match-replay" id="match-replay">Replay reveal</button>
   </div>
-</section>
+</div>
 
-<!-- ══════════════════════════════════════════════
+<!-- ════════════════════════════════════════════
      07 · COMPATIBILITY SCORE
-══════════════════════════════════════════════ -->
-<section class="compat" id="compat-section" data-reveal>
-  <h2>One score, four signals</h2>
-  <p class="compat-sub">Computed before names are ever shown.</p>
+════════════════════════════════════════════ -->
+<section class="compat" id="compat-section">
+  <h2 data-reveal>One score, four signals</h2>
+  <p class="compat-sub" data-reveal>Computed before names are ever shown.</p>
 
-  <div class="bar-row">
-    <span class="bar-label">Activities</span>
-    <div class="bar-track"><div class="bar-fill" data-w="85"></div></div>
-    <span class="bar-pct">40%</span>
+  <div class="compat-row" data-reveal data-reveal-delay="0">
+    <span class="compat-lbl">Activities</span>
+    <div class="compat-track"><div class="compat-fill" data-w="80"></div></div>
+    <span class="compat-pts">40 pts</span>
   </div>
-  <div class="bar-row">
-    <span class="bar-label">Social energy</span>
-    <div class="bar-track"><div class="bar-fill" data-w="70"></div></div>
-    <span class="bar-pct">25%</span>
+  <div class="compat-row" data-reveal data-reveal-delay="80">
+    <span class="compat-lbl">Personality</span>
+    <div class="compat-track"><div class="compat-fill" data-w="62.5"></div></div>
+    <span class="compat-pts">25 pts</span>
   </div>
-  <div class="bar-row">
-    <span class="bar-label">Timing</span>
-    <div class="bar-track"><div class="bar-fill" data-w="60"></div></div>
-    <span class="bar-pct">20%</span>
+  <div class="compat-row" data-reveal data-reveal-delay="160">
+    <span class="compat-lbl">Timing</span>
+    <div class="compat-track"><div class="compat-fill" data-w="50"></div></div>
+    <span class="compat-pts">20 pts</span>
   </div>
-  <div class="bar-row">
-    <span class="bar-label">Personality</span>
-    <div class="bar-track"><div class="bar-fill" data-w="50"></div></div>
-    <span class="bar-pct">15%</span>
+  <div class="compat-row" data-reveal data-reveal-delay="240">
+    <span class="compat-lbl">Intent</span>
+    <div class="compat-track"><div class="compat-fill" data-w="37.5"></div></div>
+    <span class="compat-pts">15 pts</span>
   </div>
+
+  <p class="compat-total" data-reveal>
+    <strong>100 pts</strong>
+    Scored before the first message. Shown before the first name.
+  </p>
 </section>
 
-<!-- ══════════════════════════════════════════════
+<!-- ════════════════════════════════════════════
      08 · TESTIMONIALS
-══════════════════════════════════════════════ -->
+════════════════════════════════════════════ -->
 <section class="testimonials">
   <h2 data-reveal>What students say</h2>
+  <div class="testi-cols">
 
-  <div class="testi-cols" id="testi-cols">
-
-    <!-- Column 1 -->
+    <!-- Col 1 — 32s -->
     <div class="testi-col">
-      <!-- First set -->
       <div class="testi-card">
-        <p class="testi-text">"I posted a gym plan thinking no one would apply. Three people did. I now have a workout buddy I see every Tuesday."</p>
+        <p class="testi-q">"I posted a gym plan thinking no one would apply. Three people did. I now have a workout buddy I see every Tuesday."</p>
         <div class="testi-author">
-          <div class="testi-avatar">JR</div>
+          <div class="testi-av"><img src="./public/PEOPLE WATCHING TENNIS.jpeg" alt="" width="30" height="30" loading="lazy"></div>
           <div><div class="testi-name">Jordan R.</div><div class="testi-school">Kenyon '26</div></div>
         </div>
       </div>
       <div class="testi-card">
-        <p class="testi-text">"Vovu removed the thing I hated most about meeting new people — the awkward opener. We just had a plan and showed up."</p>
+        <p class="testi-q">"Vovu removed the thing I hated most about meeting people — the awkward opener. We just had a plan and showed up."</p>
         <div class="testi-author">
-          <div class="testi-avatar">AL</div>
+          <div class="testi-av">AL</div>
           <div><div class="testi-name">Ava L.</div><div class="testi-school">Kenyon '27</div></div>
         </div>
       </div>
       <div class="testi-card">
-        <p class="testi-text">"The compatibility score is weirdly accurate. It matched me with someone I never would have talked to — we're now close friends."</p>
+        <p class="testi-q">"The compatibility score is weirdly accurate. Matched me with someone I never would've approached. We're close friends now."</p>
         <div class="testi-author">
-          <div class="testi-avatar">MK</div>
+          <div class="testi-av">MK</div>
           <div><div class="testi-name">Marcus K.</div><div class="testi-school">Kenyon '25</div></div>
         </div>
       </div>
       <div class="testi-card">
-        <p class="testi-text">"It felt safer because nobody knew who I was until we both said yes. I wasn't putting myself out there blindly."</p>
+        <p class="testi-q">"Nobody knew who I was until we both said yes. I wasn't putting myself out there blindly."</p>
         <div class="testi-author">
-          <div class="testi-avatar">SP</div>
+          <div class="testi-av">SP</div>
           <div><div class="testi-name">Sofia P.</div><div class="testi-school">Kenyon '26</div></div>
         </div>
       </div>
-      <!-- Duplicate for loop -->
-      <div class="testi-card">
-        <p class="testi-text">"I posted a gym plan thinking no one would apply. Three people did. I now have a workout buddy I see every Tuesday."</p>
+      <!-- duplicate for seamless loop -->
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"I posted a gym plan thinking no one would apply. Three people did. I now have a workout buddy I see every Tuesday."</p>
         <div class="testi-author">
-          <div class="testi-avatar">JR</div>
+          <div class="testi-av"><img src="./public/PEOPLE WATCHING TENNIS.jpeg" alt="" width="30" height="30" loading="lazy"></div>
           <div><div class="testi-name">Jordan R.</div><div class="testi-school">Kenyon '26</div></div>
         </div>
       </div>
-      <div class="testi-card">
-        <p class="testi-text">"Vovu removed the thing I hated most about meeting new people — the awkward opener. We just had a plan and showed up."</p>
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"Vovu removed the thing I hated most about meeting people — the awkward opener. We just had a plan and showed up."</p>
         <div class="testi-author">
-          <div class="testi-avatar">AL</div>
+          <div class="testi-av">AL</div>
           <div><div class="testi-name">Ava L.</div><div class="testi-school">Kenyon '27</div></div>
         </div>
       </div>
-      <div class="testi-card">
-        <p class="testi-text">"The compatibility score is weirdly accurate. It matched me with someone I never would have talked to — we're now close friends."</p>
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"The compatibility score is weirdly accurate. Matched me with someone I never would've approached. We're close friends now."</p>
         <div class="testi-author">
-          <div class="testi-avatar">MK</div>
+          <div class="testi-av">MK</div>
           <div><div class="testi-name">Marcus K.</div><div class="testi-school">Kenyon '25</div></div>
         </div>
       </div>
-      <div class="testi-card">
-        <p class="testi-text">"It felt safer because nobody knew who I was until we both said yes. I wasn't putting myself out there blindly."</p>
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"Nobody knew who I was until we both said yes. I wasn't putting myself out there blindly."</p>
         <div class="testi-author">
-          <div class="testi-avatar">SP</div>
+          <div class="testi-av">SP</div>
           <div><div class="testi-name">Sofia P.</div><div class="testi-school">Kenyon '26</div></div>
         </div>
       </div>
     </div>
 
-    <!-- Column 2 -->
+    <!-- Col 2 — 24s reverse -->
     <div class="testi-col">
       <div class="testi-card">
-        <p class="testi-text">"First week of freshman year I posted a dining hall plan and matched with three people. It genuinely changed how I felt about being here."</p>
+        <p class="testi-q">"First week of freshman year I posted a dining hall plan and matched with three people. Changed how I felt about being here."</p>
         <div class="testi-author">
-          <div class="testi-avatar">NC</div>
+          <div class="testi-av"><img src="./public/VANISHED PEOPLE WALKING.jpeg" alt="" width="30" height="30" loading="lazy"></div>
           <div><div class="testi-name">Nadia C.</div><div class="testi-school">Kenyon '28</div></div>
         </div>
       </div>
       <div class="testi-card">
-        <p class="testi-text">"I'm an introvert and even I used it. The structure made it feel lower stakes than just approaching someone out of nowhere."</p>
+        <p class="testi-q">"I'm an introvert and even I used it. The structure made it feel lower stakes than just approaching someone."</p>
         <div class="testi-author">
-          <div class="testi-avatar">BW</div>
+          <div class="testi-av">BW</div>
           <div><div class="testi-name">Ben W.</div><div class="testi-school">Kenyon '27</div></div>
         </div>
       </div>
       <div class="testi-card">
-        <p class="testi-text">"The reveal moment when you both match is genuinely exciting. Like the best part of a first message but with actual stakes."</p>
+        <p class="testi-q">"The reveal moment when you both match is genuinely exciting. Like the best part of a DM but with actual stakes."</p>
         <div class="testi-author">
-          <div class="testi-avatar">LT</div>
+          <div class="testi-av">LT</div>
           <div><div class="testi-name">Lily T.</div><div class="testi-school">Kenyon '26</div></div>
         </div>
       </div>
       <div class="testi-card">
-        <p class="testi-text">"I matched for a study session and ended up staying at the library for four hours. Best accidental friendship I have."</p>
+        <p class="testi-q">"Matched for a study session and stayed four hours. Best accidental friendship I've made at Kenyon."</p>
         <div class="testi-author">
-          <div class="testi-avatar">DR</div>
+          <div class="testi-av">DR</div>
           <div><div class="testi-name">Dev R.</div><div class="testi-school">Kenyon '25</div></div>
         </div>
       </div>
-      <!-- Duplicate -->
-      <div class="testi-card">
-        <p class="testi-text">"First week of freshman year I posted a dining hall plan and matched with three people. It genuinely changed how I felt about being here."</p>
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"First week of freshman year I posted a dining hall plan and matched with three people. Changed how I felt about being here."</p>
         <div class="testi-author">
-          <div class="testi-avatar">NC</div>
+          <div class="testi-av"><img src="./public/VANISHED PEOPLE WALKING.jpeg" alt="" width="30" height="30" loading="lazy"></div>
           <div><div class="testi-name">Nadia C.</div><div class="testi-school">Kenyon '28</div></div>
         </div>
       </div>
-      <div class="testi-card">
-        <p class="testi-text">"I'm an introvert and even I used it. The structure made it feel lower stakes than just approaching someone out of nowhere."</p>
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"I'm an introvert and even I used it. The structure made it feel lower stakes than just approaching someone."</p>
         <div class="testi-author">
-          <div class="testi-avatar">BW</div>
+          <div class="testi-av">BW</div>
           <div><div class="testi-name">Ben W.</div><div class="testi-school">Kenyon '27</div></div>
         </div>
       </div>
-      <div class="testi-card">
-        <p class="testi-text">"The reveal moment when you both match is genuinely exciting. Like the best part of a first message but with actual stakes."</p>
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"The reveal moment when you both match is genuinely exciting. Like the best part of a DM but with actual stakes."</p>
         <div class="testi-author">
-          <div class="testi-avatar">LT</div>
+          <div class="testi-av">LT</div>
           <div><div class="testi-name">Lily T.</div><div class="testi-school">Kenyon '26</div></div>
         </div>
       </div>
-      <div class="testi-card">
-        <p class="testi-text">"I matched for a study session and ended up staying at the library for four hours. Best accidental friendship I have."</p>
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"Matched for a study session and stayed four hours. Best accidental friendship I've made at Kenyon."</p>
         <div class="testi-author">
-          <div class="testi-avatar">DR</div>
+          <div class="testi-av">DR</div>
           <div><div class="testi-name">Dev R.</div><div class="testi-school">Kenyon '25</div></div>
         </div>
       </div>
     </div>
 
-    <!-- Column 3 -->
+    <!-- Col 3 — 36s (hidden on small mobile) -->
     <div class="testi-col">
       <div class="testi-card">
-        <p class="testi-text">"No ghosting, no awkward conversation starters. You just show up to something you were already going to do. Brilliant."</p>
+        <p class="testi-q">"No ghosting, no awkward starters. You just show up to something you were already planning to do. Brilliant."</p>
         <div class="testi-author">
-          <div class="testi-avatar">CM</div>
+          <div class="testi-av"><img src="./public/CAFE SOCIAL.jpeg" alt="" width="30" height="30" loading="lazy"></div>
           <div><div class="testi-name">Chris M.</div><div class="testi-school">Kenyon '26</div></div>
         </div>
       </div>
       <div class="testi-card">
-        <p class="testi-text">"As a junior I thought I'd missed the window to meet new people. Vovu proved me wrong in literally one week."</p>
+        <p class="testi-q">"As a junior I thought I'd missed the window to meet people. Vovu proved me wrong in one week."</p>
         <div class="testi-author">
-          <div class="testi-avatar">IA</div>
+          <div class="testi-av">IA</div>
           <div><div class="testi-name">Ines A.</div><div class="testi-school">Kenyon '25</div></div>
         </div>
       </div>
       <div class="testi-card">
-        <p class="testi-text">"The .edu requirement is what sold me. It's only real students. No random people. No creeps. Just campus."</p>
+        <p class="testi-q">"The .edu requirement sold me. Real students only. No random people. No creeps. Just campus."</p>
         <div class="testi-author">
-          <div class="testi-avatar">TH</div>
+          <div class="testi-av">TH</div>
           <div><div class="testi-name">Tyler H.</div><div class="testi-school">Kenyon '27</div></div>
         </div>
       </div>
       <div class="testi-card">
-        <p class="testi-text">"I had tried every social app. This is the first one that actually led to a real in-person thing the same day."</p>
+        <p class="testi-q">"I had tried every social app. This is the first one that actually led to a real in-person thing the same day."</p>
         <div class="testi-author">
-          <div class="testi-avatar">ZF</div>
+          <div class="testi-av">ZF</div>
           <div><div class="testi-name">Zoe F.</div><div class="testi-school">Kenyon '28</div></div>
         </div>
       </div>
-      <!-- Duplicate -->
-      <div class="testi-card">
-        <p class="testi-text">"No ghosting, no awkward conversation starters. You just show up to something you were already going to do. Brilliant."</p>
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"No ghosting, no awkward starters. You just show up to something you were already planning to do. Brilliant."</p>
         <div class="testi-author">
-          <div class="testi-avatar">CM</div>
+          <div class="testi-av"><img src="./public/CAFE SOCIAL.jpeg" alt="" width="30" height="30" loading="lazy"></div>
           <div><div class="testi-name">Chris M.</div><div class="testi-school">Kenyon '26</div></div>
         </div>
       </div>
-      <div class="testi-card">
-        <p class="testi-text">"As a junior I thought I'd missed the window to meet new people. Vovu proved me wrong in literally one week."</p>
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"As a junior I thought I'd missed the window to meet people. Vovu proved me wrong in one week."</p>
         <div class="testi-author">
-          <div class="testi-avatar">IA</div>
+          <div class="testi-av">IA</div>
           <div><div class="testi-name">Ines A.</div><div class="testi-school">Kenyon '25</div></div>
         </div>
       </div>
-      <div class="testi-card">
-        <p class="testi-text">"The .edu requirement is what sold me. It's only real students. No random people. No creeps. Just campus."</p>
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"The .edu requirement sold me. Real students only. No random people. No creeps. Just campus."</p>
         <div class="testi-author">
-          <div class="testi-avatar">TH</div>
+          <div class="testi-av">TH</div>
           <div><div class="testi-name">Tyler H.</div><div class="testi-school">Kenyon '27</div></div>
         </div>
       </div>
-      <div class="testi-card">
-        <p class="testi-text">"I had tried every social app. This is the first one that actually led to a real in-person thing the same day."</p>
+      <div class="testi-card" aria-hidden="true">
+        <p class="testi-q">"I had tried every social app. This is the first one that actually led to a real in-person thing the same day."</p>
         <div class="testi-author">
-          <div class="testi-avatar">ZF</div>
+          <div class="testi-av">ZF</div>
           <div><div class="testi-name">Zoe F.</div><div class="testi-school">Kenyon '28</div></div>
         </div>
       </div>
@@ -1209,86 +1132,93 @@
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     09 · PRIVACY
-══════════════════════════════════════════════ -->
-<section class="privacy">
-  <h2 data-reveal>Privacy by design</h2>
-  <div class="privacy-grid">
-    <div class="privacy-card" data-reveal data-reveal-delay="0">
-      <i data-lucide="venetian-mask"></i>
-      <h3>Anonymous until yes</h3>
-      <p>Nobody sees who you are until you both choose each other. The system never reveals one-sided interest.</p>
-    </div>
-    <div class="privacy-card" data-reveal data-reveal-delay="80">
-      <i data-lucide="user-x"></i>
-      <h3>No last names, ever</h3>
-      <p>First name and campus email. That's the full extent of what Vovu ever reveals to anyone.</p>
-    </div>
-    <div class="privacy-card" data-reveal data-reveal-delay="160">
-      <i data-lucide="graduation-cap"></i>
-      <h3>.edu verified only</h3>
-      <p>Real students at your school only. Verified through your campus email — no exceptions.</p>
+<!-- ════════════════════════════════════════════
+     09 · PRIVACY (forest bg)
+════════════════════════════════════════════ -->
+<div class="privacy-outer">
+  <div class="privacy-inner">
+    <h2 data-reveal>Privacy by design</h2>
+    <p class="privacy-sub" data-reveal>We built the app so rejection is structurally impossible.</p>
+    <div class="privacy-grid">
+      <div class="priv-card" data-reveal data-reveal-delay="0" data-tilt>
+        <i data-lucide="venetian-mask"></i>
+        <h3>Anonymous until yes</h3>
+        <p>Nobody sees who you are until you both choose each other. One-sided interest is never revealed.</p>
+      </div>
+      <div class="priv-card" data-reveal data-reveal-delay="100" data-tilt>
+        <i data-lucide="user-x"></i>
+        <h3>No last names. Ever.</h3>
+        <p>First name and campus email. That is the full extent of what Vovu ever reveals to anyone.</p>
+      </div>
+      <div class="priv-card" data-reveal data-reveal-delay="200" data-tilt>
+        <i data-lucide="graduation-cap"></i>
+        <h3>.edu verified only</h3>
+        <p>Verified through your campus email. Real students at your school only. No exceptions.</p>
+      </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ══════════════════════════════════════════════
+<!-- ════════════════════════════════════════════
      10 · PLAN TYPES
-══════════════════════════════════════════════ -->
-<section class="plans" data-reveal>
+════════════════════════════════════════════ -->
+<section class="plans-sec" data-reveal>
   <h2>Whatever the plan is</h2>
+  <p class="plans-sub">Nine ways to make it happen.</p>
   <div class="plans-grid">
-    <span class="plan-chip"><i data-lucide="coffee"></i> Coffee</span>
-    <span class="plan-chip"><i data-lucide="utensils"></i> Dining hall</span>
-    <span class="plan-chip"><i data-lucide="dumbbell"></i> Gym</span>
-    <span class="plan-chip"><i data-lucide="book-open"></i> Study session</span>
-    <span class="plan-chip"><i data-lucide="footprints"></i> Walk</span>
-    <span class="plan-chip"><i data-lucide="film"></i> Movie night</span>
-    <span class="plan-chip"><i data-lucide="trophy"></i> Pickup sports</span>
-    <span class="plan-chip"><i data-lucide="music"></i> Concert</span>
-    <span class="plan-chip"><i data-lucide="map-pin"></i> Off-campus</span>
-    <span class="plan-chip"><i data-lucide="sunrise"></i> Morning run</span>
-    <span class="plan-chip"><i data-lucide="palette"></i> Art night</span>
-    <span class="plan-chip"><i data-lucide="plus"></i> Anything</span>
+    <span class="plan-chip" tabindex="0" role="button"><i data-lucide="coffee"></i> Coffee</span>
+    <span class="plan-chip" tabindex="0" role="button"><i data-lucide="utensils"></i> Dining hall</span>
+    <span class="plan-chip" tabindex="0" role="button"><i data-lucide="dumbbell"></i> Gym</span>
+    <span class="plan-chip" tabindex="0" role="button"><i data-lucide="book-open"></i> Study session</span>
+    <span class="plan-chip" tabindex="0" role="button"><i data-lucide="footprints"></i> Walk</span>
+    <span class="plan-chip" tabindex="0" role="button"><i data-lucide="film"></i> Movie night</span>
+    <span class="plan-chip" tabindex="0" role="button"><i data-lucide="trophy"></i> Pickup sports</span>
+    <span class="plan-chip" tabindex="0" role="button"><i data-lucide="music"></i> Concert</span>
+    <span class="plan-chip" tabindex="0" role="button"><i data-lucide="map-pin"></i> Off-campus</span>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
+<!-- ════════════════════════════════════════════
      11 · WAITLIST CTA
-══════════════════════════════════════════════ -->
-<section class="waitlist-section" id="waitlist" data-reveal>
-  <h2>Your campus is next.</h2>
-  <p>We open campus by campus.<br>Your .edu email holds your spot.</p>
+════════════════════════════════════════════ -->
+<div class="wl-outer" id="waitlist">
+  <div class="wl-box" data-reveal>
+    <h2>Your campus is next.</h2>
+    <p>We open campus by campus.<br>Your .edu email holds your spot.</p>
 
-  <div id="wl-form-wrap">
-    <form class="wl-form" id="waitlist-form" novalidate>
-      <input type="email" id="waitlist-email" required
-             placeholder="you@university.edu" autocomplete="email"
-             inputmode="email">
-      <button type="submit" id="waitlist-btn">
-        <span id="btn-label">Join waitlist</span>
-        <i data-lucide="arrow-right" id="btn-icon" style="width:16px;height:16px;"></i>
-      </button>
-    </form>
-    <p class="wl-msg" id="waitlist-msg"></p>
+    <div id="wl-form-wrap">
+      <form class="wl-form" id="waitlist-form" novalidate>
+        <input type="email" id="waitlist-email" required
+               placeholder="you@kenyon.edu"
+               autocomplete="email" inputmode="email">
+        <button type="submit" id="wl-btn">
+          <span id="wl-btn-label">Get early access</span>
+          <i data-lucide="arrow-right" id="wl-btn-icon" style="width:14px;height:14px;"></i>
+        </button>
+      </form>
+      <p class="wl-msg" id="wl-msg" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="wl-success" id="wl-success">
+      <img src="./public/Sharing-1--Streamline-Dhaka.png"
+           width="110" height="110" loading="lazy"
+           style="object-fit:contain;" alt="">
+      <p class="wl-success-hl">You're in.</p>
+      <p>We'll email when Vovu opens at your campus.</p>
+    </div>
   </div>
+</div>
 
-  <div class="wl-success" id="waitlist-success">
-    <img src="./public/Sharing-1--Streamline-Dhaka.png"
-         width="140" height="140" loading="lazy"
-         style="object-fit:contain;" onerror="this.style.display='none'">
-    <p class="wl-success-headline">You're in.</p>
-    <p class="wl-sub">We'll email you when Vovu reaches your campus.</p>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════
-     12 · FOOTER
-══════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════
+     12 · FOOTER (forest bg)
+════════════════════════════════════════════ -->
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Vovu</h3>
+        <p>Campus social built for Kenyon College. Making it easier to show up for the people around you.</p>
+      </div>
       <div>
         <div class="footer-col-label">Company</div>
         <a href="./nosotros.html" class="footer-link">About</a>
@@ -1305,238 +1235,261 @@
         <div class="footer-col-label">Support</div>
         <a href="./ayuda.html" class="footer-link">Help</a>
         <a href="mailto:hello@vovu.co" class="footer-link">Contact</a>
-        <a href="./vovu-kenyon-deck.html" class="footer-link">Partnership deck</a>
+        <a href="#waitlist" class="footer-link">Get early access</a>
       </div>
     </div>
+    <hr class="footer-hr">
     <div class="footer-bottom">
-      <span class="footer-brand-text">Vovu</span>
-      <span class="footer-tagline">© 2026 Vovu · Making campus less lonely</span>
-    </div>
-    <div style="border-top:1px solid rgba(255,239,179,0.1); padding-top:20px; margin-top:20px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; align-items:center;">
-      <p style="font-family:system-ui; font-size:12px; color:rgba(255,239,179,0.4); margin:0;">© 2026 Vovu. Built for Kenyon College.</p>
-      <div style="display:flex; gap:20px; flex-wrap:wrap;">
-        <a href="./privacidad.html" style="font-family:system-ui; font-size:12px; color:rgba(255,239,179,0.4); text-decoration:none;">Privacy policy</a>
-        <a href="./terminos.html" style="font-family:system-ui; font-size:12px; color:rgba(255,239,179,0.4); text-decoration:none;">Terms of use</a>
-        <a href="./privacidad.html?delete=request" style="font-family:system-ui; font-size:12px; color:rgba(255,239,179,0.4); text-decoration:none;">Delete my data</a>
-      </div>
+      <p class="footer-promise">Last name never shared. Ever.</p>
+      <p class="footer-copy">© 2026 Vovu · Built for Kenyon College</p>
     </div>
   </div>
 </footer>
 
-<!-- ══════════════════════════════════════════════
-     SCRIPTS
-══════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════
+     SCRIPTS — all deferred, no blocking
+════════════════════════════════════════════ -->
 <script>
-lucide.createIcons();
+// ── Navbar scroll ──────────────────────────────────────────────────────
+window.addEventListener('scroll', function() {
+  document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 8);
+}, { passive: true });
 
-// ── Typewriter subheadline ──────────────────────────────────────────
-(function typewriter() {
-  const el = document.getElementById('hero-sub');
-  const phrases = [
+// ── Typewriter ─────────────────────────────────────────────────────────
+(function() {
+  var el = document.getElementById('hero-sub');
+  if (!el) return;
+  var phrases = [
     'Post what you want to do. Match anonymously. Meet in person.',
     'Campus plans without the awkward ask.',
     'Real students. Real plans. Real connections.',
+    'You never have to ask anyone anything.',
   ];
-  let pi = 0, ci = 0, deleting = false;
-  const SPEED_TYPE = 38, SPEED_DEL = 18, PAUSE = 2400;
-
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = phrases[0]; return;
+  }
+  var pi = 0, ci = 0, del = false;
   function tick() {
-    const phrase = phrases[pi];
-    if (!deleting) {
+    var phrase = phrases[pi];
+    if (!del) {
       ci++;
       el.textContent = phrase.slice(0, ci);
-      if (ci === phrase.length) {
-        deleting = true;
-        setTimeout(tick, PAUSE);
-        return;
-      }
+      if (ci === phrase.length) { del = true; setTimeout(tick, 2600); return; }
     } else {
       ci--;
       el.textContent = phrase.slice(0, ci);
-      if (ci === 0) {
-        deleting = false;
-        pi = (pi + 1) % phrases.length;
-      }
+      if (ci === 0) { del = false; pi = (pi + 1) % phrases.length; }
     }
-    setTimeout(tick, deleting ? SPEED_DEL : SPEED_TYPE);
+    setTimeout(tick, del ? 14 : 36);
   }
   tick();
 })();
 
-// ── Magnetic CTA ────────────────────────────────────────────────────
-(function magnetic() {
-  const btns = document.querySelectorAll('.btn-mag, .wl-form button');
-  btns.forEach(btn => {
-    btn.addEventListener('mousemove', e => {
-      const r = btn.getBoundingClientRect();
-      const x = (e.clientX - r.left - r.width / 2)  * 0.18;
-      const y = (e.clientY - r.top  - r.height / 2) * 0.18;
-      btn.style.transform = `translate(${x}px, ${y}px)`;
+// ── Magnetic buttons ───────────────────────────────────────────────────
+(function() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if ('ontouchstart' in window) return;
+  document.querySelectorAll('.btn-mag').forEach(function(btn) {
+    btn.addEventListener('mousemove', function(e) {
+      var r = btn.getBoundingClientRect();
+      var x = (e.clientX - r.left - r.width  / 2) * 0.18;
+      var y = (e.clientY - r.top  - r.height / 2) * 0.18;
+      btn.style.transform = 'translate(' + x + 'px,' + y + 'px)';
     });
-    btn.addEventListener('mouseleave', () => {
-      btn.style.transform = '';
-    });
+    btn.addEventListener('mouseleave', function() { btn.style.transform = ''; });
   });
 })();
 
-// ── IntersectionObserver (fade-up + stagger) ────────────────────────
-(function reveal() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('revealed'));
-    return;
-  }
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const el = entry.target;
-      const delay = parseInt(el.dataset.revealDelay || 0, 10);
-      setTimeout(() => el.classList.add('revealed'), delay);
+// ── Scroll reveal ──────────────────────────────────────────────────────
+(function() {
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var items = document.querySelectorAll('[data-reveal]');
+  if (reduced) { items.forEach(function(el) { el.classList.add('revealed'); }); return; }
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (!e.isIntersecting) return;
+      var el = e.target;
+      var delay = parseInt(el.dataset.revealDelay || 0, 10);
+      setTimeout(function() { el.classList.add('revealed'); }, delay);
       io.unobserve(el);
-
-      // Trigger counter animation when problem stats reveal
-      if (el.dataset.count !== undefined) {
-        animateCount(el, parseInt(el.dataset.count, 10));
-      }
-
-      // Trigger bars when compat section reveals
-      if (el.id === 'compat-section') {
-        el.querySelectorAll('.bar-fill').forEach(b => {
-          b.style.width = b.dataset.w + '%';
-        });
-      }
     });
-  }, { threshold: 0.12 });
-
-  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
-
-  // Also observe stat numbers directly
-  document.querySelectorAll('.stat-num[data-count]').forEach(el => io.observe(el));
-  // And compat section
-  const cs = document.getElementById('compat-section');
-  if (cs) io.observe(cs);
+  }, { threshold: 0.1 });
+  items.forEach(function(el) { io.observe(el); });
 })();
 
-// ── Counter animation ───────────────────────────────────────────────
-function animateCount(el, target) {
-  let start = 0;
-  const duration = 1400;
-  const step = 16;
-  const increment = target / (duration / step);
-  const timer = setInterval(() => {
-    start = Math.min(start + increment, target);
-    el.textContent = Math.round(start) + '%';
-    if (start >= target) clearInterval(timer);
-  }, step);
-}
-
-// ── Reveal names blur animation (step 7) ───────────────────────────
-(function revealNames() {
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      setTimeout(() => {
-        document.getElementById('reveal-names').classList.add('unblurred');
-      }, 800);
-      io.unobserve(entry.target);
+// ── Count-up ───────────────────────────────────────────────────────────
+(function() {
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (!e.isIntersecting) return;
+      var el = e.target;
+      var target = parseInt(el.dataset.count, 10);
+      io.unobserve(el);
+      if (reduced) { el.textContent = target + '%'; return; }
+      var start = 0, dur = 1400, step = 16;
+      var inc = target / (dur / step);
+      var t = setInterval(function() {
+        start = Math.min(start + inc, target);
+        el.textContent = Math.round(start) + '%';
+        if (start >= target) clearInterval(t);
+      }, step);
     });
   }, { threshold: 0.3 });
-  const step = document.getElementById('reveal-step');
-  if (step) io.observe(step);
+  document.querySelectorAll('[data-count]').forEach(function(el) { io.observe(el); });
 })();
 
-// ── Match reveal demo ───────────────────────────────────────────────
-(function matchReveal() {
-  function runReveal() {
-    const n1 = document.getElementById('mn1');
-    const n2 = document.getElementById('mn2');
-    const det = document.getElementById('match-details');
-    n1.classList.remove('unblurred');
-    n2.classList.remove('unblurred');
-    det.classList.remove('shown');
-    setTimeout(() => n1.classList.add('unblurred'), 800);
-    setTimeout(() => n2.classList.add('unblurred'), 1400);
-    setTimeout(() => det.classList.add('shown'), 2200);
+// ── Compatibility bars ─────────────────────────────────────────────────
+(function() {
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var section = document.getElementById('compat-section');
+  if (!section) return;
+  var fired = false;
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (!e.isIntersecting || fired) return;
+      fired = true;
+      io.unobserve(e.target);
+      section.querySelectorAll('.compat-fill').forEach(function(bar) {
+        var row = bar.closest('[data-reveal-delay]');
+        var delay = row ? parseInt(row.dataset.revealDelay || 0, 10) : 0;
+        if (reduced) { bar.style.width = bar.dataset.w + '%'; return; }
+        setTimeout(function() { bar.style.width = bar.dataset.w + '%'; }, delay + 200);
+      });
+    });
+  }, { threshold: 0.2 });
+  io.observe(section);
+})();
+
+// ── Timeline fill ──────────────────────────────────────────────────────
+(function() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var fill = document.getElementById('timeline-fill');
+  if (!fill) return;
+  var wrap = fill.closest('.timeline-wrap');
+  function update() {
+    var r = wrap.getBoundingClientRect();
+    var pct = Math.min(Math.max((-r.top / r.height) * 120, 0), 100);
+    fill.style.height = pct + '%';
   }
-
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      runReveal();
-      io.unobserve(entry.target);
-    });
-  }, { threshold: 0.4 });
-  const mc = document.getElementById('match-card');
-  if (mc) io.observe(mc);
-
-  document.getElementById('match-replay').addEventListener('click', runReveal);
+  window.addEventListener('scroll', update, { passive: true });
+  update();
 })();
 
-// ── 3D card tilt ────────────────────────────────────────────────────
-(function cardTilt() {
-  document.querySelectorAll('[data-tilt]').forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientY - r.top  - r.height / 2) / r.height * -14;
-      const y = (e.clientX - r.left - r.width  / 2) / r.width  *  14;
-      card.style.transform = `perspective(800px) rotateX(${x}deg) rotateY(${y}deg) scale(1.02) translateX(-50%)`;
+// ── Reveal names (step 7) ──────────────────────────────────────────────
+(function() {
+  var step = document.getElementById('reveal-step');
+  if (!step) return;
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (!e.isIntersecting) return;
+      setTimeout(function() {
+        document.getElementById('rnd1').classList.add('clear');
+        document.getElementById('rnd2').classList.add('clear');
+      }, 800);
+      io.unobserve(e.target);
     });
-    card.addEventListener('mouseleave', () => {
-      // Reset to stacked position — re-apply the nth-child logic via data attr
-      card.style.transform = '';
+  }, { threshold: 0.45 });
+  io.observe(step);
+})();
+
+// ── 3D card tilt ───────────────────────────────────────────────────────
+(function() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if ('ontouchstart' in window) return;
+  document.querySelectorAll('[data-tilt]').forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      var r = card.getBoundingClientRect();
+      var rx = (e.clientY - r.top  - r.height / 2) / r.height * -10;
+      var ry = (e.clientX - r.left - r.width  / 2) / r.width  *  10;
+      card.style.transform = 'perspective(600px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) scale(1.02)';
     });
+    card.addEventListener('mouseleave', function() { card.style.transform = ''; });
   });
 })();
 
-// ── Waitlist form → Supabase ────────────────────────────────────────
-document.getElementById('waitlist-form').addEventListener('submit', async (ev) => {
+// ── Plan chip toggle ───────────────────────────────────────────────────
+document.querySelectorAll('.plan-chip').forEach(function(chip) {
+  function toggle(e) {
+    if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.type === 'keydown') e.preventDefault();
+    chip.classList.toggle('active');
+  }
+  chip.addEventListener('click', toggle);
+  chip.addEventListener('keydown', toggle);
+});
+
+// ── Waitlist form (lazy Supabase) ──────────────────────────────────────
+document.getElementById('waitlist-form').addEventListener('submit', async function(ev) {
   ev.preventDefault();
-  const input  = document.getElementById('waitlist-email');
-  const btn    = document.getElementById('waitlist-btn');
-  const btnLbl = document.getElementById('btn-label');
-  const btnIco = document.getElementById('btn-icon');
-  const msg    = document.getElementById('waitlist-msg');
-  const email  = input.value.trim().toLowerCase();
+  var input = document.getElementById('waitlist-email');
+  var btn   = document.getElementById('wl-btn');
+  var lbl   = document.getElementById('wl-btn-label');
+  var msg   = document.getElementById('wl-msg');
+  var email = input.value.trim().toLowerCase();
 
   if (!email || !email.includes('@') || !email.includes('.')) {
     msg.textContent = 'Enter a valid email address.';
-    msg.style.color = '#FFEFB3';
-    return;
+    input.focus(); return;
   }
-
-  // .edu soft-warn (not hard block — some campuses use non-.edu)
-  if (!email.endsWith('.edu')) {
-    msg.textContent = 'Use your campus .edu email for priority access.';
-    msg.style.color = '#FFEFB380';
-  }
+  msg.textContent = !email.endsWith('.edu') ? 'Use your .edu email for priority access.' : '';
 
   btn.disabled = true;
-  btnLbl.textContent = 'Joining...';
-  btnIco.outerHTML = '<span class="spinner" id="btn-icon"></span>';
+  lbl.textContent = 'Joining…';
+  var icoEl = document.getElementById('wl-btn-icon');
+  if (icoEl) {
+    var spin = document.createElement('span');
+    spin.className = 'spinner spinner-lt';
+    spin.id = 'wl-btn-icon';
+    icoEl.replaceWith(spin);
+  }
 
   try {
-    const { error } = await window._supabase.from('waitlist').upsert({ email }, { onConflict: 'email' });
-    if (error && !String(error.message || '').includes('duplicate')) throw error;
+    if (!window._supabase) {
+      await new Promise(function(res, rej) {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        s.onload = function() {
+          window._supabase = window.supabase.createClient(
+            'https://tzrtuazvzgfiwsmtajkh.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6cnR1YXp2emdmaXdzbXRhamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NTEyNjYsImV4cCI6MjA5NjUyNzI2Nn0.m29Vp8gz1e_J6Ufor2Z9YHffR5Vo6kjvUcFiWOppcZs'
+          );
+          res();
+        };
+        s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+
+    var result = await window._supabase
+      .from('waitlist')
+      .upsert({ email: email }, { onConflict: 'email' });
+
+    if (result.error && !/duplicate|already exists/i.test(result.error.message || '')) {
+      throw result.error;
+    }
 
     document.getElementById('wl-form-wrap').style.display = 'none';
-    document.getElementById('waitlist-success').classList.add('shown');
+    document.getElementById('wl-success').classList.add('shown');
+
   } catch (err) {
     console.error('Waitlist error:', err);
-    msg.textContent = 'Could not save. Please try again.';
-    msg.style.color = '#FFEFB3';
+    msg.textContent = 'Something went wrong. Try again.';
     btn.disabled = false;
-    const ico = document.getElementById('btn-icon');
-    if (ico) {
-      const newIco = document.createElement('i');
+    var spEl = document.getElementById('wl-btn-icon');
+    if (spEl) {
+      var newIco = document.createElement('i');
       newIco.setAttribute('data-lucide', 'arrow-right');
-      newIco.id = 'btn-icon';
-      newIco.style.cssText = 'width:16px;height:16px;';
-      ico.replaceWith(newIco);
+      newIco.id = 'wl-btn-icon';
+      newIco.style.cssText = 'width:14px;height:14px;';
+      spEl.replaceWith(newIco);
+      if (window.lucide) lucide.createIcons();
     }
-    btnLbl.textContent = 'Join waitlist';
-    lucide.createIcons();
+    lbl.textContent = 'Get early access';
   }
 });
 </script>
-<script src="./js/cookie-consent.js"></script>
+
+<script src="./js/cookie-consent.js" defer></script>
 </body>
 </html>

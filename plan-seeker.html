@@ -39,12 +39,12 @@
            loading="lazy"
            style="object-fit:contain; margin:0 auto;"
            onerror="this.style.display='none'">
-      <h2>Someone said yes to you.</h2>
-      <p>Do you want to go? If you say yes, you'll both see each other's first name and the exact plan details.</p>
+      <h2>They want to go with you.</h2>
+      <p>Say yes and you'll both see each other's first name and the exact plan details.</p>
       <button class="btn-primary btn-yes-confirm" id="applicant-yes-btn"
               onclick="applicantConfirmsYes()">
         <i data-lucide="heart-handshake"></i>
-        Yes, I'm in
+        Yes, let's go →
       </button>
       <button class="btn-outline btn-decline" onclick="applicantDeclines()">
         Not this time
@@ -141,12 +141,12 @@
       </div>
     </div>
 
-    <div class="privacy-assurance-box fade-up" style="animation-delay:120ms;">
-      <i data-lucide="shield-check" style="width:20px;height:20px; flex-shrink:0; color:var(--success); margin-top:1px;"></i>
+    <div class="privacy-assurance-box fade-up" style="animation-delay:120ms; border:1.5px solid var(--forest); border-radius:var(--r-lg);">
+      <i data-lucide="shield-check" style="width:22px;height:22px; flex-shrink:0; color:var(--forest); margin-top:1px;"></i>
       <div>
-        <div class="privacy-assurance-title">Your identity is protected</div>
+        <div class="privacy-assurance-title" style="color:var(--forest);">Your identity is protected</div>
         <div class="privacy-assurance-sub">
-          They won't know you applied until you both say yes. Last name never shared by Vovu.
+          They'll see your interests and energy — not your name or photo. Last name never shared by Vovu.
         </div>
       </div>
     </div>
@@ -163,20 +163,34 @@
     <div id="apply-state">
       <button class="btn-apply-now" id="apply-btn" onclick="applyNow()"
               style="font-family:Georgia,serif; font-size:16px; letter-spacing:0.01em;">
-        Apply anonymously →
+        I want to go →
       </button>
-      <p class="apply-note">They'll see your vibe — not your name.</p>
+      <p class="apply-note">They'll see your interests and energy — not your name or photo.</p>
     </div>
     <div id="applied-state" class="hidden">
       <div class="applied-confirmation" style="flex-direction:column;align-items:center;text-align:center;padding:20px 16px 16px;gap:12px;">
         <img src="./public/Patience--Streamline-Dhaka.png"
-             width="100" height="100"
+             width="80" height="80"
              loading="lazy"
              style="object-fit:contain;margin:0 auto;"
              onerror="this.style.display='none'">
         <div>
-          <div class="applied-title" style="font-size:16px;font-family:Georgia,serif;margin-bottom:4px;">You applied. We'll let you know.</div>
-          <div class="applied-sub">Plans usually close within 24 hours. Your identity stays hidden until you both say yes.</div>
+          <div class="applied-title" style="font-size:16px;font-family:Georgia,serif;margin-bottom:10px;">You're in the running.</div>
+          <div style="text-align:left;width:100%;max-width:300px;margin:0 auto;">
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;">
+              <span style="width:20px;height:20px;border-radius:50%;background:var(--forest);color:var(--butter);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">1</span>
+              <span style="font-size:13px;color:var(--text);line-height:1.5;">The plan poster reviews who applied (anonymously)</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;">
+              <span style="width:20px;height:20px;border-radius:50%;background:var(--forest);color:var(--butter);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">2</span>
+              <span style="font-size:13px;color:var(--text);line-height:1.5;">If they pick you, you'll get to say yes or pass</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="width:20px;height:20px;border-radius:50%;background:var(--forest);color:var(--butter);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">3</span>
+              <span style="font-size:13px;color:var(--text);line-height:1.5;">Both say yes → first names revealed, meet up</span>
+            </div>
+          </div>
+          <div class="applied-sub" style="margin-top:10px;">Usually within 24 hours. Your identity stays hidden the whole time.</div>
         </div>
       </div>
       <button class="btn-withdraw" onclick="withdrawNow()">Withdraw application</button>
@@ -354,7 +368,7 @@ async function applyNow() {
     if (!planId) throw new Error('No plan ID in URL.');
 
     // 2. Fresh session
-    const { data: { session }, error: sessErr } = await sb.auth.getSession();
+    const { data: { session }, error: sessErr } = await window._supabase.auth.getSession();
     if (sessErr || !session) { window.location.href = './login.html'; return; }
 
     const applicantId = session.user.id;
@@ -365,14 +379,14 @@ async function applyNow() {
                       + emailUser.split('.')[0].slice(1);
 
     // 3. Ensure user row exists (first_name + verified required)
-    await sb.from('users').upsert(
+    await window._supabase.from('users').upsert(
       { id: applicantId, email, campus, first_name: firstName, verified: true },
       { onConflict: 'email', ignoreDuplicates: false }
     );
 
     // 4. Verify the plan still exists and is active
     //    This explicit check prevents PLAN_NOT_FOUND from a trigger or RLS sub-query
-    const { data: plan, error: planErr } = await sb
+    const { data: plan, error: planErr } = await window._supabase
       .from('plans')
       .select('id, creator_id, is_active, is_matched, spots')
       .eq('id', planId)
@@ -391,7 +405,7 @@ async function applyNow() {
     }
 
     // 5. Check for existing application
-    const { data: existing } = await sb
+    const { data: existing } = await window._supabase
       .from('applications')
       .select('id, status')
       .eq('plan_id', planId)
@@ -406,7 +420,7 @@ async function applyNow() {
     }
 
     // 6. Insert application
-    const { error: appErr } = await sb
+    const { error: appErr } = await window._supabase
       .from('applications')
       .insert({ plan_id: planId, applicant_id: applicantId, status: 'pending' });
 
@@ -420,7 +434,7 @@ async function applyNow() {
   } catch (err) {
     console.error('Apply error:', err);
     btn.disabled = false;
-    btn.innerHTML = '<i data-lucide="send" style="width:16px;height:16px;"></i> Apply anonymously';
+    btn.innerHTML = 'I want to go →';
     lucide.createIcons();
     if (window.showToast) showToast(err.message || 'Could not apply. Try again.', 'error');
   }
@@ -433,7 +447,7 @@ async function withdrawNow() {
     document.getElementById('apply-state').classList.remove('hidden');
     const btn = document.getElementById('apply-btn');
     btn.disabled = false;
-    btn.innerHTML = '<i data-lucide="send" style="width:16px;height:16px;"></i> Apply anonymously';
+    btn.innerHTML = 'I want to go →';
     lucide.createIcons();
   } catch (err) {
     if (window.showToast) showToast('Could not withdraw. Try again.', 'error');
@@ -530,7 +544,7 @@ async function applicantDeclines() {
     const btn = document.getElementById('apply-btn');
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = 'Apply anonymously →';
+      btn.innerHTML = 'I want to go →';
       lucide.createIcons();
     }
     if (window.showToast) showToast('Maybe next time.');

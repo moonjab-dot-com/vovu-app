@@ -311,8 +311,19 @@ function renderStep(stepIndex) {
   const prog = document.getElementById('ob-progress');
   if (prog) prog.style.width = pct + '%';
 
-  const label = document.getElementById('ob-step-label');
-  if (label) label.textContent = (stepIndex + 1) + ' of ' + STEPS.length;
+  const SECTION_NAMES = { A: 'What are you into?', B: 'How do you hang?', C: 'When are you free?', D: 'What\'s your vibe?', E: 'Your preferences', F: 'One last thing' };
+  const SECTION_ORDER = ['A','B','C','D','E','F'];
+  const currentGroup = STEPS[stepIndex].group;
+  const sectionIdx = SECTION_ORDER.indexOf(currentGroup);
+  const sectionNameEl = document.getElementById('ob-section-name');
+  if (sectionNameEl) sectionNameEl.textContent = SECTION_NAMES[currentGroup] || currentGroup;
+  const dotsEl = document.getElementById('ob-section-dots');
+  if (dotsEl) {
+    dotsEl.querySelectorAll('.ob-dot').forEach((dot, i) => {
+      dot.classList.toggle('ob-dot-active', i === sectionIdx);
+      dot.classList.toggle('ob-dot-done', i < sectionIdx);
+    });
+  }
 
   const backBtn = document.getElementById('ob-back');
   if (backBtn) backBtn.style.visibility = stepIndex === 0 ? 'hidden' : 'visible';

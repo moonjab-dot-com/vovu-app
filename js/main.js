@@ -379,12 +379,18 @@ window.filterPlans = function(activity, btn) {
   document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   const cards = document.querySelectorAll('.plan-card');
+  const OFF_CAMPUS_ZONES = ['off campus', 'off-campus', 'gambia', 'town', 'downtown', 'village'];
   cards.forEach(card => {
-    if (activity === 'all' || card.dataset.activity === activity) {
-      card.style.display = '';
+    let show = false;
+    if (activity === 'all') {
+      show = true;
+    } else if (activity === 'off-campus') {
+      const zone = (card.dataset.zone || '').toLowerCase();
+      show = OFF_CAMPUS_ZONES.some(z => zone.includes(z)) || zone.startsWith('off');
     } else {
-      card.style.display = 'none';
+      show = card.dataset.activity === activity;
     }
+    card.style.display = show ? '' : 'none';
   });
   const visible = Array.from(document.querySelectorAll('.plan-card')).filter(c => c.style.display !== 'none');
   const countEl = document.getElementById('plan-count');

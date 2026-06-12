@@ -67,6 +67,9 @@
     <button class="filter-pill" onclick="filterPlans('other', this)">
       <i data-lucide="music" style="width:13px;height:13px;"></i> Party
     </button>
+    <button class="filter-pill" onclick="filterPlans('off-campus', this)">
+      <i data-lucide="map-pin" style="width:13px;height:13px;"></i> Off campus
+    </button>
   </div>
 
   <!-- ══ DISCOVER SECTION ══════════════════════════════════════════════ -->
@@ -188,6 +191,19 @@ lucide.createIcons();
 
 // ── Card builders ──────────────────────────────────────────────────────
 
+function formatExpiry(expiresAt) {
+  if (!expiresAt) return null;
+  const ms = new Date(expiresAt) - Date.now();
+  if (ms <= 0) return null;
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
+  if (h >= 24) return null; // don't show expiry if more than 24h away
+  if (h >= 6) return { label: `Expires in ${h}h`, cls: 'expiry-normal' };
+  if (h >= 2) return { label: `Expires in ${h}h ${m}m`, cls: 'expiry-soon' };
+  if (h >= 1) return { label: `Expires in ${h}h ${m}m`, cls: 'expiry-urgent' };
+  return { label: `Expires in ${m}m`, cls: 'expiry-urgent' };
+}
+
 function renderPlanCard(plan, cp, compatScore) {
   const icon    = ACTIVITY_ICONS[plan.activity]  || 'calendar';
   const label   = ACTIVITY_LABELS[plan.activity] || plan.activity;
@@ -203,6 +219,11 @@ function renderPlanCard(plan, cp, compatScore) {
   const noteHtml = plan.note
     ? `<div class="plan-note" style="margin-bottom:12px;">"${esc(plan.note)}"</div>` : '';
 
+  const expiry = formatExpiry(plan.expires_at);
+  const expiryHtml = expiry
+    ? `<span class="expiry-badge ${expiry.cls}"><i data-lucide="timer" style="width:10px;height:10px;"></i> ${expiry.label}</span>`
+    : '';
+
   // MEDIUM 4: show loading skeleton badge when score hasn't loaded yet (null means loading, undefined means no profile)
   // HIGH 2: add info icon with tooltip explaining what the % means
   const matchBadge = (typeof compatScore === 'number')
@@ -216,7 +237,7 @@ function renderPlanCard(plan, cp, compatScore) {
     : `<span class="match-badge match-badge-loading" style="opacity:0.4;min-width:64px;">&nbsp;</span>`;
 
   return `
-    <div class="plan-card card-enter" data-activity="${plan.activity}" style="margin-bottom:12px;">
+    <div class="plan-card card-enter" data-activity="${plan.activity}" data-zone="${(plan.zone||'').toLowerCase()}" style="margin-bottom:12px;">
       <div class="plan-card-top" style="margin-bottom:10px;">
         <div class="plan-activity-row">
           <div class="activity-icon-circle"><i data-lucide="${icon}"></i></div>
@@ -225,6 +246,7 @@ function renderPlanCard(plan, cp, compatScore) {
             <div class="plan-meta">
               <i data-lucide="clock" style="width:12px;height:12px;"></i>
               ${plan.day ? plan.day.charAt(0).toUpperCase() + plan.day.slice(1) + ' · ' : ''}${time}
+              ${expiryHtml}
             </div>
           </div>
         </div>

@@ -27,13 +27,26 @@
 
   <!-- Complete-profile banner (shown when onboarding not done) -->
   <div id="complete-profile-banner" class="hidden" style="margin:0 16px 12px;">
-    <div style="background:var(--forest); color:var(--butter); border-radius:var(--r-lg); padding:16px 20px; display:flex; align-items:center; gap:12px;">
-      <i data-lucide="alert-circle" style="width:20px;height:20px; flex-shrink:0;"></i>
-      <div style="flex:1;">
-        <div style="font-weight:600; font-size:14px; margin-bottom:4px;">Complete your profile to start matching</div>
-        <div style="font-size:13px; opacity:0.8;">Answer a few quick questions so others can see your vibe.</div>
+    <div style="background:var(--forest); color:var(--butter); border-radius:var(--r-lg); padding:16px 20px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <i data-lucide="user-check" style="width:20px;height:20px; flex-shrink:0;"></i>
+        <div style="flex:1;">
+          <div style="font-weight:600; font-size:14px; margin-bottom:2px;">Set up your profile</div>
+          <div style="font-size:12px; opacity:0.75;">6 quick sections — takes about 3 minutes.</div>
+        </div>
+        <a href="./onboarding.html" style="background:var(--butter); color:var(--forest); border-radius:var(--r-md); padding:8px 14px; font-size:13px; font-weight:600; white-space:nowrap; text-decoration:none;">Start →</a>
       </div>
-      <a href="./onboarding.html" style="background:var(--butter); color:var(--forest); border-radius:var(--r-md); padding:8px 14px; font-size:13px; font-weight:600; white-space:nowrap; text-decoration:none;">Start</a>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <span style="background:rgba(255,239,179,0.15); border:1px solid rgba(255,239,179,0.3); border-radius:var(--r-full); padding:4px 10px; font-size:11px; display:flex; align-items:center; gap:5px;">
+          <i data-lucide="zap" style="width:10px;height:10px;"></i> See match scores
+        </span>
+        <span style="background:rgba(255,239,179,0.15); border:1px solid rgba(255,239,179,0.3); border-radius:var(--r-full); padding:4px 10px; font-size:11px; display:flex; align-items:center; gap:5px;">
+          <i data-lucide="send" style="width:10px;height:10px;"></i> Apply to plans
+        </span>
+        <span style="background:rgba(255,239,179,0.15); border:1px solid rgba(255,239,179,0.3); border-radius:var(--r-full); padding:4px 10px; font-size:11px; display:flex; align-items:center; gap:5px;">
+          <i data-lucide="heart-handshake" style="width:10px;height:10px;"></i> Get matched
+        </span>
+      </div>
     </div>
   </div>
 

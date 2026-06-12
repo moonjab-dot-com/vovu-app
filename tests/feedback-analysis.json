@@ -1,0 +1,136 @@
+{
+  "simulation_meta": {
+    "users": 1000,
+    "cases": 50000,
+    "personas": 8,
+    "generated": "2026-06-11"
+  },
+  "nps": {
+    "average": "6.4",
+    "promoters": 218,
+    "passives": 312,
+    "detractors": 470,
+    "nps_score": -25
+  },
+  "recommend_rate": "62.3%",
+  "top_loved": [
+    { "text": "anonymous until mutual yes mechanic", "count": 634 },
+    { "text": "compatibility score concept", "count": 581 },
+    { "text": "clean simple design / butter color", "count": 512 },
+    { "text": "match reveal animation", "count": 487 },
+    { "text": ".edu verification feels safe", "count": 443 },
+    { "text": "no pressure to approach people directly", "count": 398 },
+    { "text": "plan categories and icons", "count": 321 },
+    { "text": "vibe bars on applicant cards", "count": 298 },
+    { "text": "privacy first — last names never shared", "count": 276 },
+    { "text": "cinematic yes mechanic flow", "count": 241 }
+  ],
+  "top_frustrations": [
+    { "text": "22 onboarding questions feels endless", "count": 512 },
+    { "text": "apply button breaks / nothing happens", "count": 487 },
+    { "text": "no plan expiration timer shown anywhere", "count": 412 },
+    { "text": "compatibility score feels made up", "count": 389 },
+    { "text": "1-on-1 feels too intense as a default", "count": 298 },
+    { "text": "no off-campus filter in feed", "count": 243 },
+    { "text": "apply anonymously wording is unclear", "count": 231 },
+    { "text": "no feedback after applying — just waiting", "count": 218 },
+    { "text": "app feels too loud / busy for introverts", "count": 187 },
+    { "text": "can't see how long plan has been active", "count": 165 }
+  ],
+  "top_confusions": [
+    { "text": "what happens after i click apply", "count": 478 },
+    { "text": "what does the match percentage actually mean", "count": 401 },
+    { "text": "1 of 22 — how many more questions?", "count": 387 },
+    { "text": "why can't i see who applied to my plan", "count": 298 },
+    { "text": "is apply button broken? nothing visible happened", "count": 271 },
+    { "text": "what is zone vs exact location difference", "count": 198 },
+    { "text": "does the plan poster know i applied", "count": 187 },
+    { "text": "when does my plan expire", "count": 165 }
+  ],
+  "top_feature_requests": [
+    { "text": "show plan expiration countdown", "count": 521 },
+    { "text": "group plan option (3+ people)", "count": 398 },
+    { "text": "off-campus filter in feed", "count": 312 },
+    { "text": "push notifications when picked", "count": 287 },
+    { "text": "match history tab", "count": 265 },
+    { "text": "see how many people applied to a plan", "count": 243 },
+    { "text": "shorter onboarding — 10 questions max", "count": 234 },
+    { "text": "intensity level for gym/sports plans", "count": 198 },
+    { "text": "undo pass on applicant", "count": 143 },
+    { "text": "dark mode", "count": 121 }
+  ],
+  "top_one_changes": [
+    { "text": "fix the apply button — it appears to do nothing", "count": 312 },
+    { "text": "cut onboarding to 10 questions", "count": 287 },
+    { "text": "show expiration time on every plan card", "count": 243 },
+    { "text": "explain what happens after applying (step-by-step)", "count": 218 },
+    { "text": "explain the compatibility score better", "count": 198 },
+    { "text": "add off-campus filter", "count": 156 },
+    { "text": "make it less intense / quieter for introverts", "count": 134 },
+    { "text": "group plans", "count": 121 },
+    { "text": "show which step section i'm in not just a number", "count": 112 },
+    { "text": "better copy on the apply button", "count": 98 }
+  ],
+  "by_persona": {
+    "The Casual": {
+      "count": 200,
+      "avg_nps": "5.8",
+      "would_recommend_pct": "54%"
+    },
+    "The Athlete": {
+      "count": 150,
+      "avg_nps": "7.1",
+      "would_recommend_pct": "71%"
+    },
+    "The Academic": {
+      "count": 180,
+      "avg_nps": "6.2",
+      "would_recommend_pct": "61%"
+    },
+    "The Social Butterfly": {
+      "count": 120,
+      "avg_nps": "5.4",
+      "would_recommend_pct": "52%"
+    },
+    "The Introvert": {
+      "count": 150,
+      "avg_nps": "6.8",
+      "would_recommend_pct": "68%"
+    },
+    "The Explorer": {
+      "count": 100,
+      "avg_nps": "5.1",
+      "would_recommend_pct": "49%"
+    },
+    "The Skeptic": {
+      "count": 50,
+      "avg_nps": "3.2",
+      "would_recommend_pct": "28%"
+    },
+    "The Power User": {
+      "count": 50,
+      "avg_nps": "8.9",
+      "would_recommend_pct": "94%"
+    }
+  },
+  "ui_themes": [
+    ["confusing", 312],
+    ["trust", 289],
+    ["simple", 243],
+    ["clear", 198],
+    ["button", 187],
+    ["score", 156],
+    ["love", 134],
+    ["boring", 67]
+  ],
+  "ux_themes": [
+    ["confusing", 398],
+    ["clear", 276],
+    ["slow", 198],
+    ["trust", 187],
+    ["fast", 143],
+    ["simple", 134],
+    ["exciting", 112],
+    ["safe", 98]
+  ]
+}

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vovu — Drop a plan</title>
+  <title>Vovu — Post a plan</title>
   <link rel="icon" type="image/png" href="./VOVU LOGO OFICIAL.png">
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -18,10 +18,10 @@
     <button class="back-btn" onclick="history.back()">
       <i data-lucide="arrow-left"></i>
     </button>
-    <h1>Drop a plan</h1>
+    <h1>Post a plan</h1>
     <div class="header-spacer"></div>
   </header>
-  <p class="page-sub">Only people whose vibe matches yours will see it.</p>
+  <p class="page-sub">Only students with matching interests will see this plan.</p>
 
   <div id="post-form" style="padding-bottom: 100px;">
 
@@ -179,7 +179,7 @@
       Your plan is live
     </h2>
     <p style="color:var(--sage);font-size:15px;margin:0 0 32px;max-width:260px;line-height:1.5;">
-      People whose vibe matches yours will see it. You'll be notified if it's a match.
+      Students with matching interests will see it. You'll hear back when someone applies.
     </p>
     <a href="./feed.html" class="btn-primary"
        style="width:100%;max-width:320px;display:flex;align-items:center;justify-content:center;gap:8px;">
@@ -222,7 +222,7 @@
     <button id="submit-plan-btn"
             class="btn-primary btn-full"
             onclick="submitPlan()">
-      Drop this plan
+      Post this plan
       <i data-lucide="arrow-right"></i>
     </button>
   </div>
@@ -361,7 +361,7 @@ async function submitPlan() {
   } catch (err) {
     console.error('Create plan error:', err);
     btn.disabled = false;
-    btn.innerHTML = 'Drop this plan <i data-lucide="arrow-right"></i>';
+    btn.innerHTML = 'Post this plan <i data-lucide="arrow-right"></i>';
     lucide.createIcons();
 
     if (err.code === 'MAX_PLANS') {

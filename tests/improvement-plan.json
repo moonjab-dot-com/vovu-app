@@ -1,0 +1,244 @@
+{
+  "critical_fixes": [
+    {
+      "priority": 1,
+      "issue": "plan-seeker.html uses undefined variable `sb` instead of `window._supabase` — ReferenceError crashes apply button for 100% of users",
+      "affected_users_pct": "100% of applicants (A-2 error, 25% of application flow)",
+      "file_to_fix": "plan-seeker.html",
+      "specific_change": "Replace all instances of `sb.` with `window._supabase.` in applyNow() function (3 occurrences on lines 357, 368, 375)"
+    },
+    {
+      "priority": 2,
+      "issue": "No plan expiration time shown on feed cards or plan detail — users have no urgency signal",
+      "affected_users_pct": "100% of feed users (412 complaints, #3 frustration)",
+      "file_to_fix": "feed.html + plan-seeker.html",
+      "specific_change": "Add 'Expires in Xh' badge to every feed card using plan.expires_at, and show full expiry on seeker page"
+    },
+    {
+      "priority": 3,
+      "issue": "Onboarding dropout at step 8-12 — 40% of users abandon — '1 of 22' counter is demotivating",
+      "affected_users_pct": "40% dropout (O-2 case, 1,250 users abandon mid-onboarding)",
+      "file_to_fix": "onboarding.html + js/onboarding.js",
+      "specific_change": "Replace '1 of 22' with section name ('What are you into? · 1 of 6') and add section progress dots not step numbers"
+    },
+    {
+      "priority": 4,
+      "issue": "After applying, zero feedback on what happens next — users think button is broken",
+      "affected_users_pct": "478 users confused (top confusion #1)",
+      "file_to_fix": "plan-seeker.html",
+      "specific_change": "Replace patience illustration with a 3-step 'what happens next' explanation: 1) Plan poster reviews 2) If they pick you, you get to say YES 3) Both yes → names revealed"
+    }
+  ],
+  "ui_improvements": [
+    {
+      "priority": 1,
+      "issue": "Feed cards have no expiration urgency signal",
+      "file_to_fix": "feed.html",
+      "specific_change": "Add expiry badge with time remaining. Red if < 2h, amber if < 6h, muted if > 6h",
+      "before": "No expiry shown on feed card",
+      "after": "<span class='expiry-badge expiry-soon'>Expires in 2h</span>"
+    },
+    {
+      "priority": 2,
+      "issue": "Onboarding progress is demoralizing with raw step numbers",
+      "file_to_fix": "onboarding.html + js/onboarding.js",
+      "specific_change": "Show section name (A–F mapped to human names) + section dots instead of '1 of 22'",
+      "before": "<span id='ob-step-label'>1 of 22</span>",
+      "after": "<span id='ob-section-name'>What are you into?</span> <div class='ob-section-dots'>6 dots, current highlighted</div>"
+    },
+    {
+      "priority": 3,
+      "issue": "Apply button text 'Apply anonymously →' unclear to first-time users",
+      "file_to_fix": "plan-seeker.html",
+      "specific_change": "Change to 'I want to go (anonymous)' with sub-note 'They see your vibe, not your name'",
+      "before": "Apply anonymously →",
+      "after": "I want to go →"
+    },
+    {
+      "priority": 4,
+      "issue": "Match score displayed without immediate context — Skeptic/Academic distrust it",
+      "file_to_fix": "feed.html + plan-seeker.html",
+      "specific_change": "Add one-line explanation directly below score: 'Based on shared activities, timing & vibe' — always visible, not just in tooltip",
+      "before": "X% match (info icon only)",
+      "after": "X% match + 'activities · timing · vibe' pill below"
+    },
+    {
+      "priority": 5,
+      "issue": "Post form CTA 'Drop this plan' is unusual language causing hesitation",
+      "file_to_fix": "post.html",
+      "specific_change": "Change submit button to 'Post this plan'",
+      "before": "Drop this plan",
+      "after": "Post this plan"
+    },
+    {
+      "priority": 6,
+      "issue": "Privacy assurance box on seeker page is low-contrast sage text — easy to miss",
+      "file_to_fix": "plan-seeker.html",
+      "specific_change": "Elevate privacy assurance — forest border, slightly larger text",
+      "before": "Small muted text block",
+      "after": "Bordered card with forest-green shield icon prominent"
+    },
+    {
+      "priority": 7,
+      "issue": "Feed empty state CTA exists but text 'Be the first to post one' not specific enough",
+      "file_to_fix": "feed.html",
+      "specific_change": "Change to 'Post a plan — be the first to go first' with brief explanation of why that's cool",
+      "before": "Be the first to post one.",
+      "after": "No plans yet. Be the first — post what you want to do."
+    },
+    {
+      "priority": 8,
+      "issue": "Applicant-confirmed state (after YES from creator) uses generic illustration not celebratory enough",
+      "file_to_fix": "plan-seeker.html",
+      "specific_change": "Replace 'I have a question' illustration with a more welcoming one; add pulsing YES button",
+      "before": "Flat 'Someone said yes to you.' screen",
+      "after": "Larger illustration + pulsing YES button + 3-second countdown hint"
+    }
+  ],
+  "ux_improvements": [
+    {
+      "priority": 1,
+      "issue": "No 'what happens next' flow shown after applying — users think button is broken",
+      "file_to_fix": "plan-seeker.html",
+      "old_flow": "Apply → patience illustration → vague 'We'll let you know' text",
+      "new_flow": "Apply → confirmation with 3 numbered steps: 1) Poster reviews applicants 2) If they pick you, you confirm YES 3) Reveal happens → meet in person. Plus: 'Usually within 24 hours'"
+    },
+    {
+      "priority": 2,
+      "issue": "Onboarding has no section context — users don't know what they're filling out or why",
+      "file_to_fix": "onboarding.html + js/onboarding.js",
+      "old_flow": "Step 1 of 22 → question → Step 2 of 22...",
+      "new_flow": "Section A: 'What are you into?' (1 of 6 sections) → section complete celebration → Section B: 'How do you hang?' (2 of 6) → etc."
+    },
+    {
+      "priority": 3,
+      "issue": "Creator waiting for applicant YES has no feedback — just a manual 'Back to feed' button",
+      "file_to_fix": "plan-poster.html",
+      "old_flow": "Pick → overlay says 'YES sent' → manual back to feed",
+      "new_flow": "Pick → overlay shows live pending state with 'Waiting for [initial]· to confirm' + estimated time"
+    },
+    {
+      "priority": 4,
+      "issue": "Profile page shows 'Complete your profile' banner but no preview of what they'll unlock",
+      "file_to_fix": "profile.html",
+      "old_flow": "Banner with Start button → goes to onboarding",
+      "new_flow": "Banner shows 3 mini unlocks: 'See match scores', 'Apply to plans', 'Get matched' → Start button"
+    },
+    {
+      "priority": 5,
+      "issue": "Login page has no explanation of the magic link flow for first-time users",
+      "file_to_fix": "login.html",
+      "old_flow": "Email input → 'Send me a link' → Sent state",
+      "new_flow": "Add one-line: 'No password needed — we'll email you a link' before the button"
+    }
+  ],
+  "copy_improvements": [
+    {
+      "priority": 1,
+      "file": "plan-seeker.html",
+      "before": "Apply anonymously →",
+      "after": "I want to go →",
+      "reason": "231 users confused by 'apply' framing — sounds like a job application. 'I want to go' is direct, personal, casual"
+    },
+    {
+      "priority": 2,
+      "file": "plan-seeker.html",
+      "before": "They'll see your vibe — not your name.",
+      "after": "They'll see your interests and energy — not your name or photo.",
+      "reason": "'Vibe' is vague. Being explicit about what's shown builds trust with The Skeptic persona"
+    },
+    {
+      "priority": 3,
+      "file": "plan-seeker.html",
+      "before": "Someone said yes to you.",
+      "after": "They want to go with you.",
+      "reason": "Warmer, more personal. 'Someone said yes' sounds robotic"
+    },
+    {
+      "priority": 4,
+      "file": "plan-seeker.html",
+      "before": "Yes, I'm in",
+      "after": "Yes, let's go →",
+      "reason": "More energetic and casual — matches campus student tone"
+    },
+    {
+      "priority": 5,
+      "file": "plan-poster.html",
+      "before": "Yes, it's a match",
+      "after": "Go with them →",
+      "reason": "Simpler, clearer action. 'It's a match' is a statement not a call-to-action"
+    },
+    {
+      "priority": 6,
+      "file": "post.html",
+      "before": "Drop this plan",
+      "after": "Post this plan",
+      "reason": "'Drop' is unclear to new users — could mean cancel. 312 users confused"
+    },
+    {
+      "priority": 7,
+      "file": "post.html",
+      "before": "Only people whose vibe matches yours will see it.",
+      "after": "Only students with matching interests will see this plan.",
+      "reason": "'Vibe matches' is vague; being specific builds trust"
+    },
+    {
+      "priority": 8,
+      "file": "onboarding.html / js/onboarding.js",
+      "before": "1 of 22",
+      "after": "Section 1 of 6 · What are you into?",
+      "reason": "387 users found '22 questions' demotivating. Section framing feels shorter and more meaningful"
+    },
+    {
+      "priority": 9,
+      "file": "login.html",
+      "before": "Send me a link",
+      "after": "Send magic link",
+      "reason": "Clearer what kind of link — sets expectation. 'Magic link' is standard terminology users understand"
+    },
+    {
+      "priority": 10,
+      "file": "plan-poster.html",
+      "before": "Review each person's vibe. Pass or pick — your choice, no pressure.",
+      "after": "Take your time. These are real people — pass or say yes when it feels right.",
+      "reason": "Humanizes the decision. 298 Social Butterfly users felt the '1-on-1' framing was too intense"
+    }
+  ],
+  "new_features_to_consider": [
+    {
+      "feature": "Plan expiration countdown badge on every feed card",
+      "rationale": "521 requests — #1 feature request. Low effort, high impact urgency signal",
+      "effort": "low"
+    },
+    {
+      "feature": "Off-campus filter pill in feed",
+      "rationale": "312 requests from Explorer persona. Just add a filter pill — plans already have zone data",
+      "effort": "low"
+    },
+    {
+      "feature": "Group plan option (2-5 people)",
+      "rationale": "398 requests from Social Butterfly. Currently spots=2-3 exists but not called 'group'",
+      "effort": "low"
+    },
+    {
+      "feature": "Match history page (my-matches.html improvement)",
+      "rationale": "265 Power User requests. The route already exists",
+      "effort": "medium"
+    },
+    {
+      "feature": "Applicant count visible to plan creator in feed card",
+      "rationale": "243 requests. Small social proof signal",
+      "effort": "low"
+    }
+  ],
+  "do_not_change": [
+    "The anonymous-until-mutual-yes mechanic — #1 most loved feature (634 users)",
+    "Butter #FFEFB3 background — explicitly called out as warm and distinctive",
+    "Match reveal animation (blur to sharp names) — #4 most loved",
+    "The compatibility score concept itself — users love it even if they want it explained better",
+    ".edu verification requirement — users feel safe because of it",
+    "Privacy: no last names ever — #9 most loved",
+    "The plan-first (not profile-first) approach — users appreciate browsing before committing",
+    "Georgia serif for headlines — called out as premium-feeling by multiple personas"
+  ]
+}

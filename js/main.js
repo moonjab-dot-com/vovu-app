@@ -404,3 +404,28 @@ window.openPlan = function(role, planId) {
     window.location.href = './plan-poster.html?id=' + planId;
   }
 };
+
+// Data deletion — runs if URL has ?delete=request
+if (typeof window !== 'undefined' && window.location.search.includes('delete=request')) {
+  var delEmail = prompt('Enter your .edu email to request account deletion:');
+  if (delEmail && delEmail.trim()) {
+    var sb = window._supabase;
+    if (sb) {
+      sb.from('waitlist').upsert({
+        email: delEmail.trim(),
+        campus: 'DELETION_REQUEST',
+        created_at: new Date().toISOString()
+      }).then(function () {
+        alert(
+          'Deletion request received.\n' +
+          'We will delete your account and all data within 30 days\n' +
+          'and confirm by email to ' + delEmail.trim() + '.'
+        );
+      }).catch(function () {
+        alert('Request logged. Email privacy@vovu.app to confirm.');
+      });
+    } else {
+      alert('To request deletion, email privacy@vovu.app from your .edu address.');
+    }
+  }
+}

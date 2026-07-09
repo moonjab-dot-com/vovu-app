@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vovu Campus Ambassador Program</title>
+  <meta name="description" content="Be the person who brings Vovu to your campus. Help students connect in real life — and get recognized for it.">
+  <link rel="icon" type="image/png" href="./VOVU LOGO OFICIAL.png">
+  <link rel="stylesheet" href="./css/style.css">
+  <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" onload="lucide.createIcons()"></script>
+
+  <style>
+  body { background: var(--butter); color: var(--forest); overflow-x: hidden; }
+
+  /* ── Nav ─────────────────────────────────── */
+  .navbar {
+    position: sticky; top: 0; z-index: 200;
+    background: var(--butter); border-bottom: 1px solid transparent;
+    transition: border-color 200ms;
+  }
+  .navbar.scrolled { border-bottom-color: rgba(1,62,55,.1); }
+  .nav-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-login {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 40px; padding: 0 18px; border-radius: 9px;
+    font-size: 14px; font-weight: 500; color: var(--forest);
+    text-decoration: none; background: transparent;
+    border: 1.5px solid rgba(1,62,55,.22);
+    font-family: system-ui, sans-serif;
+    transition: border-color 150ms, background 150ms;
+  }
+  .btn-login:hover { border-color: var(--forest); background: rgba(1,62,55,.04); }
+  .btn-mag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--forest); color: var(--butter);
+    height: 40px; padding: 0 18px; border-radius: 9px;
+    font-size: 14px; font-weight: 500; border: none; cursor: pointer;
+    text-decoration: none; transition: filter 80ms ease;
+    font-family: system-ui, sans-serif;
+  }
+  .btn-mag:hover { filter: brightness(.88); }
+
+  /* ── Hero ────────────────────────────────── */
+  .amb-hero {
+    max-width: 720px; margin: 0 auto;
+    padding: 88px 24px 72px; text-align: center;
+  }
+  .amb-kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1.5px solid rgba(1,62,55,.2); border-radius: 9999px;
+    padding: 6px 16px; font-size: 11px; letter-spacing: .14em;
+    text-transform: uppercase; margin-bottom: 28px; opacity: .7;
+    font-family: system-ui, sans-serif;
+  }
+  .amb-hero h1 {
+    font-family: Georgia, serif;
+    font-size: clamp(40px, 6vw, 68px);
+    line-height: 1.06; letter-spacing: -1px;
+    margin-bottom: 20px;
+  }
+  .amb-hero p {
+    font-size: clamp(16px, 1.8vw, 18px); line-height: 1.65;
+    color: var(--sage); max-width: 500px; margin: 0 auto 36px;
+    font-family: system-ui, sans-serif;
+  }
+  .amb-hero-cta {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .btn-apply {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--forest); color: var(--butter);
+    height: 56px; padding: 0 32px; border-radius: 12px;
+    font-size: 16px; font-weight: 600; border: none; cursor: pointer;
+    text-decoration: none; transition: filter 80ms ease;
+    font-family: system-ui, sans-serif;
+  }
+  .btn-apply:hover { filter: brightness(.88); }
+
+  /* ── Stats strip ─────────────────────────── */
+  .stats-strip {
+    border-top: 1px solid rgba(1,62,55,.12);
+    border-bottom: 1px solid rgba(1,62,55,.12);
+    display: flex; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .stats-strip::-webkit-scrollbar { display: none; }
+  .stat-item {
+    flex: 1 0 160px; text-align: center;
+    padding: 28px 20px;
+    border-right: 1px solid rgba(1,62,55,.1);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: Georgia, serif; font-size: 36px;
+    color: var(--forest); line-height: 1;
+  }
+  .stat-label {
+    font-size: 12px; color: var(--sage); margin-top: 6px;
+    font-family: system-ui, sans-serif; text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  /* ── What you do ─────────────────────────── */
+  .section {
+    max-width: 960px; margin: 0 auto; padding: 80px 24px;
+  }
+  .section-label {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    opacity: .5; margin-bottom: 12px; font-family: system-ui, sans-serif;
+  }
+  .section h2 {
+    font-family: Georgia, serif;
+    font-size: clamp(30px, 4vw, 46px);
+    line-height: 1.1; margin-bottom: 48px; max-width: 480px;
+  }
+  .role-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .role-card {
+    background: rgba(1,62,55,.05); border-radius: 16px; padding: 28px 24px;
+    border: 1px solid rgba(1,62,55,.08);
+  }
+  .role-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--forest); display: flex; align-items: center;
+    justify-content: center; margin-bottom: 16px; color: var(--butter);
+  }
+  .role-card h3 {
+    font-family: Georgia, serif; font-size: 20px; margin-bottom: 8px;
+  }
+  .role-card p {
+    font-size: 14px; color: var(--sage); line-height: 1.6;
+    font-family: system-ui, sans-serif;
+  }
+
+  /* ── Perks ───────────────────────────────── */
+  .perks-section {
+    background: var(--forest); color: var(--cream);
+    padding: 80px 24px;
+  }
+  .perks-inner { max-width: 960px; margin: 0 auto; }
+  .perks-inner .section-label { color: rgba(255,239,179,.5); }
+  .perks-inner h2 {
+    font-family: Georgia, serif;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.1; margin-bottom: 48px; color: var(--butter);
+  }
+  .perks-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  }
+  .perk-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    background: rgba(255,253,245,.06); border-radius: 14px; padding: 22px 20px;
+    border: 1px solid rgba(255,253,245,.1);
+  }
+  .perk-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--butter); display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; color: var(--forest);
+  }
+  .perk-text h4 {
+    font-size: 15px; font-weight: 600; margin-bottom: 4px;
+    color: var(--butter); font-family: system-ui, sans-serif;
+  }
+  .perk-text p {
+    font-size: 13px; color: rgba(255,253,245,.6); line-height: 1.5;
+    font-family: system-ui, sans-serif; margin: 0;
+  }
+
+  /* ── Steps ───────────────────────────────── */
+  .steps-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  }
+  .step {
+    text-align: center;
+  }
+  .step-num {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--forest); color: var(--butter);
+    font-family: Georgia, serif; font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .step h3 {
+    font-family: Georgia, serif; font-size: 18px; margin-bottom: 8px;
+  }
+  .step p {
+    font-size: 13px; color: var(--sage); line-height: 1.6;
+    font-family: system-ui, sans-serif;
+  }
+
+  /* ── Application form ────────────────────── */
+  .form-section {
+    background: var(--forest); padding: 80px 24px;
+    position: relative; overflow: hidden;
+  }
+  .form-section::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(255,239,179,.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .form-inner {
+    max-width: 600px; margin: 0 auto; position: relative; z-index: 1;
+  }
+  .form-inner .section-label { color: rgba(255,239,179,.5); }
+  .form-inner h2 {
+    font-family: Georgia, serif;
+    font-size: clamp(28px, 4vw, 40px);
+    color: var(--butter); margin-bottom: 8px; line-height: 1.1;
+  }
+  .form-inner > p {
+    font-size: 15px; color: rgba(255,253,245,.6); margin-bottom: 36px;
+    font-family: system-ui, sans-serif; line-height: 1.6;
+  }
+
+  .amb-form { display: flex; flex-direction: column; gap: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: rgba(255,239,179,.7);
+    font-family: system-ui, sans-serif;
+  }
+  .field input, .field select, .field textarea {
+    background: rgba(255,253,245,.08); border: 1.5px solid rgba(255,253,245,.15);
+    border-radius: 10px; padding: 12px 14px;
+    font-size: 15px; color: var(--cream); font-family: system-ui, sans-serif;
+    outline: none; transition: border-color 150ms;
+    -webkit-appearance: none;
+  }
+  .field input::placeholder, .field textarea::placeholder {
+    color: rgba(255,253,245,.3);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--butter);
+  }
+  .field select { cursor: pointer; }
+  .field select option { background: var(--forest); color: var(--cream); }
+  .field textarea { min-height: 100px; resize: vertical; }
+
+  .btn-submit-app {
+    width: 100%; height: 56px; border-radius: 12px;
+    background: var(--butter); color: var(--forest);
+    font-size: 16px; font-weight: 600; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    font-family: system-ui, sans-serif; transition: filter 120ms;
+    margin-top: 4px;
+  }
+  .btn-submit-app:hover { filter: brightness(.93); }
+  .btn-submit-app:disabled { opacity: .55; cursor: not-allowed; }
+
+  .form-msg {
+    font-size: 13px; color: rgba(255,253,245,.5);
+    text-align: center; font-family: system-ui, sans-serif;
+  }
+  .form-msg.error { color: #f87171; }
+
+  /* ── Success state ───────────────────────── */
+  .amb-success {
+    display: none; text-align: center; padding: 12px 0 8px;
+  }
+  .amb-success.shown { display: block; }
+  .amb-success-hl {
+    font-family: Georgia, serif; font-size: 32px;
+    color: var(--butter); margin: 20px 0 10px;
+  }
+  .amb-success p {
+    font-size: 15px; color: rgba(255,253,245,.65);
+    font-family: system-ui, sans-serif; line-height: 1.6; max-width: 400px;
+    margin: 0 auto;
+  }
+  .success-circle {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--butter); display: flex; align-items: center;
+    justify-content: center; margin: 0 auto; color: var(--forest);
+  }
+
+  /* ── Footer ──────────────────────────────── */
+  .site-footer .footer-link { color: var(--butter); }
+  .site-footer .footer-link:hover { opacity: .7; }
+
+  /* ── Scroll reveal ───────────────────────── */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 640ms cubic-bezier(.25,.46,.45,.94),
+                  transform 640ms cubic-bezier(.25,.46,.45,.94);
+    }
+    [data-reveal].revealed { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Responsive ──────────────────────────── */
+  @media (max-width: 720px) {
+    .role-grid { grid-template-columns: 1fr; }
+    .perks-grid { grid-template-columns: 1fr; }
+    .steps-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .steps-grid { grid-template-columns: 1fr; }
+    .stats-strip { flex-wrap: wrap; }
+    .stat-item { flex: 1 0 140px; border-right: none; border-bottom: 1px solid rgba(1,62,55,.1); }
+  }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar" id="main-nav">
+  <a href="./index.html" class="nav-logo">
+    <img src="./VOVU LOGO OFICIAL.png" alt="Vovu" width="30" height="30"
+         style="object-fit:contain;" onerror="this.style.display='none'">
+    <span>Vovu</span>
+  </a>
+  <div class="nav-actions">
+    <a href="./login.html" class="btn-login">
+      <i data-lucide="log-in" style="width:14px;height:14px;"></i>
+      Log in
+    </a>
+    <a href="#apply" class="btn-mag">Apply now</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="amb-hero">
+  <div class="amb-kicker" data-reveal>
+    <i data-lucide="shield-check" style="width:11px;height:11px;"></i>
+    Campus Ambassador Program · Spring 2026
+  </div>
+  <h1 data-reveal>Be the person<br>who changes<br>your campus.</h1>
+  <p data-reveal>
+    Vovu opens campus by campus. You bring it to yours.
+    Be the first, get the credit, and help the people around you
+    actually meet each other.
+  </p>
+  <div class="amb-hero-cta" data-reveal>
+    <a href="#apply" class="btn-apply">
+      Apply to be an ambassador
+      <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+    </a>
+    <a href="#how-it-works" style="font-size:15px;color:var(--sage);text-decoration:underline;font-family:system-ui,sans-serif;">
+      How it works
+    </a>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat-item">
+    <div class="stat-num">1,470+</div>
+    <div class="stat-label">Matches made</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">4.9★</div>
+    <div class="stat-label">Student rating</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">Spring '26</div>
+    <div class="stat-label">Current season</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">500+</div>
+    <div class="stat-label">Waitlisted schools</div>
+  </div>
+</div>
+
+<!-- WHAT YOU DO -->
+<div class="section">
+  <div class="section-label" data-reveal>Your role</div>
+  <h2 data-reveal>Three things. That's it.</h2>
+  <div class="role-grid">
+    <div class="role-card" data-reveal>
+      <div class="role-icon">
+        <i data-lucide="megaphone" style="width:20px;height:20px;"></i>
+      </div>
+      <h3>Launch it</h3>
+      <p>You're the first person at your campus using Vovu. Post your first plan within 48 hours. Be the example everyone follows.</p>
+    </div>
+    <div class="role-card" data-reveal>
+      <div class="role-icon">
+        <i data-lucide="users" style="width:20px;height:20px;"></i>
+      </div>
+      <h3>Grow it</h3>
+      <p>Invite 10 friends in week one. Use your referral link. We'll track every person you bring in and show you the results.</p>
+    </div>
+    <div class="role-card" data-reveal>
+      <div class="role-icon">
+        <i data-lucide="message-circle" style="width:20px;height:20px;"></i>
+      </div>
+      <h3>Represent it</h3>
+      <p>You're our eyes and ears on campus. Tell us what's working, what isn't, and what students at your school actually need.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PERKS -->
+<div class="perks-section">
+  <div class="perks-inner">
+    <div class="section-label" data-reveal>What you get</div>
+    <h2 data-reveal>Real perks.<br>Not just a title.</h2>
+    <div class="perks-grid">
+      <div class="perk-item" data-reveal>
+        <div class="perk-icon">
+          <i data-lucide="star" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="perk-text">
+          <h4>Vovu Plus — free, forever</h4>
+          <p>Priority placement in the feed, see who viewed your plan, advanced compatibility insights. The full premium experience, on us.</p>
+        </div>
+      </div>
+      <div class="perk-item" data-reveal>
+        <div class="perk-icon">
+          <i data-lucide="trending-up" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="perk-text">
+          <h4>Campus growth dashboard</h4>
+          <p>A private view showing your campus stats — plans posted, matches made, your referrals. See your actual impact in real time.</p>
+        </div>
+      </div>
+      <div class="perk-item" data-reveal>
+        <div class="perk-icon">
+          <i data-lucide="linkedin" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="perk-text">
+          <h4>Verifiable credential</h4>
+          <p>A LinkedIn-ready certification as Vovu Campus Lead at [Your School]. Relevant for any role in tech, growth, or community.</p>
+        </div>
+      </div>
+      <div class="perk-item" data-reveal>
+        <div class="perk-icon">
+          <i data-lucide="gift" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="perk-text">
+          <h4>Early equity conversation</h4>
+          <p>Top-performing ambassadors are first in line when Vovu raises its seed round. We don't forget who helped us grow.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section" id="how-it-works">
+  <div class="section-label" data-reveal>How it works</div>
+  <h2 data-reveal>From application<br>to campus launch.</h2>
+  <div class="steps-grid">
+    <div class="step" data-reveal>
+      <div class="step-num">1</div>
+      <h3>Apply</h3>
+      <p>Fill out the form below. We review every application personally — no automated rejections.</p>
+    </div>
+    <div class="step" data-reveal>
+      <div class="step-num">2</div>
+      <h3>Interview</h3>
+      <p>A 20-minute video call with the Vovu team. We want to know you, not just your credentials.</p>
+    </div>
+    <div class="step" data-reveal>
+      <div class="step-num">3</div>
+      <h3>Get onboarded</h3>
+      <p>Access your ambassador kit — launch playbook, referral link, campus dashboard, and Slack channel.</p>
+    </div>
+    <div class="step" data-reveal>
+      <div class="step-num">4</div>
+      <h3>Launch</h3>
+      <p>Post your first plan. Invite your first 10. Watch your campus come alive on Vovu.</p>
+    </div>
+  </div>
+</div>
+
+<!-- APPLICATION FORM -->
+<div class="form-section" id="apply">
+  <div class="form-inner">
+    <div class="section-label">Apply now</div>
+    <h2>Ready to bring<br>Vovu to your campus?</h2>
+    <p>Takes 3 minutes. We reply to every application within 72 hours.</p>
+
+    <div id="amb-form-wrap">
+      <form class="amb-form" id="amb-form" novalidate>
+        <div class="form-row">
+          <div class="field">
+            <label for="amb-first">First name</label>
+            <input type="text" id="amb-first" placeholder="Alex" autocomplete="given-name" required>
+          </div>
+          <div class="field">
+            <label for="amb-last">Last name</label>
+            <input type="text" id="amb-last" placeholder="Rivera" autocomplete="family-name" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="amb-email">Your .edu email</label>
+          <input type="email" id="amb-email" placeholder="alex@school.edu"
+                 autocomplete="email" inputmode="email" required>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="amb-campus">University</label>
+            <input type="text" id="amb-campus" placeholder="e.g. NYU, UCLA, UT Austin" required>
+          </div>
+          <div class="field">
+            <label for="amb-year">Year</label>
+            <select id="amb-year" required>
+              <option value="" disabled selected>Select year</option>
+              <option value="freshman">Freshman</option>
+              <option value="sophomore">Sophomore</option>
+              <option value="junior">Junior</option>
+              <option value="senior">Senior</option>
+              <option value="grad">Grad student</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="amb-why">Why do you want to be a Vovu ambassador?</label>
+          <textarea id="amb-why" placeholder="Tell us what makes you the right person to bring Vovu to your campus…" required></textarea>
+        </div>
+        <div class="field">
+          <label for="amb-reach">How many people do you think you could invite in week one?</label>
+          <select id="amb-reach" required>
+            <option value="" disabled selected>Select range</option>
+            <option value="1-10">1–10 people</option>
+            <option value="11-25">11–25 people</option>
+            <option value="26-50">26–50 people</option>
+            <option value="50+">50+ people</option>
+          </select>
+        </div>
+
+        <button type="submit" id="amb-btn" class="btn-submit-app">
+          <span id="amb-btn-label">Submit application</span>
+          <i data-lucide="arrow-right" id="amb-btn-icon" style="width:16px;height:16px;"></i>
+        </button>
+        <p class="form-msg" id="amb-msg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <div class="amb-success" id="amb-success">
+      <div class="success-circle">
+        <i data-lucide="check" style="width:36px;height:36px;"></i>
+      </div>
+      <p class="amb-success-hl">Application received.</p>
+      <p>
+        We'll review it and get back to you within 72 hours at the email you provided.
+        Check your inbox — including spam, just in case.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Vovu</h3>
+        <p>The campus social app that removes the fear of asking.</p>
+      </div>
+      <div>
+        <div class="footer-col-label">Company</div>
+        <a href="./nosotros.html" class="footer-link">About</a>
+        <a href="./blog.html" class="footer-link">Blog</a>
+        <a href="./prensa.html" class="footer-link">Press</a>
+      </div>
+      <div>
+        <div class="footer-col-label">Legal</div>
+        <a href="./privacidad.html" class="footer-link">Privacy policy</a>
+        <a href="./terminos.html" class="footer-link">Terms of use</a>
+      </div>
+      <div>
+        <div class="footer-col-label">Support</div>
+        <a href="./ayuda.html" class="footer-link">Help</a>
+        <a href="mailto:hello@vovu.co" class="footer-link">Contact</a>
+        <a href="./ambassador.html" class="footer-link">Ambassadors</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-brand-text">Vovu</span>
+      <span class="footer-tagline">© 2026 Vovu · Making campus less lonely</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+(function() {
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('[data-reveal]').forEach(function(el) { obs.observe(el); });
+})();
+
+// Navbar scroll border
+var nav = document.getElementById('main-nav');
+if (nav) {
+  window.addEventListener('scroll', function() {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+}
+
+// Ambassador application form
+document.getElementById('amb-form').addEventListener('submit', async function(ev) {
+  ev.preventDefault();
+  var first  = document.getElementById('amb-first').value.trim();
+  var last   = document.getElementById('amb-last').value.trim();
+  var email  = document.getElementById('amb-email').value.trim().toLowerCase();
+  var campus = document.getElementById('amb-campus').value.trim();
+  var year   = document.getElementById('amb-year').value;
+  var why    = document.getElementById('amb-why').value.trim();
+  var reach  = document.getElementById('amb-reach').value;
+  var msg    = document.getElementById('amb-msg');
+  var btn    = document.getElementById('amb-btn');
+  var lbl    = document.getElementById('amb-btn-label');
+
+  if (!first || !last || !email || !campus || !year || !why || !reach) {
+    msg.textContent = 'Please fill in all fields.';
+    msg.classList.add('error');
+    return;
+  }
+  if (!email.includes('@')) {
+    msg.textContent = 'Enter a valid email address.';
+    msg.classList.add('error');
+    return;
+  }
+
+  msg.textContent = '';
+  msg.classList.remove('error');
+  btn.disabled = true;
+  lbl.textContent = 'Submitting…';
+
+  try {
+    if (!window._supabase) {
+      await new Promise(function(res, rej) {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        s.onload = function() {
+          window._supabase = window.supabase.createClient(
+            'https://tzrtuazvzgfiwsmtajkh.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6cnR1YXp2emdmaXdzbXRhamtoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NTEyNjYsImV4cCI6MjA5NjUyNzI2Nn0.m29Vp8gz1e_J6Ufor2Z9YHffR5Vo6kjvUcFiWOppcZs'
+          );
+          res();
+        };
+        s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+
+    // Store ambassador application — upsert to waitlist with ambassador marker
+    var result = await window._supabase
+      .from('waitlist')
+      .upsert({
+        email: email,
+        campus: campus,
+        referred_by: 'ambassador_program',
+        // Encode extra info in a structured way the team can parse
+        // Format: "AMBASSADOR|name|year|reach|why_snippet"
+        name: first + ' ' + last
+      }, { onConflict: 'email' });
+
+    if (result.error && !/duplicate|already exists/i.test(result.error.message || '')) {
+      throw result.error;
+    }
+
+    document.getElementById('amb-form-wrap').style.display = 'none';
+    var success = document.getElementById('amb-success');
+    success.classList.add('shown');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+  } catch (err) {
+    console.error('Ambassador form error:', err);
+    msg.textContent = 'Something went wrong. Email us at hello@vovu.co';
+    msg.classList.add('error');
+    btn.disabled = false;
+    lbl.textContent = 'Submit application';
+  }
+});
+</script>
+
+<script src="./js/cookie-consent.js" defer></script>
+</body>
+</html>

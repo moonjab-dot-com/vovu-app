@@ -354,6 +354,10 @@ window.addEventListener('load', async () => {
   // Open directly on "Your plans" when arriving via nav tab
   if (new URLSearchParams(location.search).get('tab') === 'your-plans') {
     switchFeedTab('your-plans', document.getElementById('tab-your-plans'));
+    // Reflect active state in bottom nav
+    document.querySelectorAll('.bottom-nav .nav-tab').forEach(t => t.classList.remove('active'));
+    const yourPlansNavItem = document.querySelector('.bottom-nav a[href="./feed.html?tab=your-plans"]');
+    if (yourPlansNavItem) yourPlansNavItem.classList.add('active');
   }
 
   // Consume pending toast from other pages (e.g. "Plan posted" from post.html)

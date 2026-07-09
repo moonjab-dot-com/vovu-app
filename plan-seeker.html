@@ -33,7 +33,7 @@
   <div id="seeker-content" class="hidden" style="padding: 16px 16px 120px;">
 
     <!-- Creator said YES screen — shown when poster picked this applicant -->
-    <div id="creator-said-yes" class="creator-yes-screen hidden" style="display:none;">
+    <div id="creator-said-yes" class="creator-yes-screen hidden">
       <img src="./public/I-Have-A-Question--Streamline-Dhaka.png"
            width="140" height="140"
            loading="lazy"
@@ -157,6 +157,32 @@
     <p style="color:var(--sage); margin-bottom:12px;">This plan isn't available.</p>
     <a href="./feed.html" style="color:var(--forest); text-decoration:underline; font-size:14px;">Back to feed</a>
   </div>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="./feed.html" class="nav-tab active">
+      <i data-lucide="compass"></i>
+      <span>Feed</span>
+    </a>
+    <a href="./my-matches.html" class="nav-tab">
+      <i data-lucide="heart"></i>
+      <span>Matches</span>
+    </a>
+    <a href="./post.html" class="nav-tab nav-post">
+      <div class="post-circle">
+        <i data-lucide="plus" style="color:var(--butter);"></i>
+      </div>
+      <span style="margin-top:2px;">Post</span>
+    </a>
+    <a href="./feed.html?tab=your-plans" class="nav-tab">
+      <i data-lucide="bookmark"></i>
+      <span>Your plans</span>
+    </a>
+    <a href="./profile.html" class="nav-tab">
+      <i data-lucide="user"></i>
+      <span>Profile</span>
+    </a>
+  </nav>
 
   <!-- Action bar -->
   <div class="plan-action-bar" id="action-bar" style="display:none;">
@@ -555,34 +581,6 @@ async function applicantDeclines() {
 }
 </script>
 
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-grid">
-      <div>
-        <div class="footer-col-label">Company</div>
-        <a href="./nosotros.html" class="footer-link">About</a>
-        <a href="./blog.html" class="footer-link">Blog</a>
-        <a href="./prensa.html" class="footer-link">Press</a>
-      </div>
-      <div>
-        <div class="footer-col-label">Legal</div>
-        <a href="./privacidad.html" class="footer-link">Privacy</a>
-        <a href="./terminos.html" class="footer-link">Terms</a>
-        <a href="./privacidad.html" class="footer-link">Cookies</a>
-      </div>
-      <div>
-        <div class="footer-col-label">Support</div>
-        <a href="./ayuda.html" class="footer-link">Help</a>
-        <a href="mailto:hello@vovu.co" class="footer-link">Contact</a>
-        <a href="./testimonios.html" class="footer-link">Testimonials</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span class="footer-brand-text">Vovu</span>
-      <span class="footer-tagline">© 2026 Vovu · Making campus less lonely</span>
-    </div>
-  </div>
-</footer>
 <script src="./js/cookie-consent.js"></script>
 </body>
 </html>

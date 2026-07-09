@@ -30,7 +30,7 @@
   </div>
 
   <!-- Real content -->
-  <div id="poster-content" class="hidden" style="padding: 16px 16px 40px;">
+  <div id="poster-content" class="hidden" style="padding: 16px 16px 120px;">
 
     <!-- Your plan summary -->
     <div class="your-plan-summary fade-up" style="margin-bottom:20px;" id="plan-summary-block">
@@ -111,6 +111,32 @@
       </div>
     </div>
   </div>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="./feed.html" class="nav-tab">
+      <i data-lucide="compass"></i>
+      <span>Feed</span>
+    </a>
+    <a href="./my-matches.html" class="nav-tab">
+      <i data-lucide="heart"></i>
+      <span>Matches</span>
+    </a>
+    <a href="./post.html" class="nav-tab nav-post">
+      <div class="post-circle">
+        <i data-lucide="plus" style="color:var(--butter);"></i>
+      </div>
+      <span style="margin-top:2px;">Post</span>
+    </a>
+    <a href="./feed.html?tab=your-plans" class="nav-tab active">
+      <i data-lucide="bookmark"></i>
+      <span>Your plans</span>
+    </a>
+    <a href="./profile.html" class="nav-tab">
+      <i data-lucide="user"></i>
+      <span>Profile</span>
+    </a>
+  </nav>
 
 </div>
 
@@ -373,14 +399,9 @@ async function pickApplicant(appId, initial) {
   overlay.classList.remove('hidden');
 
   try {
-    // Set chosen application to 'yes_creator' — do NOT decline others here.
-    // Others stay pending; if this applicant declines the slot re-opens.
-    const { error } = await window._supabase
-      .from('applications')
-      .update({ status: 'yes_creator' })
-      .eq('id', appId);
-
-    if (error) throw error;
+    // Set chosen application to 'yes_creator' using DB helper which detects
+    // RLS silent blocks (0 rows updated ≠ no error but still failed).
+    await DB.updateApplication(appId, 'yes_creator');
 
     titleEl.textContent = 'YES sent to ' + initial + '·';
     if (subEl) subEl.textContent = 'Waiting for them to confirm. You\'ll see the reveal in Your Plans.';
@@ -410,34 +431,6 @@ function showError() {
 }
 </script>
 
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-grid">
-      <div>
-        <div class="footer-col-label">Company</div>
-        <a href="./nosotros.html" class="footer-link">About</a>
-        <a href="./blog.html" class="footer-link">Blog</a>
-        <a href="./prensa.html" class="footer-link">Press</a>
-      </div>
-      <div>
-        <div class="footer-col-label">Legal</div>
-        <a href="./privacidad.html" class="footer-link">Privacy</a>
-        <a href="./terminos.html" class="footer-link">Terms</a>
-        <a href="./privacidad.html" class="footer-link">Cookies</a>
-      </div>
-      <div>
-        <div class="footer-col-label">Support</div>
-        <a href="./ayuda.html" class="footer-link">Help</a>
-        <a href="mailto:hello@vovu.co" class="footer-link">Contact</a>
-        <a href="./testimonios.html" class="footer-link">Testimonials</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span class="footer-brand-text">Vovu</span>
-      <span class="footer-tagline">© 2026 Vovu · Making campus less lonely</span>
-    </div>
-  </div>
-</footer>
 <script src="./js/cookie-consent.js"></script>
 </body>
 </html>

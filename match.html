@@ -140,12 +140,60 @@
         <i data-lucide="heart" style="width:16px;height:16px;"></i>
         My matches
       </a>
+      <button id="share-vovu-btn" onclick="shareVovu()"
+         style="width:100%;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;
+                height:52px;border-radius:var(--r-md);font-size:15px;font-weight:500;cursor:pointer;
+                background:rgba(255,253,245,0.12);color:var(--cream);border:1.5px solid rgba(255,253,245,0.25);
+                font-family:system-ui,sans-serif;transition:background 150ms;">
+        <i data-lucide="share-2" style="width:16px;height:16px;"></i>
+        Tell a friend about Vovu
+      </button>
       <a href="./feed.html" class="btn-outline match-feed-btn"
          style="display:flex;align-items:center;justify-content:center;gap:8px;
                 border-color:rgba(255,253,245,0.3);color:var(--butter);">
         <i data-lucide="layout-list" style="width:16px;height:16px;"></i>
         Back to feed
       </a>
+    </div>
+
+    <!-- Notification permission bottom sheet -->
+    <div id="notif-sheet"
+         style="position:fixed;bottom:0;left:0;right:0;z-index:9997;
+                background:var(--forest);border-top:1px solid rgba(255,253,245,0.12);
+                padding:20px 20px 36px;transform:translateY(100%);
+                transition:transform 400ms cubic-bezier(.34,1.56,.64,1);
+                max-width:480px;margin:0 auto;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;">
+        <div>
+          <div style="font-size:16px;font-weight:600;color:var(--butter);margin-bottom:4px;">
+            Know when someone applies
+          </div>
+          <div style="font-size:14px;color:rgba(255,253,245,0.65);line-height:1.5;">
+            Get notified the moment someone wants to join your plan — no more checking back.
+          </div>
+        </div>
+        <button onclick="dismissNotifSheet()" aria-label="Close"
+                style="background:none;border:none;cursor:pointer;padding:4px;flex-shrink:0;
+                       color:rgba(255,253,245,0.5);margin-top:2px;">
+          <i data-lucide="x" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="requestNotifPermission()"
+                style="flex:1;height:44px;border-radius:var(--r-md);
+                       background:var(--butter);color:var(--forest);
+                       border:none;font-size:14px;font-weight:600;cursor:pointer;
+                       font-family:system-ui,sans-serif;">
+          Turn on notifications
+        </button>
+        <button onclick="dismissNotifSheet()"
+                style="height:44px;padding:0 16px;border-radius:var(--r-md);
+                       background:transparent;color:rgba(255,253,245,0.5);
+                       border:1px solid rgba(255,253,245,0.2);font-size:14px;cursor:pointer;
+                       font-family:system-ui,sans-serif;">
+          Not now
+        </button>
+      </div>
     </div>
 
   </div><!-- /match-content -->
@@ -230,6 +278,7 @@ function populateMatch({ match, planDay, myInitial, partnerName, partnerEmail, p
 
   const icon     = ACTIVITY_ICONS[match.activity]  || 'calendar';
   const label    = ACTIVITY_LABELS[match.activity] || 'Plan';
+  window._matchActivity = label.toLowerCase();
   const location = match.exact_location || null;
   const time     = match.exact_time     || null;
 
@@ -315,11 +364,64 @@ function populateMatch({ match, planDay, myInitial, partnerName, partnerEmail, p
     const el = document.getElementById('match-actions');
     if (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }
   }, 2500);
+
+  // T=3200: notification permission sheet (after celebration settles)
+  t(() => showNotifSheet(), 3200);
 }
 
 function showError() {
   document.getElementById('match-skeleton').classList.add('hidden');
   document.getElementById('match-error').classList.remove('hidden');
+}
+
+// ── Share Vovu ─────────────────────────────────────────────────────────
+window._matchActivity = null; // set in populateMatch
+
+function shareVovu() {
+  const activity = window._matchActivity || 'something';
+  const text = `Just matched on Vovu to ${activity} with someone at my campus. Real plans, no DMs. 🌱`;
+  const url  = 'https://vovu.co';
+  if (navigator.share) {
+    navigator.share({ title: 'Vovu', text, url }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text + ' ' + url).then(() => {
+      const btn = document.getElementById('share-vovu-btn');
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check" style="width:16px;height:16px;"></i> Link copied!';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        setTimeout(() => { btn.innerHTML = orig; if (typeof lucide !== 'undefined') lucide.createIcons(); }, 2200);
+      }
+    }).catch(() => {});
+  }
+}
+
+// ── Notification permission ────────────────────────────────────────────
+function showNotifSheet() {
+  if (localStorage.getItem('vovu_notif_asked')) return;
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted' || Notification.permission === 'denied') return;
+  const sheet = document.getElementById('notif-sheet');
+  if (sheet) sheet.style.transform = 'translateY(0)';
+}
+
+function dismissNotifSheet() {
+  localStorage.setItem('vovu_notif_asked', '1');
+  const sheet = document.getElementById('notif-sheet');
+  if (sheet) sheet.style.transform = 'translateY(100%)';
+}
+
+function requestNotifPermission() {
+  dismissNotifSheet();
+  Notification.requestPermission().then(perm => {
+    localStorage.setItem('vovu_notif_asked', '1');
+    if (perm === 'granted') {
+      new Notification('Vovu', {
+        body: "You're all set. We'll let you know when someone applies.",
+        icon: './VOVU LOGO OFICIAL.png'
+      });
+    }
+  });
 }
 
 function spawnConfetti() {

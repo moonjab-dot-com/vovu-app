@@ -361,7 +361,55 @@ window.addEventListener('load', async () => {
   if (pendingToast) { localStorage.removeItem('vovu_toast'); showToast(pendingToast); }
 
   await Promise.all([loadDiscover(), loadYourPlans()]);
+  subscribeToNewPlans();
 });
+
+// ── Realtime: new plan banner ──────────────────────────────────────────
+function subscribeToNewPlans() {
+  var campus = window.currentUser && window.currentUser.campus;
+  if (!campus || !window._supabase) return;
+
+  window._supabase
+    .channel('public:plans:campus=' + campus)
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'plans',
+      filter: 'campus=eq.' + campus
+    }, function() {
+      showNewPlanBanner();
+    })
+    .subscribe();
+}
+
+function showNewPlanBanner() {
+  var existing = document.getElementById('new-plan-banner');
+  if (existing) return; // already showing
+  var banner = document.createElement('div');
+  banner.id = 'new-plan-banner';
+  banner.style.cssText = [
+    'position:sticky', 'top:0', 'z-index:100',
+    'background:var(--forest)', 'color:var(--butter)',
+    'padding:10px 16px', 'font-size:14px', 'font-weight:500',
+    'display:flex', 'align-items:center', 'justify-content:space-between',
+    'gap:12px', 'cursor:pointer', 'font-family:system-ui,sans-serif',
+    'border-bottom:1px solid rgba(255,239,179,0.15)',
+    'animation:slideDown 280ms ease'
+  ].join(';');
+  banner.innerHTML =
+    '<span style="display:flex;align-items:center;gap:8px;">' +
+      '<span style="width:8px;height:8px;border-radius:50%;background:var(--butter);flex-shrink:0;"></span>' +
+      'New plan posted on your campus' +
+    '</span>' +
+    '<span style="font-size:13px;opacity:.8;text-decoration:underline;">Refresh</span>';
+  banner.addEventListener('click', function() {
+    banner.remove();
+    loadDiscover();
+  });
+  var discoverEl = document.getElementById('discover-section');
+  if (discoverEl) discoverEl.prepend(banner);
+  else document.querySelector('.feed-screen').prepend(banner);
+}
 
 async function loadDiscover() {
   try {
@@ -493,6 +541,12 @@ async function loadYourPlans() {
   }
 }
 </script>
+<style>
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+</style>
 <script src="./js/cookie-consent.js"></script>
 </body>
 </html>

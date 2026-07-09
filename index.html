@@ -1226,6 +1226,24 @@
            style="object-fit:contain;" alt="">
       <p class="wl-success-hl">You're in.</p>
       <p>We'll email when Vovu opens at your campus.</p>
+
+      <div id="wl-refer-section" style="display:none;margin-top:20px;padding-top:18px;border-top:1px solid rgba(1,62,55,.12);">
+        <p style="font-size:13px;color:var(--sage);margin:0 0 10px;font-family:system-ui,sans-serif;">
+          Move up the list — share your link:
+        </p>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <code id="wl-ref-url"
+                style="flex:1;font-size:12px;background:rgba(1,62,55,.07);
+                       padding:8px 12px;border-radius:8px;word-break:break-all;
+                       font-family:monospace;color:var(--forest);">vovu.co?ref=…</code>
+          <button onclick="copyRefLink()"
+                  style="height:36px;padding:0 14px;border-radius:8px;
+                         background:var(--forest);color:var(--butter);
+                         border:none;font-size:13px;font-weight:500;cursor:pointer;
+                         white-space:nowrap;font-family:system-ui,sans-serif;"
+                  id="wl-copy-btn">Copy</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1440,6 +1458,24 @@ document.querySelectorAll('.plan-chip').forEach(function(chip) {
   chip.addEventListener('keydown', toggle);
 });
 
+// ── Referral copy ──────────────────────────────────────────────────────
+function copyRefLink() {
+  var url = document.getElementById('wl-ref-url');
+  var btn = document.getElementById('wl-copy-btn');
+  if (!url || !btn) return;
+  navigator.clipboard.writeText(url.textContent).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = orig; }, 2000);
+  }).catch(function() {});
+}
+
+// ── Referral param tracking ────────────────────────────────────────────
+(function() {
+  var ref = new URLSearchParams(location.search).get('ref');
+  if (ref) localStorage.setItem('vovu_ref', ref.slice(0, 64));
+})();
+
 // ── Waitlist form (lazy Supabase) ──────────────────────────────────────
 document.getElementById('waitlist-form').addEventListener('submit', async function(ev) {
   ev.preventDefault();
@@ -1482,9 +1518,10 @@ document.getElementById('waitlist-form').addEventListener('submit', async functi
       });
     }
 
+    var refBy = localStorage.getItem('vovu_ref') || null;
     var result = await window._supabase
       .from('waitlist')
-      .upsert({ email: email }, { onConflict: 'email' });
+      .upsert({ email: email, referred_by: refBy }, { onConflict: 'email' });
 
     if (result.error && !/duplicate|already exists/i.test(result.error.message || '')) {
       throw result.error;
@@ -1492,6 +1529,14 @@ document.getElementById('waitlist-form').addEventListener('submit', async functi
 
     document.getElementById('wl-form-wrap').style.display = 'none';
     document.getElementById('wl-success').classList.add('shown');
+
+    // Build referral link — use email prefix as slug (safe chars only)
+    var refSlug = email.split('@')[0].replace(/[^a-z0-9]/gi, '').toLowerCase().slice(0, 20);
+    var refUrl  = 'https://vovu.co?ref=' + refSlug;
+    var refEl   = document.getElementById('wl-ref-url');
+    var refWrap = document.getElementById('wl-refer-section');
+    if (refEl)   refEl.textContent = refUrl;
+    if (refWrap) refWrap.style.display = '';
 
   } catch (err) {
     console.error('Waitlist error:', err);
